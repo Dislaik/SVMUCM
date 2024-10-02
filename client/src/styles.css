@@ -1,0 +1,42 @@
+/* You can add global styles to this file, and also import other style files */
+@font-face {
+    font-family: Roboto;
+    src: url(../src/assets/fonts/Roboto/Roboto-Regular.ttf);
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(../src/assets/fonts/Roboto/Roboto-Bold.ttf);
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+    font-family: Roboto;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1, h2, h3, p, span, label {
+    color: #1E2124 !important;
+}
+
+.btn {
+    border-radius: 3px;
+}
+
+.row {
+    --bs-gutter-x: 0;
+}
+
+.form-label {
+    margin-bottom: 0;
+}
+
+p {
+    margin-bottom: 0;
+}

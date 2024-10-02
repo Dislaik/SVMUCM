@@ -1,0 +1,15 @@
+{
+  "username": "root",
+  "password": "2103",
+  "database": "juntavecinalucm",
+  "token_secret": "c23bcf05e8343fd7f7bddfb51c3df4f8bec04bc8d9e15a2ff72486f7803f11dc0894bf927b74fc9d1edaa1438f9a8b3d546758ec9fc70982b4aa654d8de0f854",
+  "databaseOptions": {
+    "host": "localhost",
+    "dialect": "mysql",
+    "define": {
+      "freezeTableName": true,
+      "underscored": true,
+      "timestamps": false
+    }
+  }
+}

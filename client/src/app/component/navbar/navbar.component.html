@@ -1,0 +1,39 @@
+<div *ngIf="showComponent">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
+    <div class="container">
+      <!-- Logo a la izquierda -->
+      <a class="navbar-brand" href="#">
+        <img src="../../../assets/img/logoucm.png" alt="Logo" width="180"class="d-inline-block align-text-top">
+      </a>
+      
+      <!-- Botón para menú responsive -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <!-- Enlaces de navegación -->
+      <div class="collapse navbar-collapse d-flex justify-content-start" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" [routerLink]="['/']">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/courses']">Cursos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/request']">Solicitud</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link">Contacto</a>
+          </li>
+        </ul>
+  
+        <!-- Botones a la derecha -->
+        <div class="ms-auto d-flex">
+          <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLogin()">Ingresar</button>
+          <button class="btn btn-primary" type="button" (click)="ngOnRegister()">Registrarse</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>

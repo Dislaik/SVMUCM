@@ -1,0 +1,173 @@
+.background {
+  height: 100%;
+  width: 100vw;
+  left: 0rem;
+  background-image: linear-gradient(-105deg,#1E3F85,#00A1E1);
+  position: fixed;
+  overflow: auto;
+  background-size: cover;  
+}
+  
+.container-to-center {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.card-register {
+  width: 500px;
+  height: auto;
+  background-color: #E5E8E8;
+  border-radius: 3px;
+}
+
+.row-welcome {
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.row-welcome h3 {
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.row-welcome p {
+  color: #AAAAAA;
+}
+
+
+.form-control {
+  border: none;
+  background-color: #A6ACAf;
+  border-radius: 3px;
+  color: #1E2124;
+}
+
+.btn-register {
+  width: 100%;
+  background-color: #1E3F85;
+  color: #E5E8E8;
+  border: none;
+  border-radius: 3px;
+}
+
+.btn-register:hover {
+  background-color: #2853b1;
+  color: #E5E8E8;
+}
+
+span {
+  color: #AAAAAA;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+a {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.pop-in {
+  animation-name: pop-in;
+  animation-timing-function: cubic-bezier(0.26, 0.53, 0.74, 1.48);
+  animation-duration: 0.2s;
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8, 0.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1.0, 1.0);
+  }
+}
+
+.bottom-card {
+  width: 100%;
+  height: 50px;
+  align-items: center;
+}
+
+.back-card {
+  font-size: 20px;
+  margin-left: 20px;
+  color: #1E2124;
+}
+
+.label-form-register {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.label-form-register label {
+  font-size: .8rem;
+}
+
+.label-form-register i {
+  position: relative;
+  font-size: 16px;
+  top: 1px;
+  opacity: 0.3;
+  transition: ease 0.3s;  
+}
+
+.label-form-register i:hover {
+  opacity: 1;
+  transition: ease 0.3s;
+}
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px; /* Ajusta según sea necesario */
+  background-color: #1E2124;
+  color: #E5E8E8 !important;
+  text-align: center;
+  border-radius: 3px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 150%; /* Posiciona el tooltip a la derecha */
+  transform: translateY(-50%); /* Centra el tooltip verticalmente */
+  pointer-events: none; /* Evita la propagación del evento */
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #1E2124 transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+::placeholder {
+  color: #1E2124;
+  opacity: 0.3; /* Firefox */
+}
