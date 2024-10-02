@@ -33,4 +33,8 @@ export class Utils {
   public static getStorage(p1: string): string | null {
     return window.localStorage.getItem(p1);
   }
+
+  public static clearStorage(): void {
+    window.localStorage.clear();
+  }
 }

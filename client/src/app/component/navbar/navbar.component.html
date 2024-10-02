@@ -21,7 +21,7 @@
             <a class="nav-link" [routerLink]="['/courses']">Cursos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/request']">Solicitud</a>
+            <a class="nav-link" [routerLink]="['/request-course']">Solicitud</a>
           </li>
           <li class="nav-item">
             <a class="nav-link">Contacto</a>
@@ -30,8 +30,13 @@
   
         <!-- Botones a la derecha -->
         <div class="ms-auto d-flex">
-          <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLogin()">Ingresar</button>
-          <button class="btn btn-primary" type="button" (click)="ngOnRegister()">Registrarse</button>
+          <div *ngIf="isLogged; else elseBlock">
+            <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLoggout()">Cerrar Sesión</button>
+          </div>
+          <ng-template #elseBlock>
+            <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLogin()">Ingresar</button>
+            <button class="btn btn-primary" type="button" (click)="ngOnRegister()">Registrarse</button>
+          </ng-template>
         </div>
       </div>
     </div>

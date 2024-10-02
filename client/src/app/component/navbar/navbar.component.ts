@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../architecture/service/auth.service';
+import { Utils } from '../../utils';
 
 @Component({
   selector: 'app-navbar',
@@ -39,5 +40,10 @@ export class NavbarComponent implements OnInit {
 
   ngOnRegister(): void {
     this.router.navigate(['/register'])
+  }
+
+  ngOnLoggout(): void {
+    Utils.clearStorage();
+    window.location.reload();
   }
 }
