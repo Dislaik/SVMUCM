@@ -18,6 +18,13 @@ export class RegisterComponent implements OnInit{
   email: HTMLInputElement;
   password: HTMLInputElement;
   repeatPassword: HTMLInputElement;
+  usernameError: string = '';
+  firstNameError: string = '';
+  lastNameError: string = '';
+  emailError: string = '';
+  passwordError: string = '';
+  repeatPasswordError: string = '';
+
 
   constructor(
     private router: Router,
@@ -34,14 +41,67 @@ export class RegisterComponent implements OnInit{
     this.repeatPassword = this.elementReference.nativeElement.querySelector('#inputTextRepeatPassword');
   }
 
-  async ngOnRegister(object) {
-    const result = await this.authService.register(object);
+  async ngOnRegister(object): Promise<void> {
+    const response = await this.authService.register(object)
 
-    if (!result.error) {
-      Utils.setStorage('token', result.token);
+    console.log(response)
+
+    if (response.ok) {
+      Utils.setStorage('keyToken', response.token);
+      Utils.setStorage('isLogged', true);
       this.router.navigate(['/']);
     } else {
-      console.log(result.error);
+      if (response.error.username) {
+        this.usernameError = response.error.username.error;
+        this.username.style.border = '2px solid red';
+      } else {
+        this.usernameError = '';
+        this.username.style.border = '';
+      }
+
+      if (response.error.firstName) {
+        this.firstNameError = response.error.firstName.error;
+        this.firstName.style.border = '2px solid red';
+      } else {
+        this.firstNameError = '';
+        this.firstName.style.border = '';
+      }
+
+      if (response.error.lastName) {
+        this.lastNameError = response.error.lastName.error;
+        this.lastName.style.border = '2px solid red';
+      } else {
+        this.lastNameError = '';
+        this.lastName.style.border = '';
+      }
+
+      if (response.error.email) {
+        this.emailError = response.error.email.error;
+        this.email.style.border = '2px solid red';
+      } else {
+        this.emailError = '';
+        this.email.style.border = '';
+      }
+
+      if (response.error.password) {
+        this.passwordError = response.error.password.error;
+        this.password.style.border = '2px solid red';
+      } else {
+        this.passwordError = '';
+        this.password.style.border = '';
+      }
+
+      if (response.error.repeatPassword) {
+        this.repeatPasswordError = response.error.repeatPassword.error;
+        this.repeatPassword.style.border = '2px solid red';
+      } else {
+        this.repeatPasswordError = '';
+        this.repeatPassword.style.border = '';
+      }
+
+      if (response.fatalError) {
+        console.log(response.fatalError) //Crear un mensaje de que hubo error fatal
+      }
     }
   }
 
@@ -57,7 +117,7 @@ export class RegisterComponent implements OnInit{
     const buttonRegisterSubmit = this.elementReference.nativeElement.querySelector('#buttonRegisterSubmit')
 
     if (event.target === buttonRegisterSubmit) {
-      const register = new Register(this.username.value, this.password.value, this.email.value, this.firstName.value, this.lastName.value);
+      const register = new Register(this.username.value.toLowerCase(), this.password.value, this.repeatPassword.value, this.email.value.toLowerCase(), this.firstName.value, this.lastName.value);
 
       this.ngOnRegister(register);
     }

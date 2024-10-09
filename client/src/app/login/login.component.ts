@@ -13,7 +13,8 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit{
   username: HTMLInputElement;
   password: HTMLInputElement;
-  failed: boolean;
+  usernameError: string = '';
+  passwordError: string = '';
 
   constructor(
     private router: Router,
@@ -26,14 +27,32 @@ export class LoginComponent implements OnInit{
     this.password = this.elementReference.nativeElement.querySelector('#inputTextPassword');
   }
 
-  async ngOnLogin(object) {
-    const result = await this.authService.login(object)
+  async ngOnLogin(object): Promise<void> {
+    const response = await this.authService.login(object)
 
-    if (!result.error) {
-      Utils.setStorage('token', result.token);
+    if (response.ok) {
+      Utils.setStorage('keyToken', response.token);
+      Utils.setStorage('isLogged', true);
       this.router.navigate(['/']);
     } else {
-      console.log(result.error);
+      if (response.error.username) {
+        this.usernameError = response.error.username.error;
+        this.username.style.border = '2px solid red';
+      } else {
+        this.usernameError = '';
+        this.username.style.border = '';
+      }
+
+      if (response.error.password) {
+        this.passwordError = response.error.password.error;
+        this.password.style.border = '2px solid red';
+      } else {
+        this.passwordError = '';
+        this.password.style.border = '';
+      }
+      if (response.fatalError) {
+        console.log(response.fatalError) //Crear un mensaje de que hubo error fatal
+      }
     }
   }
 
@@ -49,9 +68,9 @@ export class LoginComponent implements OnInit{
     const buttonSubmit = this.elementReference.nativeElement.querySelector('#buttonSubmit')
 
     if (event.target === buttonSubmit) {
-      const register = new Login(this.username.value, this.password.value);
+      const login = new Login(this.username.value.toLowerCase(), this.password.value);
 
-      this.ngOnLogin(register);
+      this.ngOnLogin(login);
     }
   }
 

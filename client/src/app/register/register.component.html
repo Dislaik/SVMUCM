@@ -15,6 +15,11 @@
                   </i>
                 </div>
                 <input type="text" id="inputTextRUN" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu RUN">
+                <div *ngIf="usernameError !== ''">
+                  <div class="message-error-container d-flex align-items-center">
+                    <p>{{usernameError}}</p>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <div class="col-6">
@@ -24,6 +29,11 @@
                       <i class="bi bi-question-circle"></i>
                     </div>
                     <input type="text" id="inputTextFirstName" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu nombre">
+                    <div *ngIf="firstNameError !== ''">
+                      <div class="message-error-container d-flex align-items-center">
+                        <p>{{firstNameError}}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="col-6">
@@ -33,6 +43,11 @@
                       <i class="bi bi-question-circle"></i>
                     </div>
                     <input type="text" id="inputTextLastName" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu apellido">
+                    <div *ngIf="lastNameError !== ''">
+                      <div class="message-error-container d-flex align-items-center">
+                        <p>{{lastNameError}}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -42,6 +57,11 @@
                   <i class="bi bi-question-circle"></i>
                 </div>
                 <input type="text" id="inputTextEmail" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu correo electronico">
+                <div *ngIf="emailError !== ''">
+                  <div class="message-error-container d-flex align-items-center">
+                    <p>{{emailError}}</p>
+                  </div>
+                </div>
               </div>
               <div class="mb-2">
                 <div class="label-form-register">
@@ -49,6 +69,11 @@
                   <i class="bi bi-question-circle"></i>
                 </div>
                 <input type="password" id="inputTextPassword" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu contraseña">
+                <div *ngIf="passwordError !== ''">
+                  <div class="message-error-container d-flex align-items-center">
+                    <p>{{passwordError}}</p>
+                  </div>
+                </div>
               </div>
               <div class="mb-4">
                 <div class="label-form-register">
@@ -56,6 +81,11 @@
                   <i class="bi bi-question-circle"></i>
                 </div>
                 <input type="password" id="inputTextRepeatPassword" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu contraseña">
+                <div *ngIf="repeatPasswordError !== ''">
+                  <div class="message-error-container d-flex align-items-center">
+                    <p>{{repeatPasswordError}}</p>
+                  </div>
+                </div>
               </div>
               <!--<button class="mt-3"></button> ADD MODAL-->
               <button type="submit" id="buttonRegisterSubmit" class="btn btn-register mb-2">Continuar</button>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../architecture/service/auth.service';
 import { Utils } from '../../utils';
 
@@ -18,20 +18,19 @@ export class NavbarComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-  async ngOnInit() {
-    this.router.events.subscribe(() => {
-      this.showComponent = this.router.url !== '/login' && this.router.url !== '/register';
+  ngOnInit(): void {
+    this.router.events.subscribe(async event => {
+      if (event instanceof NavigationEnd) {
+        this.showComponent = this.router.url !== '/login' && this.router.url !== '/register';
+        this.isLogged = Utils.getStorage('isLogged') || false;
+        
+        if (await this.authService.verify()) {
+          this.isLogged = true;
+        } else {
+          this.isLogged = false;
+        }
+      }
     });
-
-    console.log(await this.authService.verify())
-
-    if (await this.authService.verify()) {
-      this.isLogged = true;
-      console.log("Usuario logeado")
-    } else {
-      this.isLogged = false;
-      console.log("Usuario no esta logeado")
-    }
   }
 
   ngOnLogin(): void {

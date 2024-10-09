@@ -9,30 +9,26 @@
           </div>
           <form>
               <div class="mb-2">
-                <div *ngIf="failed; else elseBlockUsername">
-                  <div class="login-error">
-                    <label for="inputTextRUN" class="form-label">R.U.N.</label><i class="bi bi-dash-lg"></i><span>Username or password is invalid</span>
+                <div class="label-form-login">
+                  <label for="inputTextRUN" class="form-label me-1">RUN</label>
+                </div>
+                <input type="text" class="form-control shadow-none" id="inputTextRUN" required autocomplete="off" placeholder="Ingresa tu RUN">
+                <div *ngIf="usernameError !== ''">
+                  <div class="message-error-container d-flex align-items-center">
+                    <p>{{usernameError}}</p>
                   </div>
                 </div>
-                <ng-template #elseBlockUsername>
-                  <div class="label-form-login">
-                    <label for="inputTextRUN" class="form-label me-1">RUN</label>
-                  </div>
-                </ng-template>
-                <input type="text" class="form-control shadow-none" id="inputTextRUN" required autocomplete="off" placeholder="Ingresa tu RUN">
               </div>
               <div class="mb-3">
-                <div *ngIf="failed; else elseBlockPassword">
-                  <div class="login-error">
-                    <label for="inputTextPassword" class="form-label">CONTRASEÑA</label><i class="bi bi-dash-lg"></i><span>Username or password is invalid</span>
+                <div class="label-form-login">
+                  <label for="inputTextPassword" class="form-label me-1">CONTRASEÑA</label>
+                </div>
+                <input type="password" class="form-control shadow-none" id="inputTextPassword" required autocomplete="off" placeholder="Ingresa tu contraseña">
+                <div *ngIf="passwordError !== ''">
+                  <div class="message-error-container d-flex align-items-center">
+                    <p>{{passwordError}}</p>
                   </div>
                 </div>
-                <ng-template #elseBlockPassword>
-                  <div class="label-form-login">
-                    <label for="inputTextPassword" class="form-label me-1">CONTRASEÑA</label>
-                  </div>
-                </ng-template>
-                <input type="password" class="form-control shadow-none" id="inputTextPassword" required autocomplete="off" placeholder="Ingresa tu contraseña">
                 <a [routerLink]="['/']">¿Olvidaste tu contraseña?</a>
               </div>
 
