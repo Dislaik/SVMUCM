@@ -13,8 +13,28 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: RobotoCondensed;
+    src: url(../src//assets//fonts/RobotoCondensed/RobotoCondensed-Regular.ttf);
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: RobotoCondensed;
+    src: url(../src//assets//fonts/RobotoCondensed/RobotoCondensed-Bold.ttf);
+    font-weight: bold;
+    font-style: normal;
+}
+
 body {
-    font-family: Roboto;
+    font-family: RobotoCondensed;
+    background-color: #1E3F85;
+}
+
+.container-base {
+    margin-top: 80px;
+    display: block;
 }
 
 a {
@@ -39,4 +59,9 @@ h1, h2, h3, p, span, label {
 
 p {
     margin-bottom: 0;
+}
+
+.accordion {
+	--bs-accordion-border-color: 0;
+	--bs-accordion-inner-border-radius: 3px;
 }

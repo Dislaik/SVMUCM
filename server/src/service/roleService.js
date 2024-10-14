@@ -1,12 +1,12 @@
-const roleRepository = require('../repository/roleRepository');
+const RoleRepository = require('../repository/roleRepository');
 
 class RoleService {
   async getAll() {
-    return await roleRepository.findAll();
+    return await RoleRepository.findAll();
   }
 
   async getById(id) {
-    const role = await roleRepository.findById(id);
+    const role = await RoleRepository.findById(id);
 
     if (!role) {
       throw new Error('Role not found');
@@ -16,7 +16,7 @@ class RoleService {
   }
 
   async getByName(name) {
-    const role = await roleRepository.findByName(name);
+    const role = await RoleRepository.findByName(name);
     
     if (!role) {
       throw new Error('Role not found');
@@ -26,7 +26,7 @@ class RoleService {
   }
 
   async getByLabel(label) {
-    const role = await roleRepository.findByLabel(label);
+    const role = await RoleRepository.findByLabel(label);
     
     if (!role) {
       throw new Error('Role not found');
@@ -36,15 +36,15 @@ class RoleService {
   }
 
   async create(data) {
-    return await roleRepository.create(data);
+    return await RoleRepository.create(data);
   }
 
   async update(id, data) {
-    return await roleRepository.update(id, data);
+    return await RoleRepository.update(id, data);
   }
 
   async delete(id) {
-    return await roleRepository.delete(id);
+    return await RoleRepository.delete(id);
   }
 }
 

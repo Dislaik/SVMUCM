@@ -1,3 +1,11 @@
+.background {
+  height: auto;
+  width: 100%;
+  background-color: #1E3F85;
+  background-size: cover;
+  margin-top: 80px;
+}
+
 .big-holder {
   position: relative;
   height: 600px;
@@ -13,7 +21,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* Oscurece la imagen con una capa negra semi-transparente */
+  background-color: rgba(0, 0, 0, 0.5); /* Oscurece la imagen con una capa negra semi-transparente */
   z-index: 1; /* Asegúrate de que esté por encima de la imagen pero debajo del contenido */
 }
 
@@ -24,7 +32,7 @@
   left: 0;
   width: 100%;
   height: 50%;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 1) 100%);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 50%, rgba(30, 63, 133, 1) 100%);
   z-index: 2; /* El gradiente debe estar encima de la capa oscura */
   pointer-events: none; /* Permite que los eventos pasen a la imagen */
 }
@@ -34,6 +42,7 @@
   width: 100%;
   height: 100%;
   z-index: 3; /* Asegúrate de que el contenido esté por encima de todo */
+  margin-top: 80px;
 }
 
 .holder {
@@ -90,11 +99,12 @@
   width: 100%;
   text-align: center;
   z-index: 3; /* Asegúrate de que esté por encima del gradiente */
-  color: #2853b1 !important;
   font-size: 20px;
 }
 
-
+.bottom-text p {
+  color: #E5E8E8 !important;
+}
 
 
 .cards {
@@ -104,7 +114,7 @@
 }
 
 .card {
-  background-color: #2853B1;
+  background-color: #E5E8E8;
   border-radius: 3px;
   padding: 20px;
   width: 200px;

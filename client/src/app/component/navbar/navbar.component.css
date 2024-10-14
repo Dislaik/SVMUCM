@@ -1,3 +1,29 @@
 .navbar {
   height: 80px;
+  padding: 0;
+}
+
+.navbar .container {
+  align-items: normal;
+  height: 100%;
+}
+
+.navbar-nav {
+  align-items: center; /* Centrar verticalmente los elementos dentro del navbar */
+  height: 100%;
+}
+
+.nav-item {
+  height: 100%;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center; /* Centrar verticalmente el texto */
+  height: 100%; /* Ocupar toda la altura del navbar */
+}
+
+.nav-link.active {
+  color: aliceblue;
+  background-color: #1E3F85;
 }

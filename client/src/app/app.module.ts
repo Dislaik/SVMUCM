@@ -10,6 +10,9 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthInterceptor } from './architecture/interceptor/auth.interceptor';
+import { RestrictedModelRequestCourseComponent } from './component/restricted-model-request-course/restricted-model-request-course.component';
+import { FooterComponent } from "./component/footer/footer.component";
+import { RequestCourseComponent } from './request-course/request-course.component';
 
 @NgModule({
   declarations: [
@@ -17,13 +20,16 @@ import { AuthInterceptor } from './architecture/interceptor/auth.interceptor';
     HomeComponent,
     LoginComponent,
     RegisterComponent,
-    NavbarComponent
+    RequestCourseComponent,
+    NavbarComponent,
+    RestrictedModelRequestCourseComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule,
+    FormsModule
 ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

@@ -3,14 +3,14 @@ import { AuthService } from '../architecture/service/auth.service';
 import { Utils } from '../utils';
 import { Router } from '@angular/router';
 
-declare var bootstrap: any; // Declarar bootstrap para evitar errores de TypeScript
-
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-home',
   standalone: false,
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
+  host: {'class': 'container-base'}
 })
 export class HomeComponent implements OnInit{
   requestCourseModal: HTMLElement;
@@ -24,8 +24,8 @@ export class HomeComponent implements OnInit{
   ) {}
   
   async ngOnInit(): Promise<void> {
+    this.requestCourseModal = document.getElementById('restricted-model-request-course');
     this.isLogged = Utils.getStorage('isLogged') || false;
-    this.requestCourseModal = this.elementReference.nativeElement.querySelector('#exampleModal');
 
     if (await this.authService.verify()) {
       this.isLogged = true;
@@ -35,10 +35,9 @@ export class HomeComponent implements OnInit{
   }
 
   @HostListener('click', ['$event']) onClick(event: Event) {
-    const buttonRegisterSubmit = this.elementReference.nativeElement.querySelector('#buttonRequestCourse')
+    const buttonRequestCourse = this.elementReference.nativeElement.querySelector('#buttonRequestCourse')
 
-    if (event.target === buttonRegisterSubmit) {
-      console.log(this.isLogged);
+    if (event.target === buttonRequestCourse) {
       if (this.isLogged) {
         this.router.navigate(['/request-course'])
       } else {

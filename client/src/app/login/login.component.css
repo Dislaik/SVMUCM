@@ -4,7 +4,6 @@
   left: 0rem;
   background-image: linear-gradient(-105deg,#1E3F85,#00A1E1);
   position: fixed;
-  overflow: auto;
   background-size: cover;  
 }
 
