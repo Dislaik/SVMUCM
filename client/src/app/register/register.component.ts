@@ -117,7 +117,14 @@ export class RegisterComponent implements OnInit{
     const buttonRegisterSubmit = this.elementReference.nativeElement.querySelector('#buttonRegisterSubmit')
 
     if (event.target === buttonRegisterSubmit) {
-      const register = new Register(this.username.value.toLowerCase(), this.password.value, this.repeatPassword.value, this.email.value.toLowerCase(), this.firstName.value, this.lastName.value);
+      const register = new Register(
+        this.username.value.toLowerCase(),
+        this.password.value,
+        this.repeatPassword.value,
+        this.email.value.toLowerCase(),
+        this.firstName.value,
+        this.lastName.value
+      );
 
       this.ngOnRegister(register);
     }

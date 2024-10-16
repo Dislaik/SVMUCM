@@ -2,6 +2,8 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../architecture/service/auth.service';
 import { Utils } from '../../utils';
+import { UserService } from '../../architecture/service/user.service';
+import { User } from '../../architecture/model/user';
 
 declare var bootstrap: any;
 
@@ -12,6 +14,7 @@ declare var bootstrap: any;
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit {
+  user: User = new User();
   requestCourseModal: HTMLElement;
   showComponent: boolean = true;
   isLogged: boolean = false;
@@ -20,10 +23,11 @@ export class NavbarComponent implements OnInit {
   constructor(
     private router: Router,
     private elementReference: ElementRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.requestCourseModal = document.getElementById('restricted-model-request-course');
     this.router.events.subscribe(async event => {
       if (event instanceof NavigationEnd) {
@@ -33,6 +37,7 @@ export class NavbarComponent implements OnInit {
         
         if (await this.authService.verify()) {
           this.isLogged = true;
+          this.user = await this.userService.getByUsername(Utils.getUsernameByBrowser());
         } else {
           this.isLogged = false;
         }
@@ -51,6 +56,7 @@ export class NavbarComponent implements OnInit {
   ngOnLoggout(): void {
     Utils.clearStorage();
     window.location.reload();
+    this.user = null;
   }
 
   @HostListener('click', ['$event']) onClick(event: Event) {
@@ -61,7 +67,7 @@ export class NavbarComponent implements OnInit {
     if (event.target === buttonNavHome) {
       this.router.navigate(['/'])
     } else if (event.target === buttonNavCourse) {
-      this.router.navigate(['/courses'])
+      this.router.navigate(['/course'])
     } else if (event.target === buttonNavRequestCourse) {
       if (this.isLogged) {
         this.router.navigate(['/request-course'])

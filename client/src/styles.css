@@ -1,40 +1,68 @@
-/* You can add global styles to this file, and also import other style files */
 @font-face {
-    font-family: Roboto;
-    src: url(../src/assets/fonts/Roboto/Roboto-Regular.ttf);
-    font-weight: normal;
-    font-style: normal;
+  font-family: Roboto;
+  src: url(../src/assets/fonts/Roboto/Roboto-Regular.ttf);
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: Roboto;
-    src: url(../src/assets/fonts/Roboto/Roboto-Bold.ttf);
-    font-weight: bold;
-    font-style: normal;
+  font-family: Roboto;
+  src: url(../src/assets/fonts/Roboto/Roboto-Bold.ttf);
+  font-weight: bold;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: RobotoCondensed;
-    src: url(../src//assets//fonts/RobotoCondensed/RobotoCondensed-Regular.ttf);
-    font-weight: normal;
-    font-style: normal;
+  font-family: RobotoCondensed;
+  src: url(../src//assets//fonts/RobotoCondensed/RobotoCondensed-Regular.ttf);
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: RobotoCondensed;
-    src: url(../src//assets//fonts/RobotoCondensed/RobotoCondensed-Bold.ttf);
-    font-weight: bold;
-    font-style: normal;
+  font-family: RobotoCondensed;
+  src: url(../src//assets//fonts/RobotoCondensed/RobotoCondensed-Bold.ttf);
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: ProtestStrike;
+  src: url(../src//assets//fonts/ProtestStrike/ProtestStrike-Regular.ttf);
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
-    font-family: RobotoCondensed;
-    background-color: #1E3F85;
+  display: flex;
+  flex-direction: column;
+  font-family: RobotoCondensed;
+  background-color: #1E3F85;
 }
 
-.container-base {
-    margin-top: 80px;
-    display: block;
+
+/* .container-base {
+  
+} */
+
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 a {

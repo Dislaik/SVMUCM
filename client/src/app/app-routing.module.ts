@@ -7,13 +7,15 @@ import { AuthGuard } from './architecture/guard/auth.guard';
 import { CourseComponent } from './course/course.component';
 import { RequestCourseComponent } from './request-course/request-course.component';
 import { requestCourseGuard } from './architecture/guard/request-course.guard';
+import { CourseSearchComponent } from './course-search/course-search.component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent, canActivate: [AuthGuard]},
   {path: 'register', component: RegisterComponent, canActivate: [AuthGuard]},
   {path: 'request-course', component: RequestCourseComponent, canActivate: [requestCourseGuard]},
   {path: '', component: HomeComponent},
-  {path: 'courses', component: CourseComponent}
+  {path: 'course', component: CourseComponent},
+  {path: 'course/search', component: CourseSearchComponent}
 ];
 
 @NgModule({

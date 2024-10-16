@@ -2,27 +2,51 @@ const UserRepository = require('../repository/userRepository');
 
 class UserService {
   async getAll() {
-    return await UserRepository.findAll();
+    const user = await UserRepository.findAll();
+
+    const restructuredUser = user.map(user => {
+      const userJSON = user.toJSON();
+
+      userJSON.id_role = userJSON.role;
+
+      delete userJSON.role;
+
+      return userJSON;
+    });
+
+    return restructuredUser;
   }
 
   async getById(id) {
     const user = await UserRepository.findById(id);
 
-    if (!user) {
-      throw new Error('User not found');
+    if (user) {
+      const restructuredUser = user.toJSON();
+
+      restructuredUser.id_role = restructuredUser.role;
+
+      delete restructuredUser.role;
+
+      return restructuredUser;
     }
 
-    return user;
+    throw new Error('User not found');
   }
 
   async getByUsername(username) {
     const user = await UserRepository.findByUsername(username);
-    
-    if (!user) {
-      throw new Error('User not found');
+
+    if (user) {
+      const restructuredUser = user.toJSON();
+
+      restructuredUser.id_role = restructuredUser.role;
+
+      delete restructuredUser.role;
+
+      return restructuredUser;
     }
 
-    return user;
+    throw new Error('User not found');
   }
 
   async create(data) {

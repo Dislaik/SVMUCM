@@ -7,4 +7,4 @@ const CourseCategory = sequelize.define('course_category', {
   label: { type: DataTypes.STRING, allowNull: false }
 });
 
-module.exports = Course;
+module.exports = CourseCategory;

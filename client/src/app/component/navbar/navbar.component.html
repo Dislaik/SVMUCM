@@ -1,6 +1,6 @@
 <nav *ngIf="showComponent" class="navbar navbar-expand-lg navbar-light bg-light shadow fixed-top">
   <div class="container">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand d-flex align-items-center" [routerLink]="['/']">
       <img src="../../../assets/img/logoucm.png" alt="Logo" width="180" class="d-inline-block align-text-top">
     </a>
 
@@ -14,7 +14,7 @@
           <button type="button" id="nav-home" [ngClass]="currentPage == '/' ? 'nav-link active' : 'nav-link' ">Inicio</button>
         </li>
         <li class="nav-item">
-          <button type="button" id="nav-courses" [ngClass]="currentPage == '/courses' ? 'nav-link active' : 'nav-link' ">Cursos</button>
+          <button type="button" id="nav-courses" [ngClass]="currentPage == '/course' ? 'nav-link active' : 'nav-link' ">Cursos</button>
         </li>
         <li class="nav-item">
           <button type="button" id="nav-request-course" [ngClass]="currentPage == '/request-course' ? 'nav-link active' : 'nav-link' ">Crear solicitud</button>
@@ -23,7 +23,18 @@
 
       <div class="ms-auto d-flex">
         <div *ngIf="isLogged; else elseBlock">
-          <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLoggout()">Cerrar Sesión</button>
+          <div class="nav-item dropdown">
+            <button class="btn dropdown-toggle d-flex align-items-center" type="button" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src={{user.image}} class="rounded-circle me-2" height="30"/>
+              {{user.first_name}} {{user.last_name}}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
+              <li><a class="dropdown-item" href="#">Configuración</a></li>
+              <li><a class="dropdown-item" (click)="ngOnLoggout()">Cerrar sesión</a></li>
+            </ul>
+          </div>
+          <!-- <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLoggout()">Cerrar Sesión</button> -->
         </div>
         <ng-template #elseBlock>
           <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLogin()">Ingresar</button>

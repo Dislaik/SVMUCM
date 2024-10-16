@@ -10,8 +10,11 @@ const User = sequelize.define('User', {
   first_name: { type: DataTypes.STRING, allowNull: false },
   last_name: { type: DataTypes.STRING, allowNull: false },
   image: { type: DataTypes.STRING, allowNull: false },
-  id_role: { type: DataTypes.INTEGER, allowNull: false, references: { model: Role, key: 'id',} },
+  id_role: { type: DataTypes.INTEGER, allowNull: false, references: { model: Role, key: 'id' } },
   created_at: { type: DataTypes.DATE,  allowNull: false }
 });
+
+User.belongsTo(Role, { foreignKey: 'id_role'});
+
 
 module.exports = User;

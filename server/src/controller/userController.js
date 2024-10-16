@@ -22,6 +22,17 @@ class UserController {
     }
   }
 
+  async getByUsername(request, response) {
+    try {
+      const { username } = request.params;
+      const user = await userService.getByUsername(username)
+
+      response.status(200).json(user);
+    } catch (error) {
+      response.status(500).json(null);
+    }
+  }
+
   async create(request, response) {
     try {
       const { body } = request

@@ -27,3 +27,10 @@
   color: aliceblue;
   background-color: #1E3F85;
 }
+
+.dropdown-menu[data-bs-popper] {
+  top: 100%;
+  left: auto;
+  right: 0;
+  margin-top: var(--bs-dropdown-spacer);
+}

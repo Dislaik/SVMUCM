@@ -1,3 +1,5 @@
+import { jwtDecode } from "jwt-decode";
+
 export class Utils {
 
   public static formatRUN(p1: HTMLInputElement): void {
@@ -37,5 +39,12 @@ export class Utils {
 
   public static clearStorage(): void {
     window.localStorage.clear();
+  }
+
+  public static getUsernameByBrowser(): any {
+    const token = this.getStorage('keyToken');
+    const decoded = jwtDecode(token);
+
+    return decoded['username']
   }
 }
