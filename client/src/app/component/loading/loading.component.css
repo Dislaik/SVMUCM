@@ -1,0 +1,54 @@
+#loading-background {
+    height: 100%;
+    width: 100vw;
+    left: 0rem;
+    background-image: linear-gradient(-105deg,#00807E,#003534);
+    z-index: 10;
+    position: fixed;
+    overflow: auto
+}
+
+.spinner {
+    animation: rotation 2s linear infinite;
+    z-index: 10;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -25px 0 0 -25px;
+    width: 50px;
+    height: 50px
+}
+
+.spinner .path {
+    stroke: #12918e;
+    stroke-linecap: round;
+    animation: spinner 1.5s ease-in-out infinite
+}
+
+@keyframes rotation {
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes spinner {
+    0% {
+        stroke-dasharray: 1,150;
+        stroke-dashoffset: 0
+    }
+
+    50% {
+        stroke-dasharray: 90,150;
+        stroke-dashoffset: -35
+    }
+
+    to {
+        stroke-dasharray: 90,150;
+        stroke-dashoffset: -124
+    }
+}
+
+.close {
+    opacity: 0;
+    transition: .5s ease;
+}

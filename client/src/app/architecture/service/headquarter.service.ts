@@ -62,9 +62,9 @@ export class HeadquarterService {
     })
   };
 
-  public create(user: Headquarter): Promise<any> {
+  public create(headquarter: Headquarter): Promise<any> {
     return new Promise((resolve) => {
-      this.httpClient.post<Headquarter>(this.URL, user).subscribe(
+      this.httpClient.post<Headquarter>(this.URL, headquarter).subscribe(
         data => {
           resolve(data)
         },

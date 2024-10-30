@@ -1,0 +1,10 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li *ngFor="let i of breadcrumbPages | keyvalue" class='breadcrumb-item'>
+      <a *ngIf="titlePage == i.value['page']; else elseBlock">
+        {{i.value['page']}}
+      </a>
+      <ng-template #elseBlock><a class="text-decoration-none" [routerLink]="[i.value['url']]">{{i.value['page']}}</a></ng-template>
+    </li>
+  </ol>
+</nav>

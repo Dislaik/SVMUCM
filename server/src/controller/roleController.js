@@ -5,9 +5,9 @@ class RoleController {
     try {
       const roles = await roleService.getAll();
       
-      response.status(200).json(roles);
+      response.status(200).json({ ok: true, message: roles});
     } catch (error) {
-      response.status(500).json({ error: 'Error fetching roles' });
+      response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -19,6 +19,36 @@ class RoleController {
       response.status(200).json(role);
     } catch (error) {
       response.status(500).json(null);
+    }
+  }
+
+  async getByName(request, response) {
+    try {
+      const { name } = request.params;
+      const role = await RegionService.getByName(name);
+      
+      if (!role) {
+        response.status(200).json({ ok: true, message: null});
+      }
+
+      response.status(200).json({ ok: true, message: role});
+    } catch (error) {
+      response.status(500).json({ ok: false, error: error});
+    }
+  }
+
+  async getByLabel(request, response) {
+    try {
+      const { label } = request.params;
+      const role = await RegionService.getByLabel(label);
+
+      if (!role) {
+        response.status(200).json({ ok: true, message: null});
+      }
+
+      response.status(200).json({ ok: true, message: role});
+    } catch (error) {
+      response.status(500).json({ ok: false, error: error});
     }
   }
 

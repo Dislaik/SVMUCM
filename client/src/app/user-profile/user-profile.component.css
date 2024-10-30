@@ -1,0 +1,7 @@
+.content {
+  flex: 1;
+  margin-top: 80px;
+  padding: 20px;
+  background-color: #F5F5F5;
+  min-height: calc(100vh - 300px);
+}

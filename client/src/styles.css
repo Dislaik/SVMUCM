@@ -41,6 +41,7 @@
 
 html, body {
   height: 100%;
+  scroll-behavior: auto;
 }
 
 body {
@@ -50,10 +51,6 @@ body {
   background-color: #1E3F85;
 }
 
-
-/* .container-base {
-  
-} */
 
 footer {
   background-color: #333;
@@ -74,7 +71,9 @@ h1, h2, h3, p, span, label {
 }
 
 .btn {
-    border-radius: 3px;
+  border-radius: 3px;
+  outline: none;
+  border: none;
 }
 
 .row {
@@ -92,4 +91,9 @@ p {
 .accordion {
 	--bs-accordion-border-color: 0;
 	--bs-accordion-inner-border-radius: 3px;
+} 
+
+body.swal2-shown {
+  overflow-y: scroll !important;
+  padding-right: 0 !important;
 }

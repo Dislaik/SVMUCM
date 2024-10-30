@@ -6,3 +6,9 @@
 .footer-credits a {
   color: #E5E8E8 !important;
 }
+
+.mission {
+  color: #E5E8E8 !important;
+  text-align: justify;
+  text-justify: inter-word
+}

@@ -1,0 +1,90 @@
+<div class="container content">
+	<h1>Gestionar proyectos</h1>
+    <div class="row">
+        <div class="col-3">
+            <button type="button" class="btn btn-create-project">Crear nuevo proyecto</button>
+        </div>
+        <div class="col-6">
+
+        </div>
+        <div class="col-3">
+            <div class="input-group">
+                <input type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar proyecto">
+                <button class="btn btn-search" type="button"><i class="bi bi-search"></i>Buscar</button>
+              </div>
+        </div>
+    </div>
+    <div class="card mt-3 mb-3 height-list-project">
+        <div class="card-header">
+          <p>Proyectos</p>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group rounded-0">
+            <div class="m-2 mb-0 row">
+              <div class="col-1 text-center">
+                <p>ID</p>
+              </div>
+              <div class="col-4 text-center">
+                <p>Nombre del proyecto</p>
+              </div>
+              <div class="col-2 text-center">
+                <p>Solicitante</p>
+              </div>
+              <div class="col-2 text-center">
+                <p>Fecha de creación</p>
+              </div>
+              <div class="col-2 text-center">
+                <p>Estado</p>
+              </div>
+              <div class="col-1 text-center">
+                <p>Opciones</p>
+              </div>
+            </div>
+
+            <hr class="mb-2 mt-2">
+            <div *ngFor="let i of paginationShowProjects | keyvalue" class="m-2 row">
+              <div class="col-1 text-center">{{i.value['id']}}</div>
+              <div class="col-4 text-center">{{i.value['name']}}</div>
+              <div class="col-2 text-center">{{i.value['id_user'].username}}</div>
+              <div class="col-2 text-center">{{UTCToChileTime(i.value['created_at'])}}</div>
+              <div class="col-2 text-center">{{i.value['id_projectStatus'].label}}</div>
+              <div class="col-1 text-center">
+                <button type="button" class="btn btn-project-details btn-sm">Ver detalles</button>
+              </div>
+            </div>
+            
+          </ul>
+        </div>
+      </div>
+      
+      <nav aria-label="..." class="d-flex flex-row-reverse">
+        <ul class="pagination">
+          <li *ngIf="pagination == 1; then thenPaginationBackBlock else elsePaginationBackBlock"></li>
+          <ng-template #thenPaginationBackBlock>
+              <button class="btn page-link btn-pagination shadow-none disabled" disabled>Anterior</button>
+          </ng-template>
+          <ng-template #elsePaginationBackBlock>
+            <button class="btn page-link btn-pagination shadow-none">Anterior</button>
+          </ng-template>
+
+          <li *ngFor="let i of paginationList" class="page-item">
+              <span *ngIf="pagination == i; then thenPaginationItemBlock else elsePaginationItemBlock"></span>
+              <ng-template #thenPaginationItemBlock>
+                <button class="btn page-link shadow-none disabled" disabled>{{i}}</button>
+              </ng-template>
+              <ng-template #elsePaginationItemBlock>
+                <button class="btn page-link shadow-none">{{i}}</button>
+              </ng-template>
+          </li>
+
+          <li *ngIf="this.paginationLengh != 10; then thenPaginationNextBlock else elsePaginationNextBlock"></li>
+          <ng-template #thenPaginationNextBlock>
+            <button class="btn page-link btn-pagination shadow-none disabled" disabled>Siguiente</button>
+          </ng-template>
+          <ng-template #elsePaginationNextBlock>
+            <button class="btn page-link btn-pagination shadow-none">Siguiente</button>
+          </ng-template>
+        </ul>
+      </nav>
+
+</div>

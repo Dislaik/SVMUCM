@@ -1,4 +1,3 @@
-const { Utils } = require('sequelize');
 const auth = require('../security/authentication');
 const userService = require('../service/userService');
 const utils = require('../utils/utils');
@@ -68,7 +67,7 @@ class AuthController {
           first_name: firstName,
           last_name: lastName,
           image: 'http://localhost:8080/attachments/avatarDefault.png',
-          id_role: 1,
+          id_role: 8,
           created_at: utils.getCurrentUTCTimeZone()
         }
 

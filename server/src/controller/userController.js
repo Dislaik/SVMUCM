@@ -1,4 +1,6 @@
 const userService = require('../service/userService');
+const auth = require('../security/authentication');
+const utils = require('../utils/utils');
 
 class UserController {
   async getAll(request, response) {
@@ -35,12 +37,40 @@ class UserController {
 
   async create(request, response) {
     try {
-      const { body } = request
-      const user = await userService.create(body);
+      const { body } = request;
+      let error = {};
+      
+      if (await userService.existsByUsername(body.username)) {
+        error.username = 'Nombre de usuario ya esta registrado';
+      }
 
-      response.status(200).json(user);
+      if (await userService.existsByEmail(body.email)) {
+        error.email = 'El correo electronico ya esta registrado';
+      }
+
+      if (Object.keys(error).length === 0) {
+        
+        const passwordCrypted = await auth.cryptPassword(body.password)
+        const userObject = {
+          username: body.username,
+          password: passwordCrypted,
+          email: body.email,
+          first_name: body.first_name,
+          last_name: body.last_name,
+          image: 'http://localhost:8080/attachments/avatarDefault.png',
+          id_role: body.id_role.id,
+          created_at: utils.getCurrentUTCTimeZone()
+        }
+
+        let user = await userService.create(userObject);
+        user.id_role = body.id_role;
+
+        return response.status(200).json({ ok: true, message: user});
+      }
+
+      response.status(200).json({ ok: false, error: error});
     } catch (error) {
-      response.status(500).json({ error: 'Error creating user' });
+      response.status(500).json({ ok: false,  error: error });
     }
   }
 

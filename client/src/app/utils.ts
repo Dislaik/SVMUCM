@@ -47,4 +47,54 @@ export class Utils {
 
     return decoded['username']
   }
+
+  public static convertToChileTime(dateString: string): string {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+        timeZone: 'America/Santiago',  // Zona horaria de Chile
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato de 24 horas
+    };
+
+    return new Intl.DateTimeFormat('es-CL', options).format(date);
+  }
+
+  public static validateRUN = function(rut: any) {
+    // Limpiar el RUT, eliminando puntos, guiones y espacios
+    rut = rut.replace(/\./g, '').replace('-', '').trim();
+    
+    // Verificar que el RUT tenga al menos 8 caracteres
+    if (rut.length < 8) return false;
+
+    // Extraer el dígito verificador
+    const cuerpo = rut.slice(0, -1);
+    const dv = rut.slice(-1).toUpperCase();
+    
+    // Calcular el dígito verificador
+    let suma = 0;
+    let multiplicador = 2;
+    
+    for (let i = cuerpo.length - 1; i >= 0; i--) {
+        suma += parseInt(cuerpo[i]) * multiplicador;
+        multiplicador = multiplicador < 7 ? multiplicador + 1 : 2;
+    }
+    
+    let dvEsperado: string | number = 11 - (suma % 11);
+    
+    if (dvEsperado === 11) dvEsperado = '0';
+    else if (dvEsperado === 10) dvEsperado = 'K';
+    else dvEsperado = dvEsperado.toString();
+    
+    // Comparar el dígito verificador calculado con el ingresado
+    return dv === dvEsperado;
+  }
+
+  public static cleanRUN = function(p1: any) {
+    return p1.replace(/[.-]/g, '');
+  }
 }

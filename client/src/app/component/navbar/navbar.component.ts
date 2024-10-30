@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../architecture/service/auth.service';
 import { Utils } from '../../utils';
@@ -14,10 +14,31 @@ declare var bootstrap: any;
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit {
+  @ViewChild('navHome') navHome: ElementRef;
+  @ViewChild('navRequestProject') navRequestProject: ElementRef;
+  @ViewChild('navProject') navProject: ElementRef;
+
+  @ViewChild('navUserProfile') navUserProfile: ElementRef;
+  @ViewChild('navUserSettings') navUserSettings: ElementRef;
+  @ViewChild('navUserPanel') navUserPanel: ElementRef;
+  @ViewChild('navUserLoggout') navUserLoggout: ElementRef;
+
+  @ViewChild('navPanel') navPanel: ElementRef;
+  @ViewChild('navManage') navManage: ElementRef;
+  @ViewChild('navPanelManageUser') navPanelManageUser: ElementRef;
+  @ViewChild('navPanelManageRole') navPanelManageRole: ElementRef;
+  @ViewChild('navPanelManageResource') navPanelManageResource: ElementRef;
+  @ViewChild('navPanelManageProject') navPanelManageProject: ElementRef;
+
+  @ViewChild('modalRequestProjectGuest') modalRequestProjectGuest: ElementRef;
+  modalRequestProjectGuestInstance: any;
+
   user: User = new User();
   requestCourseModal: HTMLElement;
   showComponent: boolean = true;
   isLogged: boolean = false;
+  isOnPanel: boolean = false;
+  isOnManage: boolean = false;
   currentPage: string = '';
 
   constructor(
@@ -34,6 +55,8 @@ export class NavbarComponent implements OnInit {
         this.currentPage = this.router.url;
         this.showComponent = this.router.url !== '/login' && this.router.url !== '/register';
         this.isLogged = Utils.getStorage('isLogged') || false;
+        this.isOnPanel = this.currentPage.split('/')[1] === 'panel';
+        this.isOnManage = this.currentPage.split('/')[2] === 'manage';
         
         if (await this.authService.verify()) {
           this.isLogged = true;
@@ -53,29 +76,46 @@ export class NavbarComponent implements OnInit {
     this.router.navigate(['/register'])
   }
 
-  ngOnLoggout(): void {
-    Utils.clearStorage();
-    window.location.reload();
-    this.user = null;
-  }
-
   @HostListener('click', ['$event']) onClick(event: Event) {
-    const buttonNavHome = this.elementReference.nativeElement.querySelector('#nav-home');
-    const buttonNavCourse = this.elementReference.nativeElement.querySelector('#nav-courses');
-    const buttonNavRequestCourse = this.elementReference.nativeElement.querySelector('#nav-request-course');
 
-    if (event.target === buttonNavHome) {
-      this.router.navigate(['/'])
-    } else if (event.target === buttonNavCourse) {
-      this.router.navigate(['/course'])
-    } else if (event.target === buttonNavRequestCourse) {
+    if (this.navHome && event.target === this.navHome.nativeElement) {
+      this.router.navigate(['/']);
+    } else if (this.navRequestProject && event.target === this.navRequestProject.nativeElement) {
       if (this.isLogged) {
-        this.router.navigate(['/request-course'])
+        this.router.navigate(['/request-project']);
       } else {
-        const modal = new bootstrap.Modal(this.requestCourseModal);
-
-        modal.show();
+        this.modalRequestProjectGuestInstance = new bootstrap.Modal(this.modalRequestProjectGuest.nativeElement);
+        
+        this.modalRequestProjectGuestInstance.show();
       }
+    } else if (this.navProject && event.target === this.navProject.nativeElement) {
+      this.router.navigate(['/project']);
+    }
+
+    if (this.navUserProfile && event.target === this.navUserProfile.nativeElement) {
+      this.router.navigate(['/profile']);
+    } else if (this.navUserSettings && event.target === this.navUserSettings.nativeElement) {
+      this.router.navigate(['/settings']);
+    } else if (this.navUserPanel && event.target === this.navUserPanel.nativeElement) {
+      this.router.navigate(['/panel']);
+    } else if (this.navUserLoggout && event.target === this.navUserLoggout.nativeElement) {
+      Utils.clearStorage();
+      window.location.reload();
+      this.user = null;
+    }
+
+    if (this.navPanel && event.target === this.navPanel.nativeElement) {
+      this.router.navigate(['/panel']);
+    } else if (this.navManage && event.target === this.navManage.nativeElement) {
+      this.router.navigate(['/panel/manage']);
+    } else if (this.navPanelManageUser && event.target === this.navPanelManageUser.nativeElement) {
+      this.router.navigate(['/panel/manage/user']);
+    } else if (this.navPanelManageRole && event.target === this.navPanelManageRole.nativeElement) {
+      this.router.navigate(['/panel/manage/role']);
+    } else if (this.navPanelManageProject && event.target === this.navPanelManageProject.nativeElement) {
+      this.router.navigate(['/panel/manage/project']);
+    } else if (this.navPanelManageResource && event.target === this.navPanelManageResource.nativeElement) {
+      this.router.navigate(['/panel/manage/resource']);
     }
   }
 }

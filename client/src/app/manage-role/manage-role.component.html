@@ -1,0 +1,106 @@
+<div class="container content">
+	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
+	<h1 class="mb-3">{{title}}</h1>
+  <div class="row">
+    <div class="col-3">
+      <!-- <button type="button" #buttonCreateUser class="btn btn-create-user">Crear nuevo rol</button> -->
+    </div>
+    <div class="col-6">
+
+    </div>
+    <div class="col-3">
+      <div class="input-group">
+        <input type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar rol">
+        <button class="btn btn-search" type="button"><i class="bi bi-search"></i>Buscar</button>
+      </div>
+    </div>
+  </div>
+  <div class="card mt-3 mb-3 height-list-user">
+    <div class="card-header">Usuarios</div>
+    <div class="card-body p-0">
+      <ul class="list-group rounded-0">
+        <div class="m-2 mb-0 row">
+          <div class="col-1 text-center">ID</div>
+          <div class="col-4 text-center">Nombre</div>
+          <div class="col-4 text-center">Etiqueta</div>
+          <div class="col-2 text-center">Fecha de creación</div>
+          <div class="col-1 text-center">Opciones</div>
+        </div>
+        <hr class="mb-2 mt-2">
+
+        <div *ngFor="let i of paginationShowRoles | keyvalue" class="m-2 row">
+          <div class="col-1 text-center">{{i.value['id']}}</div>
+          <div class="col-4 text-center">{{i.value['name']}}</div>
+          <div class="col-4 text-center">{{i.value['label']}}</div>
+          <!-- <div class="col-2 text-center">{{UTCToChileTime(i.value['created_at'])}}</div> -->
+          <div class="col-2 text-center">Crear en DB</div>
+          <div class="col-1 text-center">
+            <button type="button" class="btn btn-user-details btn-sm">Ver detalles</button>
+          </div>
+        </div>
+      </ul>
+    </div>
+  </div>
+      
+  <nav aria-label="..." class="d-flex flex-row-reverse">
+    <ul class="pagination">
+      <li *ngIf="pagination == 1; then thenPaginationBackBlock else elsePaginationBackBlock"></li>
+      <ng-template #thenPaginationBackBlock>
+        <button class="btn page-link btn-pagination shadow-none disabled" disabled>Anterior</button>
+      </ng-template>
+      <ng-template #elsePaginationBackBlock>
+        <button class="btn page-link btn-pagination shadow-none" (click)="ngOnPaginationBack()">Anterior</button>
+      </ng-template>
+
+      <li *ngFor="let i of paginationList" class="page-item">
+        <span *ngIf="pagination == i; then thenPaginationItemBlock else elsePaginationItemBlock"></span>
+        <ng-template #thenPaginationItemBlock>
+          <button class="btn page-link shadow-none disabled" disabled>{{i}}</button>
+        </ng-template>
+        <ng-template #elsePaginationItemBlock>
+          <button class="btn page-link shadow-none" (click)="ngOnPaginationItem(i)">{{i}}</button>
+        </ng-template>
+      </li>
+
+      <li *ngIf="this.paginationLengh != 10; then thenPaginationNextBlock else elsePaginationNextBlock"></li>
+      <ng-template #thenPaginationNextBlock>
+        <button class="btn page-link btn-pagination shadow-none disabled" disabled>Siguiente</button>
+      </ng-template>
+      <ng-template #elsePaginationNextBlock>
+        <button class="btn page-link btn-pagination shadow-none" (click)="ngOnPaginationNext()">Siguiente</button>
+      </ng-template>
+    </ul>
+  </nav>
+
+  <div class="card mt-3 mb-3">
+    <div class="card-header">Estadisticas</div>
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-6 pe-2">
+          <div class="charts-height">
+            <!-- <ng-template [ngIf]="isChartUsersLoaded" [ngIfElse]="elseChartsUsersBlock">
+              <div echarts [options]="chartUsers"></div>
+            </ng-template>
+            <ng-template #elseChartsUsersBlock>
+              <svg viewBox="0 0 50 50" class="spinner">
+                <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+              </svg>
+            </ng-template> -->
+          </div>
+        </div>
+        <div class="col-6 ps-2">
+          <div class="charts-height">
+            <!-- <ng-template [ngIf]="isChartProjectsLoaded" [ngIfElse]="elseChartsProjectsBlock">
+              <div echarts [options]="chartOptionProjects"></div>
+            </ng-template>
+            <ng-template #elseChartsProjectsBlock>
+              <svg viewBox="0 0 50 50" class="spinner">
+                <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+              </svg>
+            </ng-template> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,9 +3,9 @@ const HeadquarterService = require('../service/headquarterService');
 class HeadquarterController {
   async getAll(request, response) {
     try {
-      const headquarter = await HeadquarterService.getAll();
+      const headquarters = await HeadquarterService.getAll();
       
-      response.status(200).json({ ok: true, message: headquarter});
+      response.status(200).json({ ok: true, message: headquarters});
     } catch (error) {
       response.status(500).json({ ok: false, error: 'Error fetching headquarter' });
     }

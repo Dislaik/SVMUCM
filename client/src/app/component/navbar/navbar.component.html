@@ -9,34 +9,65 @@
     </button>
 
     <div class="collapse navbar-collapse d-flex justify-content-start" id="navbarNav">
-      <ul class="navbar-nav">
+      <ul *ngIf="!isOnPanel; else elseBlockOnPanel" class="navbar-nav">
         <li class="nav-item">
-          <button type="button" id="nav-home" [ngClass]="currentPage == '/' ? 'nav-link active' : 'nav-link' ">Inicio</button>
+          <button #navHome type="button" [ngClass]="currentPage == '/' ? 'nav-link active' : 'nav-link' ">Inicio</button>
         </li>
+        <!-- <li class="nav-item">
+          <button type="button" id="nav-courses" [ngClass]="currentPage == '/course' ? 'nav-link active' : 'nav-link' ">Proyectos</button>
+        </li> -->
         <li class="nav-item">
-          <button type="button" id="nav-courses" [ngClass]="currentPage == '/course' ? 'nav-link active' : 'nav-link' ">Cursos</button>
+          <button #navRequestProject type="button" [ngClass]="currentPage == '/request-project' ? 'nav-link active' : 'nav-link' ">Crear solicitud de proyecto</button>
         </li>
-        <li class="nav-item">
-          <button type="button" id="nav-request-course" [ngClass]="currentPage == '/request-course' ? 'nav-link active' : 'nav-link' ">Crear solicitud</button>
+        <li *ngIf="isLogged" class="nav-item">
+          <button #navProject type="button" [ngClass]="currentPage == '/project' ? 'nav-link active' : 'nav-link' ">Mis Proyectos</button>
         </li>
       </ul>
+      <ng-template #elseBlockOnPanel>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <button #navPanel type="button" [ngClass]="currentPage == '/panel' ? 'nav-link active' : 'nav-link' ">Panel de administración</button>
+          </li>
+
+          <div class="nav-item dropdown" id="dropdown-gestionar">
+            <button #navManage type="button" [ngClass]="isOnManage ? 'nav-link dropdown-toggle active' : 'nav-link dropdown-toggle'">
+              Gestionar
+            </button>
+            <div class="dropdown-menu-panel-manage flex-column">
+              <button #navPanelManageUser type="button" [ngClass]="currentPage == '/panel/manage/user' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Usuarios</button>
+              <button #navPanelManageRole type="button" [ngClass]="currentPage == '/panel/manage/role' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Roles</button>
+              <button #navPanelManageVolunteerStudent type="button" class="btn btn-panel-manage-dropdown text-start">Alumnos Voluntarios</button>
+              <button #navPanelManageHeardquarter type="button" class="btn btn-panel-manage-dropdown text-start">Sedes</button>
+              <button #navPanelManageFaculty type="button" class="btn btn-panel-manage-dropdown text-start">Facultades</button>
+              <button #navPanelManageCareer type="button" class="btn btn-panel-manage-dropdown text-start">Carreras</button>
+              <button #navPanelManageProject type="button" [ngClass]="currentPage == '/panel/manage/project' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Proyectos</button>
+              <button #navPanelManageActivity type="button" class="btn btn-panel-manage-dropdown text-start">Actividades</button>
+              <button #navPanelManageResource type="button" [ngClass]="currentPage == '/panel/manage/resource' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Recursos</button>
+            </div>
+          </div>
+
+          <li class="nav-item">
+            <button type="button" id="nav-manage-project" [ngClass]="currentPage == '/logs' ? 'nav-link active' : 'nav-link' ">Registros</button>
+          </li>
+        </ul>
+      </ng-template>
 
       <div class="ms-auto d-flex">
-        <div *ngIf="isLogged; else elseBlock">
+        <div *ngIf="isLogged; else elseBlockLogged">
           <div class="nav-item dropdown">
-            <button class="btn dropdown-toggle d-flex align-items-center" type="button" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn dropdown-toggle btn-user d-flex align-items-center" type="button" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
               <img src={{user.image}} class="rounded-circle me-2" height="30"/>
               {{user.first_name}} {{user.last_name}}
             </button>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
-              <li><a class="dropdown-item" href="#">Configuración</a></li>
-              <li><a class="dropdown-item" (click)="ngOnLoggout()">Cerrar sesión</a></li>
-            </ul>
+            <div class="dropdown-menu flex-column" aria-labelledby="navbarDropdownMenuLink">
+              <button #navUserProfile type="button" class="btn btn-user-dropdown text-start"><i class="bi bi-person-lines-fill"></i>Mi perfil</button>
+              <button #navUserSettings type="button" class="btn btn-user-dropdown text-start"><i class="bi bi-person-fill-gear"></i>Configuración</button>
+              <button #navUserPanel *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start"><i class="bi bi-pencil-fill"></i>Panel de administración</button>
+              <button #navUserLoggout type="button" class="btn btn-user-dropdown text-start"><i class="bi bi-box-arrow-in-right"></i>Cerrar sesión</button>
+            </div>
           </div>
-          <!-- <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLoggout()">Cerrar Sesión</button> -->
         </div>
-        <ng-template #elseBlock>
+        <ng-template #elseBlockLogged>
           <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLogin()">Ingresar</button>
           <button class="btn btn-primary" type="button" (click)="ngOnRegister()">Registrarse</button>
         </ng-template>
@@ -44,3 +75,20 @@
     </div>
   </div>
 </nav>
+
+<div class="modal fade" #modalRequestProjectGuest tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+      <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Inicia sesión para solicitar un curso</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          Debes iniciar sesión para poder crear una solicitud. Si no tienes una cuenta creada, <a data-bs-dismiss="modal" [routerLink]="['/register']">registrate aquí</a>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+      </div>
+  </div>
+</div>
