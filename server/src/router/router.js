@@ -1,5 +1,6 @@
 const express = require('express');
 const authRouter = require('./authRouter');
+const apuRouter = require('./apuRouter');
 const roleRouter = require('./roleRouter')
 const userRouter = require('./userRouter');
 const headquarterRouter = require('./headquarterRouter');
@@ -8,12 +9,15 @@ const careerRouter = require('./careerRouter');
 const regionRouter = require('./regionRouter');
 const cityRouter = require('./cityRouter');
 const projectStatusRouter = require('./projectStatusRouter');
-const projectResourceRouter = require('./projectResourceRouter');
+const resourceRouter = require('./resourceRouter');
 const project = require('./projectRouter');
+const apuResource = require('./apuResourceRouter');
+const projectAPU = require('./projectApuRouter');
 let router = express.Router();
 
 router.stack = router.stack.concat(authRouter.stack);
-router.stack = router.stack.concat(projectResourceRouter.stack);
+router.stack = router.stack.concat(apuRouter.stack);
+router.stack = router.stack.concat(resourceRouter.stack);
 router.stack = router.stack.concat(projectStatusRouter.stack);
 router.stack = router.stack.concat(project.stack);
 router.stack = router.stack.concat(cityRouter.stack);
@@ -23,5 +27,7 @@ router.stack = router.stack.concat(facultyRouter.stack);
 router.stack = router.stack.concat(careerRouter.stack);
 router.stack = router.stack.concat(roleRouter.stack);
 router.stack = router.stack.concat(userRouter.stack);
+router.stack = router.stack.concat(apuResource.stack);
+router.stack = router.stack.concat(projectAPU.stack);
 
 module.exports = router;

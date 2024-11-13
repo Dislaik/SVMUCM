@@ -1,5 +1,6 @@
 <div class="container content">
-	<h1>Gestionar proyectos</h1>
+	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
+	<h1 class="mb-3">{{title}}</h1>
     <div class="row">
         <div class="col-3">
             <button type="button" class="btn btn-create-project">Crear nuevo proyecto</button>
@@ -46,10 +47,12 @@
               <div class="col-1 text-center">{{i.value['id']}}</div>
               <div class="col-4 text-center">{{i.value['name']}}</div>
               <div class="col-2 text-center">{{i.value['id_user'].username}}</div>
-              <div class="col-2 text-center">{{UTCToChileTime(i.value['created_at'])}}</div>
+              <div class="col-2 text-center">{{UTCToChileTime(i.value['created_at'], true)}}</div>
               <div class="col-2 text-center">{{i.value['id_projectStatus'].label}}</div>
               <div class="col-1 text-center">
-                <button type="button" class="btn btn-project-details btn-sm">Ver detalles</button>
+                <button type="button" class="btn btn-project-details btn-sm" (click)="ngOnProjectDetails(i)">
+                  Ver detalles
+                </button>
               </div>
             </div>
             

@@ -28,6 +28,12 @@ export class Utils {
     }
   }
 
+  public static formatCLP(p1: HTMLInputElement): void {
+    let value = p1.value.replace(/\./g, '').replace(/\D/g, '');
+    
+    p1.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
   public static setStorage(p1: string, p2: any): void {
     window.localStorage.removeItem(p1);
     window.localStorage.setItem(p1, p2);
@@ -48,21 +54,40 @@ export class Utils {
     return decoded['username']
   }
 
-  public static convertToChileTime(dateString: string): string {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-        timeZone: 'America/Santiago',  // Zona horaria de Chile
+  public static convertToChileTime(date: Date | string, onlyDay: boolean): string {
+    if (typeof date === 'string') {
+        date = new Date(date); // Convierte la cadena a un objeto Date
+    }
+
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+        console.error("Fecha no válida:", date);
+        return "";
+    }
+
+    if (onlyDay) {
+      const options: Intl.DateTimeFormatOptions = {
+        timeZone: 'America/Santiago',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      };
+
+      return new Intl.DateTimeFormat('es-CL', options).format(date);
+    } else {
+      const options: Intl.DateTimeFormatOptions = {
+        timeZone: 'America/Santiago',
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hour12: false  // Para formato de 24 horas
-    };
+        hour12: false
+      };
 
-    return new Intl.DateTimeFormat('es-CL', options).format(date);
-  }
+      return new Intl.DateTimeFormat('es-CL', options).format(date);
+    }
+}
 
   public static validateRUN = function(rut: any) {
     // Limpiar el RUT, eliminando puntos, guiones y espacios
@@ -94,7 +119,19 @@ export class Utils {
     return dv === dvEsperado;
   }
 
+  public static onlyNumbers(p1: HTMLInputElement): void {
+    p1.value = p1.value.replace(/\D/g, '');
+    
+    if (p1.value.startsWith('0')) {
+      p1.value = p1.value.replace(/^0+/, '');
+    }
+  }
+
   public static cleanRUN = function(p1: any) {
     return p1.replace(/[.-]/g, '');
+  }
+
+  public static isBlank(p1) {
+    return /^ *$/.test(p1);
   }
 }

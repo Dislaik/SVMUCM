@@ -7,12 +7,20 @@ class CareerService {
 
   async getById(id) {
     const career = await CareerRepository.findById(id);
+    
+    if (career) {
+      const restructuredCareer = career.toJSON();
 
-    if (!career) {
-      throw new Error('Career not found');
+      restructuredCareer.id_headquarter = restructuredCareer.headquarter;
+      restructuredCareer.id_faculty = restructuredCareer.faculty;
+
+      delete restructuredCareer.headquarter;
+      delete restructuredCareer.faculty;
+
+      return restructuredCareer;
     }
 
-    return career;
+    throw new Error('Career not found');
   }
 
   async getByName(name) {

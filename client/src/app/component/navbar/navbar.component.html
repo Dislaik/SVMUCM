@@ -36,13 +36,13 @@
             <div class="dropdown-menu-panel-manage flex-column">
               <button #navPanelManageUser type="button" [ngClass]="currentPage == '/panel/manage/user' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Usuarios</button>
               <button #navPanelManageRole type="button" [ngClass]="currentPage == '/panel/manage/role' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Roles</button>
-              <button #navPanelManageVolunteerStudent type="button" class="btn btn-panel-manage-dropdown text-start">Alumnos Voluntarios</button>
-              <button #navPanelManageHeardquarter type="button" class="btn btn-panel-manage-dropdown text-start">Sedes</button>
-              <button #navPanelManageFaculty type="button" class="btn btn-panel-manage-dropdown text-start">Facultades</button>
-              <button #navPanelManageCareer type="button" class="btn btn-panel-manage-dropdown text-start">Carreras</button>
+              <button #navPanelManageVolunteerStudent type="button" [ngClass]="currentPage == '/panel/manage/student-volunteer' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/student-volunteer']">Alumnos Voluntarios</button>
+              <button #navPanelManageHeardquarter type="button" [ngClass]="currentPage == '/panel/manage/headquarter' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/headquarter']">Sedes</button>
+              <button #navPanelManageFaculty type="button" [ngClass]="currentPage == '/panel/manage/faculty' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/faculty']">Facultades</button>
+              <button #navPanelManageCareer type="button" [ngClass]="currentPage == '/panel/manage/career' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/career']">Carreras</button>
               <button #navPanelManageProject type="button" [ngClass]="currentPage == '/panel/manage/project' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Proyectos</button>
-              <button #navPanelManageActivity type="button" class="btn btn-panel-manage-dropdown text-start">Actividades</button>
-              <button #navPanelManageResource type="button" [ngClass]="currentPage == '/panel/manage/resource' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Recursos</button>
+              <button #navPanelManageActivity type="button" [ngClass]="currentPage == '/panel/manage/apu' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/apu']">APU</button>
+              <button type="button" [ngClass]="currentPage == '/panel/manage/resource' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/resource']">Recursos</button>
             </div>
           </div>
 
@@ -60,10 +60,9 @@
               {{user.first_name}} {{user.last_name}}
             </button>
             <div class="dropdown-menu flex-column" aria-labelledby="navbarDropdownMenuLink">
-              <button #navUserProfile type="button" class="btn btn-user-dropdown text-start"><i class="bi bi-person-lines-fill"></i>Mi perfil</button>
-              <button #navUserSettings type="button" class="btn btn-user-dropdown text-start"><i class="bi bi-person-fill-gear"></i>Configuración</button>
-              <button #navUserPanel *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start"><i class="bi bi-pencil-fill"></i>Panel de administración</button>
-              <button #navUserLoggout type="button" class="btn btn-user-dropdown text-start"><i class="bi bi-box-arrow-in-right"></i>Cerrar sesión</button>
+              <button type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/my-profile']"><i class="bi bi-person-lines-fill"></i>Mi perfil</button>
+              <button *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/panel']"><i class="bi bi-pencil-fill"></i>Panel de administración</button>
+              <button type="button" class="btn btn-user-dropdown text-start" (click)="ngOnLoggout()"><i class="bi bi-box-arrow-in-right"></i>Cerrar sesión</button>
             </div>
           </div>
         </div>

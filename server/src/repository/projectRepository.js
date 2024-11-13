@@ -1,14 +1,20 @@
+const Career = require('../model/career');
+const City = require('../model/city');
 const Project = require('../model/project');
-const projectStatus = require('../model/projectStatus');
+const ProjectStatus = require('../model/projectStatus');
 const User = require('../model/user');
 
 class ProjectRepository {
   async findAll() {
-    return await Project.findAll({ include: [User, projectStatus] });
+    return await Project.findAll({ include: [User, Career, City, ProjectStatus] });
   }
 
   async findById(id) {
-    return await Project.findByPk(id);
+    return await Project.findByPk(id, { include: [User, Career, City, ProjectStatus] });
+  }
+
+  async findByUserId(id) {
+    return await Project.findAll({ where: { id_user: id }, include: [User, Career, City, ProjectStatus] });
   }
 
   async create(data) {

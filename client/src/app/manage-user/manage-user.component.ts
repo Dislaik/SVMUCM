@@ -46,6 +46,8 @@ export class ManageUserComponent implements OnInit{
   paginationMax: number;
   paginationList: number[];
 
+  userRoles: string = 'community';
+
   constructor(
     private router: Router,
     private elementReference: ElementRef,
@@ -86,8 +88,7 @@ export class ManageUserComponent implements OnInit{
   }
 
   ngOnUserDetails(user): void {
-    console.log(user.value.id);
-    //this.router.navigate(['/user', user.value.id]);
+    this.router.navigate(['/panel/manage/user', user.value.id]);
   }
 
   ngOnPaginationNext(): void {
@@ -125,8 +126,8 @@ export class ManageUserComponent implements OnInit{
       .map((n, index) => index + 1);
   }
 
-  UTCToChileTime(p1: string): string {
-    return Utils.convertToChileTime(p1);
+  UTCToChileTime(p1: Date, p2: boolean): string {
+    return Utils.convertToChileTime(p1, p2);
   }
 
   async ngOnCreateUser(user: User): Promise<void> {
@@ -223,9 +224,9 @@ export class ManageUserComponent implements OnInit{
       const firstName = this.inputModalCreateUserFirstName.nativeElement.value;
       const lastName = this.inputModalCreateUserLastName.nativeElement.value;
       const role = <Role>this.roles.find(role => role.name === this.selectModalCreateUserRole.nativeElement.value);
-      const user = new User(username, password, email, firstName, lastName, role);
+      //const user = new User(username, password, email, firstName, lastName, role);
 
-      this.ngOnCreateUser(user);
+      //this.ngOnCreateUser(user); DISLAIK
     }
   }
 

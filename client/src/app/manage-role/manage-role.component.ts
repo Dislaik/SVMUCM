@@ -10,7 +10,7 @@ import { RoleService } from '../architecture/service/role.service';
   templateUrl: './manage-role.component.html',
   styleUrl: './manage-role.component.css'
 })
-export class ManageRoleComponent implements OnInit{
+export class ManageRoleComponent implements OnInit {
   title: string = "Roles";
   pages: string;
   roles: Role[];
@@ -32,26 +32,9 @@ export class ManageRoleComponent implements OnInit{
     await this.getAllRoles();
 
     this.pagination = 1;
-    console.log(this.roles)
     this.showPage(this.roles, this.pagination, 10)
     this.paginationMax = this.getTotalPages(this.roles, 10)
     this.paginationList = this.createRange(this.paginationMax);
-  }
-
-  async createPagination() {
-    
-
-    
-  }
-
-  async getAllRoles(): Promise<void> {
-    const roles = await this.roleService.getAll();
-
-    if (roles.ok) {
-      this.roles = roles.message
-    } else {
-      console.log(roles.error)
-    }
   }
 
   createBreadCrumb(): void {
@@ -64,9 +47,19 @@ export class ManageRoleComponent implements OnInit{
     this.pages = JSON.stringify(arrayPages);
   }
 
+  async getAllRoles(): Promise<void> {
+    const roles = await this.roleService.getAll();
+
+    if (roles.ok) {
+      this.roles = roles.message
+    } else {
+      console.log(roles.error)
+    }
+  }
+
   ngOnRoleDetails(role): void {
     console.log(role.value.id);
-    //this.router.navigate(['/role', user.value.id]);
+    this.router.navigate([this.router.url + '/', role.value.id]);
   }
 
   ngOnPaginationNext(): void {
@@ -104,8 +97,8 @@ export class ManageRoleComponent implements OnInit{
       .map((n, index) => index + 1);
   }
 
-  UTCToChileTime(p1: string): string {
-    return Utils.convertToChileTime(p1);
+  UTCToChileTime(p1: Date, p2: boolean): string {
+    return Utils.convertToChileTime(p1, p2);
   }
 
 

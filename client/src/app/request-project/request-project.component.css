@@ -45,9 +45,13 @@ textarea {
 .form-control {
   border: none;
   outline: none;
-  background-color: #A6ACAf;
+  background-color: #A6ACAF;
   border-radius: 3px;
   color: #1E2124;
+}
+
+.form-control.disabled {
+ opacity: 0.6;
 }
 
 .accordion-button {
@@ -76,4 +80,13 @@ textarea {
 .custom-select {
   max-height: 50px; /* Altura máxima del desplegable */
   overflow-y: auto;   /* Activar el scroll vertical */
+}
+
+.message-error-container {
+  width: 100%;
+  height: auto;
+}
+
+.message-error-container p {
+  color: red !important;
 }

@@ -4,6 +4,7 @@ import { ProjectStatus } from "./project-status";
 import { User } from "./user";
 
 export class Project {
+  id: number;
   name: String;
   description: String;
   id_user: User;

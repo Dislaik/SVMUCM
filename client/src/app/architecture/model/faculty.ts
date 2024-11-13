@@ -1,4 +1,5 @@
 export class Faculty {
+  id: number;
   name: String;
   label: String;
 

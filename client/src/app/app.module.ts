@@ -23,6 +23,21 @@ import { ManageRoleComponent } from './manage-role/manage-role.component';
 import { ManageResourceComponent } from './manage-resource/manage-resource.component';
 import { ProjectComponent } from './project/project.component';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { ManageUserDetailsComponent } from './manage-user-details/manage-user-details.component';
+import { ManageRoleDetailsComponent } from './manage-role-details/manage-role-details.component';
+import { ManageStudentVolunteerComponent } from './manage-student-volunteer/manage-student-volunteer.component';
+import { ManageStudentVolunteerDetailsComponent } from './manage-student-volunteer-details/manage-student-volunteer-details.component';
+import { ManageHeadquarterComponent } from './manage-headquarter/manage-headquarter.component';
+import { ManageHeadquarterDetailsComponent } from './manage-headquarter-details/manage-headquarter-details.component';
+import { ManageFacultyDetailsComponent } from './manage-faculty-details/manage-faculty-details.component';
+import { ManageFacultyComponent } from './manage-faculty/manage-faculty.component';
+import { ManageCareerComponent } from './manage-career/manage-career.component';
+import { ManageCareerDetailsComponent } from './manage-career-details/manage-career-details.component';
+import { ManageProjectDetailsComponent } from './manage-project-details/manage-project-details.component';
+import { ManageAPUComponent } from './manage-apu/manage-apu.component';
+import { ManageAPUDetailsComponent } from './manage-apu-details/manage-apu-details.component';
+import { ManageResourceDetailsComponent } from './manage-resource-details/manage-resource-details.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +45,7 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
     HomeComponent,
     LoginComponent,
     RegisterComponent,
+    UserProfileComponent,
     RequestProjectComponent,
     ProjectComponent,
     NavbarComponent,
@@ -38,9 +54,23 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
     PanelComponent,
     ManageComponent,
     ManageUserComponent,
+    ManageUserDetailsComponent,
     ManageRoleComponent,
+    ManageRoleDetailsComponent,
+    ManageStudentVolunteerComponent,
+    ManageStudentVolunteerDetailsComponent,
+    ManageHeadquarterComponent,
+    ManageHeadquarterDetailsComponent,
+    ManageFacultyComponent,
+    ManageFacultyDetailsComponent,
+    ManageCareerComponent,
+    ManageCareerDetailsComponent,
     ManageProjectComponent,
+    ManageProjectDetailsComponent,
+    ManageAPUComponent,
+    ManageAPUDetailsComponent,
     ManageResourceComponent,
+    ManageResourceDetailsComponent,
     BreadcrumbComponent
   ],
   imports: [

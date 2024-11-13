@@ -16,7 +16,11 @@ class FacultyController {
       const { id } = request.params;
       const faculty = await FacultyService.getById(id)
 
-      response.status(200).json(faculty);
+      if (!faculty) {
+        response.status(200).json({ ok: true, message: null});
+      }
+
+      response.status(200).json({ ok: true, message: faculty});
     } catch (error) {
       response.status(500).json(null);
     }

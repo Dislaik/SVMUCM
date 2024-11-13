@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../architecture/service/auth.service';
 import { Utils } from '../utils';
 import { Login } from '../architecture/dto/login';
@@ -11,9 +11,9 @@ import { Router } from '@angular/router';
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit{
-  username: HTMLInputElement;
-  password: HTMLInputElement;
+  @ViewChild('inputUsername') inputUsername: ElementRef;
   usernameError: string = '';
+  @ViewChild('inputPassword') inputPassword: ElementRef;
   passwordError: string = '';
 
   constructor(
@@ -23,11 +23,22 @@ export class LoginComponent implements OnInit{
   ){}
 
   ngOnInit(): void {
-    this.username = this.elementReference.nativeElement.querySelector('#inputTextRUN');
-    this.password = this.elementReference.nativeElement.querySelector('#inputTextPassword');
+
   }
 
-  async ngOnLogin(object): Promise<void> {
+  public ngOnFormatUsername(): void {
+    Utils.formatRUN(this.inputUsername.nativeElement);
+  }
+
+  public ngOnLoginSubmit(): void {
+    const username = this.inputUsername.nativeElement.value.toLowerCase();
+    const password = this.inputPassword.nativeElement.value;
+    const login = new Login(username, password);
+
+    this.ngOnLogin(login);
+  }
+
+  private async ngOnLogin(object: Login): Promise<void> {
     const response = await this.authService.login(object)
 
     if (response.ok) {
@@ -36,42 +47,23 @@ export class LoginComponent implements OnInit{
       this.router.navigate(['/']);
     } else {
       if (response.error.username) {
-        this.usernameError = response.error.username.error;
-        this.username.style.border = '2px solid red';
+        this.usernameError = response.error.username;
+        this.inputUsername.nativeElement.style.border = '2px solid red';
       } else {
         this.usernameError = '';
-        this.username.style.border = '';
+        this.inputUsername.nativeElement.style.border = '';
       }
 
       if (response.error.password) {
-        this.passwordError = response.error.password.error;
-        this.password.style.border = '2px solid red';
+        this.passwordError = response.error.password;
+        this.inputPassword.nativeElement.style.border = '2px solid red';
       } else {
         this.passwordError = '';
-        this.password.style.border = '';
+        this.inputPassword.nativeElement.style.border = '';
       }
       if (response.fatalError) {
         console.log(response.fatalError) //Crear un mensaje de que hubo error fatal
       }
     }
   }
-
-  @HostListener('input', ['$event']) onInput(event: Event) {
-    
-    if (event.target === this.username) {
-
-      Utils.formatRUN(this.username);
-    }
-  }
-
-  @HostListener('click', ['$event']) onClick(event: Event) {
-    const buttonSubmit = this.elementReference.nativeElement.querySelector('#buttonSubmit')
-
-    if (event.target === buttonSubmit) {
-      const login = new Login(this.username.value.toLowerCase(), this.password.value);
-
-      this.ngOnLogin(login);
-    }
-  }
-
 }

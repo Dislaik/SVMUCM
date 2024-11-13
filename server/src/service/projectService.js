@@ -5,15 +5,19 @@ class ProjectService {
     const projects = await ProjectRepository.findAll()
 
     const restructuredProject = projects.map(project => {
-      const projectJSON = project.toJSON();
+      const restructuredProject = project.toJSON();
 
-      projectJSON.id_user = projectJSON.user;
-      projectJSON.id_projectStatus = projectJSON.project_status;
+      restructuredProject.id_user = restructuredProject.user;
+      restructuredProject.id_career = restructuredProject.career;
+      restructuredProject.id_city = restructuredProject.city;
+      restructuredProject.id_projectStatus = restructuredProject.project_status;
 
-      delete projectJSON.user;
-      delete projectJSON.project_status;
+      delete restructuredProject.user;
+      delete restructuredProject.career;
+      delete restructuredProject.city;
+      delete restructuredProject.project_status;
 
-      return projectJSON;
+      return restructuredProject;
     });
 
     return restructuredProject;
@@ -22,11 +26,46 @@ class ProjectService {
   async getById(id) {
     const project = await ProjectRepository.findById(id);
 
-    if (!project) {
-      throw new Error('Project not found');
+    if (project) {
+      const restructuredProject = project.toJSON();
+
+      restructuredProject.id_user = restructuredProject.user;
+      restructuredProject.id_career = restructuredProject.career;
+      restructuredProject.id_city = restructuredProject.city;
+      restructuredProject.id_projectStatus = restructuredProject.project_status;
+
+      delete restructuredProject.user;
+      delete restructuredProject.career;
+      delete restructuredProject.city;
+      delete restructuredProject.project_status;
+
+      return restructuredProject;
     }
 
-    return project;
+    throw new Error('Project not found');
+  }
+
+  async getByUserId(id) {
+    const projects = await ProjectRepository.findByUserId(id);
+    console.log(projects)
+
+    const restructuredProject = projects.map(project => {
+      const restructuredProject = project.toJSON();
+
+      restructuredProject.id_user = restructuredProject.user;
+      restructuredProject.id_career = restructuredProject.career;
+      restructuredProject.id_city = restructuredProject.city;
+      restructuredProject.id_projectStatus = restructuredProject.project_status;
+
+      delete restructuredProject.user;
+      delete restructuredProject.career;
+      delete restructuredProject.city;
+      delete restructuredProject.project_status;
+
+      return restructuredProject;
+    });
+
+    return restructuredProject;
   }
 
   async create(data) {

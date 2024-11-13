@@ -37,14 +37,23 @@ export class RequestProjectComponent implements OnInit{
   pages: string;
 
   @ViewChild('inputRequestProjectName') inputRequestProjectName: ElementRef;
+  nameError: string = '';
   @ViewChild('selectRequestProjectHeadquarter') selectRequestProjectHeadquarter: ElementRef;
+  headquarterError: string = '';
   @ViewChild('selectRequestProjectFaculty') selectRequestProjectFaculty: ElementRef;
+  facultyError: string = '';
   @ViewChild('selectRequestProjectCareer') selectRequestProjectCareer: ElementRef;
+  careerError: string = '';
   @ViewChild('selectRequestProjectRegion') selectRequestProjectRegion: ElementRef;
+  regionError: string = '';
   @ViewChild('selectRequestProjectCity') selectRequestProjectCity: ElementRef;
+  cityError: string = '';
   @ViewChild('inputRequestProjectStartDate') inputRequestProjectStartDate: ElementRef;
+  startDateError: string = '';
   @ViewChild('inputRequestProjectEndDate') inputRequestProjectEndDate: ElementRef;
+  endDateError: string = '';
   @ViewChild('textareaRequestProjectDescription') textareaRequestProjectDescription: ElementRef;
+  descriptionError: string = '';
   @ViewChild('buttonRequestProjectSubmit') buttonRequestProjectSubmit: ElementRef;
 
   user: User;
@@ -131,13 +140,15 @@ export class RequestProjectComponent implements OnInit{
     }
   }
 
-  async getCareersByHeadquarterAndFacultyName(headquarterName: string, facultyName: string): Promise<void> {
-    const careers = await this.careerService.getByHeadquarterAndFacultyName(headquarterName, facultyName);
+  async getCareersByHeadquarterAndFacultyName(headquarterName: string, facultyName: string, cb: any): Promise<void> {
+    const result = await this.careerService.getByHeadquarterAndFacultyName(headquarterName, facultyName);
 
-    if (careers.ok) {
-      this.careers = careers.message;
+    if (result.ok) {
+      this.careers = result.message;
+
+      cb(this.careers.length);
     } else {
-      console.log(careers.error)
+      console.log(result.error)
     }
   }
 
@@ -152,11 +163,13 @@ export class RequestProjectComponent implements OnInit{
     }
   }
 
-  async getCitiesByRegionName(name: string): Promise<void> {
+  async getCitiesByRegionName(name: string, cb: any): Promise<void> {
     const cities = await this.cityService.getByRegionName(name);
 
     if (cities.ok) {
       this.cities = cities.message;
+
+      cb(this.cities.length);
     } else {
       console.log(cities.error)
     }
@@ -174,14 +187,119 @@ export class RequestProjectComponent implements OnInit{
 
   
 
-  async ngOnCreateRequestProject(object): Promise<void> {
-    console.log(object);
-    const project = await this.projectService.create(object)
+  async ngOnCreateRequestProject(): Promise<void> {
+    const nameValue = this.inputRequestProjectName.nativeElement.value;
+    const headquarterValue = this.selectRequestProjectHeadquarter.nativeElement.value;
+    const facultyValue = this.selectRequestProjectFaculty.nativeElement.value;
+    const careerValue = this.selectRequestProjectCareer.nativeElement.value;
+    const regionValue = this.selectRequestProjectRegion.nativeElement.value;
+    const cityValue = this.selectRequestProjectCity.nativeElement.value;
+    const startDateValue = this.inputRequestProjectStartDate.nativeElement.value;
+    const endDateValue = this.inputRequestProjectEndDate.nativeElement.value;
+    const descriptionValue = this.textareaRequestProjectDescription.nativeElement.value;
+    const todayDate = new Date();
+    let success = 0;
 
-    if (project.ok) {
-      console.log(project.message)
+
+
+    if (Utils.isBlank(nameValue)) {
+      this.nameError = 'Debe especificar un nombre a su proyecto';
     } else {
-      console.log(project.error)
+      this.nameError = '';
+      success+= 1;
+    }
+
+    if (Utils.isBlank(headquarterValue)) {
+      this.headquarterError = 'Debe seleccionar una sede';
+    } else {
+      this.headquarterError = '';
+      success+= 1;
+    }
+
+    if (Utils.isBlank(facultyValue)) {
+      this.facultyError = 'Debe seleccionar una facultad';
+    } else {
+      this.facultyError = '';
+      success+= 1;
+    }
+
+    if (Utils.isBlank(careerValue)) {
+      this.careerError = 'Debe seleccionar una carrera';
+    } else {
+      this.careerError = '';
+      success+= 1;
+    }
+
+    if (Utils.isBlank(regionValue)) {
+      this.regionError = 'Debe seleccionar una región';
+    } else {
+      this.regionError = '';
+      success+= 1;
+    }
+
+    if (Utils.isBlank(cityValue)) {
+      this.cityError = 'Debe seleccionar una ciudad';
+    } else {
+      this.cityError = '';
+      success+= 1;
+    }
+
+    todayDate.setHours(0, 0, 0, 0);
+
+    if (Utils.isBlank(startDateValue)) {
+      this.startDateError = 'Debe especificar una fecha de inicio';
+    } else if (new Date(startDateValue) < todayDate) {
+      this.startDateError = 'La fecha de inicio no puede ser una fecha anterior o igual a la de hoy';
+    } else {
+      this.startDateError = '';
+      success+= 1;
+    }
+
+    if (Utils.isBlank(endDateValue)) {
+      this.endDateError = 'Debe especificar una fecha de termino';
+    } else if (new Date(startDateValue) > new Date(endDateValue) ) {
+      this.endDateError = 'La fecha de termino no puede ser una fecha anterior a la fecha de inicio';
+    } else {
+      this.endDateError = '';
+      success+= 1;
+    }
+
+    if (Utils.isBlank(descriptionValue)) {
+      this.descriptionError = 'Debe especificar una descripción de su proyecto';
+    } else {
+      this.descriptionError = '';
+      success+= 1;
+    }
+
+    if (success == 9) {
+      Swal.fire({
+        title: '¿Estas seguro que quieres crear una nueva solicitud?',
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const result = await this.userService.getByUsername(Utils.getUsernameByBrowser());
+
+          if (result.ok) {
+            const user = result.message;
+            const career = this.careers.find(career => career.name === careerValue);
+            const city = this.cities.find(city => city.name === cityValue);
+            const status = this.projectStatus.find(status => status.name === 'created');
+
+            const project = new Project(nameValue, descriptionValue, user, startDateValue, endDateValue, career, city, status);
+
+            await this.projectService.create(project)
+            this.router.navigate(['/project']);
+          } else {
+            console.log(result.error)
+          }
+          
+          Swal.fire('¡Solicitud creada!', '', 'success');
+        } else if (result.isDenied) {
+          Swal.fire('Los cambios no se han guardado', '', 'info');
+        }
+      }); 
     }
   }
 
@@ -192,58 +310,40 @@ export class RequestProjectComponent implements OnInit{
       const valueFaculty = this.selectRequestProjectFaculty.nativeElement.value;
 
       if (valueHeadquarter !== '' && valueFaculty !== '') {
-        this.getCareersByHeadquarterAndFacultyName(valueHeadquarter, valueFaculty);
+        this.getCareersByHeadquarterAndFacultyName(valueHeadquarter, valueFaculty, (i) => {
+          const selectCareer = this.selectRequestProjectCareer.nativeElement;
+
+          if (i > 0) {
+            selectCareer.disabled = false;
+            selectCareer.classList.remove('disabled')
+          } else {
+            selectCareer.disabled = true;
+            selectCareer.classList.add('disabled')
+          }
+        });
       }
-      
     }
 
 
     if (event.target === this.selectRequestProjectRegion.nativeElement) {
-      this.getCitiesByRegionName(this.selectRequestProjectRegion.nativeElement.value);
+      this.getCitiesByRegionName(this.selectRequestProjectRegion.nativeElement.value, (i) => {
+        const selectCity = this.selectRequestProjectCity.nativeElement;
+
+        if (i > 0) {
+          selectCity.disabled = false;
+          selectCity.classList.remove('disabled')
+        } else {
+          selectCity.disabled = true;
+          selectCity.classList.add('disabled')
+        }
+      });
     }
   }
 
-  @HostListener('click', ['$event']) async onClick(event: Event) {
+  @HostListener('click', ['$event']) onClick(event: Event) {
 
     if (event.target === this.buttonRequestProjectSubmit.nativeElement) {
-      const name = this.inputRequestProjectName.nativeElement.value;
-      const user = await this.userService.getByUsername(Utils.getUsernameByBrowser());
-      //const headquarter = this.selectRequestProjectHeadquarter.nativeElement.value;
-      //const faculty = this.selectRequestProjectFaculty.nativeElement.value;
-      //const career = this.selectRequestProjectCareer.nativeElement.value;
-      const career = this.careers.find(career => career.name === this.selectRequestProjectCareer.nativeElement.value);
-      //const region = this.selectRequestProjectRegion.nativeElement.value;
-      //const city = this.selectRequestProjectCity.nativeElement.value;
-      const city = this.cities.find(city => city.name === this.selectRequestProjectCity.nativeElement.value);
-      const startDate = this.inputRequestProjectStartDate.nativeElement.value;
-      const endDate = this.inputRequestProjectEndDate.nativeElement.value;
-      const description = this.textareaRequestProjectDescription.nativeElement.value;
-      console.log(this.projectStatus)
-      const status = this.projectStatus.find(status => status.name === 'created');
-      console.log(status);
-
-      const project = new Project(name, description, user, startDate, endDate, career, city, status);
-
-      this.ngOnCreateRequestProject(project);
-
-
-      ///CONFIRMATION HERE
-      // Swal.fire({
-      //   title: '¿Quieres guardar los cambios?',
-      //   showDenyButton: true,
-      //   showCancelButton: true,
-      //   confirmButtonText: 'Guardar',
-      //   denyButtonText: 'No guardar',
-      //   customClass: {
-      //     popup: 'no-padding-fix'
-      //   }
-      // }).then((result) => {
-      //   if (result.isConfirmed) {
-      //     Swal.fire('¡Guardado!', '', 'success');
-      //   } else if (result.isDenied) {
-      //     Swal.fire('Los cambios no se han guardado', '', 'info');
-      //   }
-      // }); 
+      this.ngOnCreateRequestProject();
     }
     
     

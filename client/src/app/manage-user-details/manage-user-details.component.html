@@ -1,0 +1,136 @@
+<div class="container content">
+	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
+	<h1 class="mb-3">{{title}}</h1>
+  <div class="row mb-2">
+    <div class="col-3">
+      
+    </div>
+    <div class="col-6">
+
+    </div>
+    <div class="col-3 d-grid gap-2 d-md-flex justify-content-md-end">
+      <button type="button" class="btn btn-user-delete" (click)="ngOnDeleteUser()"><i class="bi bi-gear-fill"></i>Eliminar</button>
+      <button type="button" class="btn btn-user-edit" (click)="ngOnEditUser()"><i class="bi bi-gear-fill"></i>Editar</button>
+    </div>
+  </div>
+    <div class="row">
+      <div class="col-4">
+        <div class="card profile-basic-info me-2 p-3 shadow">
+          <div *ngIf="isUserLoaded; else elseBlockOnUserLoaded">
+            <div class="text-center mt-2 mb-3">
+              <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo">
+              <h2 class="user-fullname">{{user.first_name}} {{user.last_name}}</h2>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                RUN:
+              </div>
+              <div class="col-8">
+                {{user.username}}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                Rol:
+              </div>
+              <div class="col-8">
+                {{user.id_role.label}}
+              </div>
+            </div>
+          </div>
+          <ng-template #elseBlockOnUserLoaded>
+            <svg viewBox="0 0 50 50" class="spinner">
+              <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+            </svg>
+          </ng-template>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="row mb-2">
+          <div class="card profile-general-info ms-2 shadow">
+          <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
+          <div class="card-body">
+            <div *ngIf="isUserLoaded; else elseBlockOnUserLoaded">
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  RUN:
+                </div>
+                <div class="col-6 ps-2">
+                  {{user.username}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Contraseña:
+                </div>
+                <div class="col-6 ps-2">
+                  ************
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Nombres:
+                </div>
+                <div class="col-6 ps-2">
+                  {{user.first_name}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Apellidos:
+                </div>
+                <div class="col-6 ps-2">
+                  {{user.last_name}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Correo electronico:
+                </div>
+                <div class="col-6 ps-2">
+                  {{user.email}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Rol:
+                </div>
+                <div class="col-6 ps-2">
+                  {{user.id_role.label}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Creado en:
+                </div>
+                <div class="col-6 ps-2">
+                  {{user.created_at}}
+                </div>
+              </div>
+            </div>
+            <ng-template #elseBlockOnUserLoaded>
+              <svg viewBox="0 0 50 50" class="spinner">
+                <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+              </svg>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="card profile-general-info ms-2 shadow">
+          <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
+          <div class="card-body">
+            <div class="row mb-2">
+              <div class="col-6 pe-2">
+                Proyectos:
+              </div>
+              <div class="col-6 ps-2">
+                0
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

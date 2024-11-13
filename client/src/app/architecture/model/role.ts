@@ -1,4 +1,5 @@
 export class Role {
+  id: string;
   name: String;
   label: String;
 

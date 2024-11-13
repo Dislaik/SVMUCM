@@ -5,3 +5,83 @@
   background-color: #f5f5f5;
   min-height: calc(100vh - 312px);
 }
+
+.height-list-user {
+  min-height: 570px;
+}
+
+
+.wrap-text {
+  white-space: nowrap;         /* Evita que el texto se divida en varias líneas */
+  overflow: hidden;            /* Oculta el contenido que excede el contenedor */
+  text-overflow: ellipsis;     /* Agrega los "..." al final del texto truncado */
+  max-width: auto;            /* Ajusta el ancho máximo según el tamaño deseado */
+}
+
+.btn-create-user {
+  background-color: #1E3F85;
+  color:#f5f5f5 !important;
+}
+
+.btn-create-user:hover, .btn-create-user:active {
+  background-color: #1E3F85;
+  color: #f5f5f5;
+}
+
+.btn-user-details {
+  background-color: #1E3F85;
+  color:#f5f5f5 !important;
+}
+
+.btn-user-details:hover, .btn-user-details:active {
+  background-color: #1E3F85;
+  color: #f5f5f5;
+}
+
+.btn-pagination {
+  background-color: #1E3F85;
+  color:#f5f5f5 !important;
+}
+
+.btn-pagination:hover, .btn-pagination:active {
+  background-color: #1E3F85;
+  color: #f5f5f5;
+}
+
+.btn-search {
+  background-color: #1E3F85;
+  color: #f5f5f5;
+}
+
+.btn-search:hover, .btn-search:active {
+ background-color: #152b5c;
+ color: #f5f5f5;
+}
+
+.btn-search i {
+  margin-right: 10px;
+}
+
+.form-control {
+  border: none;
+  outline: none;
+  background-color: #A6ACAf;
+  border-radius: 3px;
+  color: #1E2124;
+}
+
+.label-form {
+  display: flex;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.message-error-container {
+  width: 100%;
+  height: auto;
+}
+
+.message-error-container p {
+  color: red !important;
+}

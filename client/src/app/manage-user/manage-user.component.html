@@ -36,9 +36,11 @@
           <div class="col-2 text-center wrap-text">{{i.value['first_name']}} {{i.value['last_name']}}</div>
           <div class="col-2 text-center">{{i.value['email']}}</div>
           <div class="col-2 text-center">{{i.value['id_role'].label}}</div>
-          <div class="col-2 text-center">{{UTCToChileTime(i.value['created_at'])}}</div>
+          <div class="col-2 text-center">{{UTCToChileTime(i.value['created_at'], false)}}</div>
           <div class="col-1 text-center">
-            <button type="button" class="btn btn-user-details btn-sm">Ver detalles</button>
+            <button type="button" class="btn btn-user-details btn-sm" (click)="ngOnUserDetails(i)">
+              Ver detalles
+            </button>
           </div>
         </div>
       </ul>

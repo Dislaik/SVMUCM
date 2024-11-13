@@ -10,9 +10,9 @@
           <form>
             <div class="mb-2">
               <div class="label-form-login">
-                <label for="inputTextRUN" class="form-label me-1">RUN</label>
+                <label class="form-label me-1">RUN</label>
               </div>
-              <input type="text" class="form-control shadow-none" id="inputTextRUN" required autocomplete="off" placeholder="Ingresa tu RUN">
+              <input #inputUsername type="text" class="form-control shadow-none"required autocomplete="off" placeholder="Ingresa tu RUN" (input)="ngOnFormatUsername()">
               <div *ngIf="usernameError !== ''">
                 <div class="message-error-container d-flex align-items-center">
                   <p>{{usernameError}}</p>
@@ -21,9 +21,9 @@
             </div>
             <div class="mb-3">
               <div class="label-form-login">
-                <label for="inputTextPassword" class="form-label me-1">CONTRASEÑA</label>
+                <label class="form-label me-1">CONTRASEÑA</label>
               </div>
-              <input type="password" class="form-control shadow-none" id="inputTextPassword" required autocomplete="off" placeholder="Ingresa tu contraseña">
+              <input #inputPassword type="password" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu contraseña">
               <div *ngIf="passwordError !== ''">
                 <div class="message-error-container d-flex align-items-center">
                   <p>{{passwordError}}</p>
@@ -32,7 +32,7 @@
               <a [routerLink]="['/']">¿Olvidaste tu contraseña?</a>
             </div>
 
-            <button type="submit" id="buttonSubmit" class="btn btn-login mb-2">Ingresar</button>
+            <button type="submit" class="btn btn-login mb-2" (click)="ngOnLoginSubmit()">Ingresar</button>
             <span>¿Necesitas una cuenta? </span> <a [routerLink]="['/register']">Registrate</a>
           </form>
         </div>

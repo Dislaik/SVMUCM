@@ -6,7 +6,7 @@ class ProjectController {
     try {
       const projects = await ProjectService.getAll();
       
-      response.status(200).json(projects);
+      response.status(200).json({ ok: true, message: projects});
     } catch (error) {
       response.status(500).json({ ok: false, error: error});
     }
@@ -17,16 +17,31 @@ class ProjectController {
       const { id } = request.params;
       const project = await ProjectService.getById(id)
 
-      response.status(200).json(project);
+      if (!project) {
+        response.status(200).json({ ok: true, message: null});
+      }
+
+      response.status(200).json({ ok: true, message: project});
     } catch (error) {
       response.status(500).json(null);
+    }
+  }
+
+  async getByUserId(request, response) {
+    try {
+      const { id } = request.params;
+      const projects = await ProjectService.getByUserId(id);
+      
+      
+      response.status(200).json({ ok: true, message: projects});
+    } catch (error) {
+      response.status(500).json({ ok: false, error: error});
     }
   }
 
   async create(request, response) {
     try {
       const { body } = request;
-      console.log(body)
       const projectObject = {
         name: body.name,
         description: body.description,

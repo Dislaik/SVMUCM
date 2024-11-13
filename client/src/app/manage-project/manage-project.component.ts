@@ -30,13 +30,13 @@ export class ManageProjectComponent implements OnInit{
   async ngOnInit(): Promise<void> {
     this.createBreadCrumb();
 
+    this.getAllProjects(() => {
 
-    this.pagination = 1;
-    this.projects = await this.projectService.getAll();
-    console.log(this.projects)
-    this.showPage(this.projects, this.pagination, 10)
-    this.paginationMax = this.getTotalPages(this.projects, 10)
-    this.paginationList = this.createRange(this.paginationMax);
+      this.pagination = 1;
+      this.showPage(this.projects, this.pagination, 10)
+      this.paginationMax = this.getTotalPages(this.projects, 10)
+      this.paginationList = this.createRange(this.paginationMax);
+    });
   }
 
   createBreadCrumb(): void {
@@ -49,19 +49,21 @@ export class ManageProjectComponent implements OnInit{
     this.pages = JSON.stringify(arrayPages);
   }
 
-  // async getAllRoles(): Promise<void> {
-  //   const roles = await this.roleService.getAll();
+  async getAllProjects(cb: any): Promise<void> {
+    const result = await this.projectService.getAll();
 
-  //   if (roles.ok) {
-  //     this.roles = roles.message;
-  //   } else {
-  //     console.log(roles.error)
-  //   }
-  // }
+    if (result.ok) {
+      this.projects = result.message
 
-  ngOnUserDetails(user): void {
-    console.log(user.value.id);
-    //this.router.navigate(['/user', user.value.id]);
+      cb();
+    } else {
+      console.log(result.error)
+    }
+  }
+
+  ngOnProjectDetails(project): void {
+    console.log(project.value.id);
+    this.router.navigate([this.router.url + '/', project.value.id]);
   }
 
   ngOnPaginationNext(): void {
@@ -99,8 +101,8 @@ export class ManageProjectComponent implements OnInit{
       .map((n, index) => index + 1);
   }
 
-  UTCToChileTime(p1: string): string {
-    return Utils.convertToChileTime(p1);
+  UTCToChileTime(p1: Date, p2: boolean): string {
+    return Utils.convertToChileTime(p1, p2);
   }
 
 }

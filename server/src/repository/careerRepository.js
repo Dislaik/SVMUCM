@@ -8,7 +8,7 @@ class CareerRepository {
   }
 
   async findById(id) {
-    return await Career.findByPk(id);
+    return await Career.findByPk(id, { include: [Headquarter, Faculty] });
   }
 
   async findByName(name) {

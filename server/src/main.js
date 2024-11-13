@@ -141,11 +141,11 @@ async function initTable() {
   await Role.findOrCreate({ where: {name: 'professor'}, defaults: {label: 'Docente'} });
   await Role.findOrCreate({ where: {name: 'student'}, defaults: {label: 'Alumno voluntario'} });
   await Role.findOrCreate({ where: {name: 'community'}, defaults: {label: 'Comunidad'} });
-  await User.findOrCreate({ where: { username: '20.349.272-3' }, defaults: {password: await authentication.cryptPassword('123'), email: 'matias.salas@alu.ucm.cl', first_name: 'Matias Nicolas', last_name: 'Salas Sepulveda', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 1, created_at: utils.getCurrentUTCTimeZone()} })
-  await User.findOrCreate({ where: { username: '20.564.236-6' }, defaults: {password: await authentication.cryptPassword('123'), email: 'alex.gajardo@alu.ucm.cl', first_name: 'Alex Nicolas', last_name: 'Gajardo Sanchez', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 8, created_at: utils.getCurrentUTCTimeZone()} })
-  await Headquarter.findOrCreate({ where: {name: 'ucm1'}, defaults: {label: 'Campus San Miguel'} });
-  await Headquarter.findOrCreate({ where: {name: 'ucm2'}, defaults: {label: 'Campus Nuestra Señora del Carmen'} });
-  await Headquarter.findOrCreate({ where: {name: 'ucm3'}, defaults: {label: 'Campus San Isidro'} });
+  await User.findOrCreate({ where: { username: '20.349.272-3' }, defaults: {password: await authentication.cryptPassword('123'), email: 'matias.salas@alu.ucm.cl', first_name: 'Matias Nicolas', last_name: 'Salas Sepulveda', address: 'Santa María 660', phone: '+56930853894', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 1, created_at: new Date()} })
+  await User.findOrCreate({ where: { username: '20.564.236-6' }, defaults: {password: await authentication.cryptPassword('123'), email: 'alex.gajardo@alu.ucm.cl', first_name: 'Alex Nicolas', last_name: 'Gajardo Sanchez', address: '9 Ote. 30 sur Pje. 31 493 Villa Brisas Del Maule', phone: '+56936341033', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 8, created_at: new Date()} })
+  await Headquarter.findOrCreate({ where: {name: 'ucm1'}, defaults: {label: 'Campus San Miguel', created_at: new Date()} });
+  await Headquarter.findOrCreate({ where: {name: 'ucm2'}, defaults: {label: 'Campus Nuestra Señora del Carmen', created_at: new Date()} });
+  await Headquarter.findOrCreate({ where: {name: 'ucm3'}, defaults: {label: 'Campus San Isidro', created_at: new Date()} });
   await Faculty.findOrCreate({ where: {name: 'medicina'}, defaults: {label: 'Facultad de Medicina'} });
   await Faculty.findOrCreate({ where: {name: 'educacion'}, defaults: {label: 'Facultad de Ciencias de la Educación'} })
   await Faculty.findOrCreate({ where: {name: 'salud'}, defaults: {label: 'Facultad de Ciencias de la Salud'} });

@@ -1,4 +1,206 @@
 <div class="container content">
-	<h1>Perfil de usuario</h1>
-
+	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
+	<h1>{{title}}</h1>
+  <div class="row mb-2">
+    <div class="col">
+      
+    </div>
+    <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEdit" class="col-4 d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="button" class="btn btn-discard-changes" (click)="ngOnEditUserProfileCancel()"><i class="bi bi-gear-fill"></i>Deshacer cambios</button>
+        <button type="button" class="btn btn-configure" (click)="ngOnEditUserProfileSave()"><i class="bi bi-gear-fill"></i>Guardar cambios</button>
+    </div>
+    <ng-template #elseBlockOnUserEnableEdit>
+      <div class="col-4 d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="button" class="btn btn-configure" (click)="ngOnEditUserProfile()"><i class="bi bi-gear-fill"></i>Configuración</button>
+      </div>
+    </ng-template>
+  </div>
+	<div class="row">
+		<div class="col-4">
+			<div class="card profile-basic-info me-2 p-3 shadow">
+				<div *ngIf="isUserLoaded; else elseBlockOnUserLoaded">
+          <div class="text-center mt-2 mb-3">
+            <img class="profile-image" src="{{user.image}}" alt="Student Photo">
+            <h2 class="user-fullname">{{user.first_name}} {{user.last_name}}</h2>
+          </div>
+          <div class="row align-items-center mb-2">
+            <div class="col-4">
+              RUN:
+            </div>
+            <div class="col-8">
+              {{user.username}}
+            </div>
+          </div>
+          <!-- <div class="row align-items-center mb-2">
+            <div class="col-4">
+              Rol:
+            </div>
+            <div class="col-8">
+              {{user.id_role.label}}
+            </div>
+          </div> -->
+        </div>
+        <ng-template #elseBlockOnUserLoaded>
+          <svg viewBox="0 0 50 50" class="spinner">
+            <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+          </svg>
+        </ng-template>
+			</div>
+		</div>
+		<div class="col-8">
+      <div class="row mb-2">
+        <div class="card profile-general-info ms-2 shadow">
+          <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
+          <div class="card-body">
+            <div *ngIf="isUserLoaded; else elseBlockOnUserLoaded">
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  RUN:
+                </div>
+                <div class="col-6 ps-2">
+                  {{user.username}}
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Contraseña:
+                </div>
+                <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditPassword" class="col-6 ps-2">
+                  <input #inputUserEditPassword type="password" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="passwordError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{passwordError}}</p>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #elseBlockOnUserEnableEditPassword>
+                  <div class="col-6 ps-2">
+                    ************
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Nombres:
+                </div>
+                <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditFirstName" class="col-6 ps-2">
+                  <input #inputUserEditFirstName type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="firstNameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{firstNameError}}</p>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #elseBlockOnUserEnableEditFirstName>
+                  <div class="col-6 ps-2">
+                    {{user.first_name}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Apellidos:
+                </div>
+                <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditLastName" class="col-6 ps-2">
+                  <input #inputUserEditLastName type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="lastNameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{lastNameError}}</p>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #elseBlockOnUserEnableEditLastName>
+                  <div class="col-6 ps-2">
+                    {{user.last_name}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Correo electronico:
+                </div>
+                <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditEmail" class="col-6 ps-2">
+                  <input #inputUserEditEmail type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="emailError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{emailError}}</p>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #elseBlockOnUserEnableEditEmail>
+                  <div class="col-6 ps-2">
+                    {{user.email}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Dirección:
+                </div>
+                <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditAddress" class="col-6 ps-2">
+                  <input #inputUserEditAddress type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="addressError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{addressError}}</p>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #elseBlockOnUserEnableEditAddress>
+                  <div class="col-6 ps-2">
+                    {{user.address}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Teléfono:
+                </div>
+                <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditPhone" class="col-6 ps-2">
+                  <input #inputUserEditPhone type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="phoneError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{phoneError}}</p>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #elseBlockOnUserEnableEditPhone>
+                  <div class="col-6 ps-2">
+                    {{user.phone}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Creado en:
+                </div>
+                <div class="col-6 ps-2">
+                  {{userCreateAt}}
+                </div>
+              </div>
+            </div>
+            <ng-template #elseBlockOnUserLoaded>
+              <svg viewBox="0 0 50 50" class="spinner">
+                <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+              </svg>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="card profile-general-info ms-2 shadow">
+          <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
+          <div class="card-body">
+            <div class="row align-items-center mb-2">
+              <div class="col-6 pe-2">
+                Proyectos:
+              </div>
+              <div class="col-6 ps-2">
+                0
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+	</div>
 </div>

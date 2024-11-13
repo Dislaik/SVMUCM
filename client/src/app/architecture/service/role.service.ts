@@ -25,7 +25,7 @@ export class RoleService {
 
   public getById(id: number): Promise<any> {
     return new Promise((resolve) => {
-      this.httpClient.get<Role>(this.URL + '/by-id/' + id).subscribe(
+      this.httpClient.get<any>(this.URL + '/by-id/' + id).subscribe(
         data => {
           resolve(data);
         },
@@ -38,7 +38,7 @@ export class RoleService {
 
   public getByName(name: string): Promise<any> {
     return new Promise((resolve) => {
-      this.httpClient.get<Role>(this.URL + '/by-name/' + name).subscribe(
+      this.httpClient.get<any>(this.URL + '/by-name/' + name).subscribe(
         data => {
           resolve(data);
         },

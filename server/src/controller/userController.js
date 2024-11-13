@@ -18,7 +18,11 @@ class UserController {
       const { id } = request.params;
       const user = await userService.getById(id)
 
-      response.status(200).json(user);
+      if (user) {
+        return response.status(200).json({ ok: true, message: user}); 
+      }
+
+      response.status(404).json({ ok: false, error: 'User not found'});
     } catch (error) {
       response.status(500).json(null);
     }
@@ -29,7 +33,11 @@ class UserController {
       const { username } = request.params;
       const user = await userService.getByUsername(username)
 
-      response.status(200).json(user);
+      if (user) {
+        return response.status(200).json({ ok: true, message: user});
+      }
+
+      response.status(404).json({ ok: false, error: 'User not found'});
     } catch (error) {
       response.status(500).json(null);
     }
@@ -57,6 +65,8 @@ class UserController {
           email: body.email,
           first_name: body.first_name,
           last_name: body.last_name,
+          address: body.address,
+          phone: body.phone,
           image: 'http://localhost:8080/attachments/avatarDefault.png',
           id_role: body.id_role.id,
           created_at: utils.getCurrentUTCTimeZone()
@@ -78,15 +88,38 @@ class UserController {
     try {
       const { id } = request.params;
       const { body } = request;
-
-      const user = await userService.update(id, body);
-      if (!user) {
-        return response.status(404).json({ message: 'User not found' });
+      const user = await userService.getById(id)
+      let password;
+      console.log(body.password === user.password)
+      if (body.password === user.password) {
+        password = user.password;
+      } else {
+        password = await auth.cryptPassword(body.password);
       }
 
-      response.status(200).json(user);
+
+      const userObject = {
+        username: body.username,
+        password: password,
+        email: body.email,
+        first_name: body.first_name,
+        last_name: body.last_name,
+        address: body.address,
+        phone: body.phone,
+        image: 'http://localhost:8080/attachments/avatarDefault.png',
+        id_role: body.id_role.id,
+        created_at: body.created_at
+      } 
+      console.log(userObject)
+
+      const userUpdate = await userService.update(id, userObject);
+      if (!userUpdate) {
+        return response.status(404).json({ ok: false,  error: 'User not found' });
+      }
+
+      return response.status(200).json({ ok: true, message: userUpdate});
     } catch (error) {
-      response.status(500).json({ error: 'Error updating user' });
+      return response.status(500).json({ error: 'Error updating user' });
     }
   }
 

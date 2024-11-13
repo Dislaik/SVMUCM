@@ -18,16 +18,10 @@ export class NavbarComponent implements OnInit {
   @ViewChild('navRequestProject') navRequestProject: ElementRef;
   @ViewChild('navProject') navProject: ElementRef;
 
-  @ViewChild('navUserProfile') navUserProfile: ElementRef;
-  @ViewChild('navUserSettings') navUserSettings: ElementRef;
-  @ViewChild('navUserPanel') navUserPanel: ElementRef;
-  @ViewChild('navUserLoggout') navUserLoggout: ElementRef;
-
   @ViewChild('navPanel') navPanel: ElementRef;
   @ViewChild('navManage') navManage: ElementRef;
   @ViewChild('navPanelManageUser') navPanelManageUser: ElementRef;
   @ViewChild('navPanelManageRole') navPanelManageRole: ElementRef;
-  @ViewChild('navPanelManageResource') navPanelManageResource: ElementRef;
   @ViewChild('navPanelManageProject') navPanelManageProject: ElementRef;
 
   @ViewChild('modalRequestProjectGuest') modalRequestProjectGuest: ElementRef;
@@ -60,7 +54,13 @@ export class NavbarComponent implements OnInit {
         
         if (await this.authService.verify()) {
           this.isLogged = true;
-          this.user = await this.userService.getByUsername(Utils.getUsernameByBrowser());
+          const result = await this.userService.getByUsername(Utils.getUsernameByBrowser());
+
+          if (result.ok) {
+            this.user = result.message;
+          } else {
+            console.log(result.error)
+          }
         } else {
           this.isLogged = false;
         }
@@ -74,6 +74,17 @@ export class NavbarComponent implements OnInit {
 
   ngOnRegister(): void {
     this.router.navigate(['/register'])
+  }
+
+  ngOnLoggout(): void {
+    console.log("asdad")
+    Utils.clearStorage();
+    if (this.router.url == '/') {
+      location.reload();
+    } else {
+      this.router.navigate(['/'])
+    }
+    this.user = null;
   }
 
   @HostListener('click', ['$event']) onClick(event: Event) {
@@ -92,18 +103,6 @@ export class NavbarComponent implements OnInit {
       this.router.navigate(['/project']);
     }
 
-    if (this.navUserProfile && event.target === this.navUserProfile.nativeElement) {
-      this.router.navigate(['/profile']);
-    } else if (this.navUserSettings && event.target === this.navUserSettings.nativeElement) {
-      this.router.navigate(['/settings']);
-    } else if (this.navUserPanel && event.target === this.navUserPanel.nativeElement) {
-      this.router.navigate(['/panel']);
-    } else if (this.navUserLoggout && event.target === this.navUserLoggout.nativeElement) {
-      Utils.clearStorage();
-      window.location.reload();
-      this.user = null;
-    }
-
     if (this.navPanel && event.target === this.navPanel.nativeElement) {
       this.router.navigate(['/panel']);
     } else if (this.navManage && event.target === this.navManage.nativeElement) {
@@ -114,8 +113,6 @@ export class NavbarComponent implements OnInit {
       this.router.navigate(['/panel/manage/role']);
     } else if (this.navPanelManageProject && event.target === this.navPanelManageProject.nativeElement) {
       this.router.navigate(['/panel/manage/project']);
-    } else if (this.navPanelManageResource && event.target === this.navPanelManageResource.nativeElement) {
-      this.router.navigate(['/panel/manage/resource']);
     }
   }
 }

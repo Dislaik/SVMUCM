@@ -16,7 +16,11 @@ class RoleController {
       const { id } = request.params;
       const role = await roleService.getById(id)
 
-      response.status(200).json(role);
+      if (role) {
+        return response.status(200).json({ ok: true, message: role}); 
+      }
+
+      response.status(404).json({ ok: false, error: 'Role not found'});
     } catch (error) {
       response.status(500).json(null);
     }

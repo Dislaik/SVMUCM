@@ -23,9 +23,9 @@ export class UserService {
     })
   }
 
-  public getById(id: number): Promise<User> {
+  public getById(id: number): Promise<any> {
     return new Promise((resolve) => {
-      this.httpClient.get<User>(this.URL + '/by-id/' + id).subscribe(
+      this.httpClient.get<any>(this.URL + '/by-id/' + id).subscribe(
         data => {
           resolve(data);
         },
@@ -36,9 +36,9 @@ export class UserService {
     })
   }
 
-  public getByUsername(username: string): Promise<User> {
+  public getByUsername(username: string): Promise<any> {
     return new Promise((resolve) => {
-      this.httpClient.get<User>(this.URL + '/by-username/' + username).subscribe(
+      this.httpClient.get<any>(this.URL + '/by-username/' + username).subscribe(
         data => {
           resolve(data);
         },
@@ -62,9 +62,9 @@ export class UserService {
     })
   }
 
-  public update(id: number, user: User): Promise<User> {
+  public update(id: number, user: User): Promise<any> {
     return new Promise((resolve) => {
-      this.httpClient.put<User>(this.URL + '/by-id/' + id, user).subscribe(
+      this.httpClient.put<any>(this.URL + '/by-id/' + id, user).subscribe(
         data => {
           resolve(data)
         },

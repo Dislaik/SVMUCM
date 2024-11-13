@@ -117,143 +117,149 @@ export class PanelComponent implements OnInit{
       };
     }
 
-    this.projects = await this.projectService.getAll();
-    const countProjects = this.projects.length;
+    const resultProject = await this.projectService.getAll();
 
-    this.projectsByStatus = this.projects.reduce((acc: { [key: string]: number }, project: Project) => {
-      const asd = <string>project.id_projectStatus.name;
+    if (resultProject.ok) {
+      this.projects = resultProject.message;
+      const countProjects = this.projects.length;
 
-      if (acc[asd]) {
-        acc[asd]++;
-      } else {
-        acc[asd] = 1;
-      }
+      this.projectsByStatus = this.projects.reduce((acc: { [key: string]: number }, project: Project) => {
+        const asd = <string>project.id_projectStatus.name;
 
-      return acc;
-    }, {});
-
-    console.log(this.projectsByStatus);
-
-    this.chartOptionProjects = {
-      title: {
-        text: 'Proyectos',
-        subtext: countProjects + ' Proyectos registrados',
-        left: 'center'
-      },
-      tooltip: {
-        trigger: 'item'
-      },
-      legend: {
-        orient: 'vertical',
-        left: 'left'
-      },
-      series: [
-        {
-          name: 'Estado',
-          type: 'pie',
-          radius: '50%',
-          data: [
-            { value: this.projectsByStatus['created'], name: 'Creado', itemStyle: { color: 'rgba(115, 192, 222, 1)' } },
-            { value: 0, name: 'Aprobado', itemStyle: { color: 'rgba(145, 204, 117, 1)' } },
-            { value: 0, name: 'Rechazado', itemStyle: { color: 'rgba(238, 102, 102, 1)' } },
-            { value: 0, name: 'En revisión', itemStyle: { color: 'rgba(250, 200, 88, 1)' } }
-          ],
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          }
+        if (acc[asd]) {
+          acc[asd]++;
+        } else {
+          acc[asd] = 1;
         }
-      ]
-    };
 
-    let data: DataItem[] = [];
-    let now = new Date(1997, 9, 3);
-    let oneDay = 24 * 3600 * 1000;
-    let value = Math.random() * 1000;
-    for (var i = 0; i < 1000; i++) {
-      data.push(randomData());
-    }
+        return acc;
+      }, {});
 
-    this.chartOptionPopularCareer = {
-      title: {
-        text: 'Dynamic Data & Time Axis'
-      },
-      tooltip: {
-        trigger: 'axis',
-        formatter: function (params: any) {
-          params = params[0];
-          var date = new Date(params.name);
-          return (
-            date.getDate() +
-            '/' +
-            (date.getMonth() + 1) +
-            '/' +
-            date.getFullYear() +
-            ' : ' +
-            params.value[1]
-          );
+      this.chartOptionProjects = {
+        title: {
+          text: 'Proyectos',
+          subtext: countProjects + ' Proyectos registrados',
+          left: 'center'
         },
-        axisPointer: {
-          animation: false
-        }
-      },
-      xAxis: {
-        type: 'time',
-        splitLine: {
-          show: false
-        }
-      },
-      yAxis: {
-        type: 'value',
-        boundaryGap: [0, '100%'],
-        splitLine: {
-          show: false
-        }
-      },
-      series: [
-        {
-          name: 'Fake Data',
-          type: 'line',
-          showSymbol: false,
-          data: data
-        }
-      ]
-    };
-
-
-    function randomData(): DataItem {
-      now = new Date(+now + oneDay);
-      value = value + Math.random() * 21 - 10;
-      return {
-        name: now.toString(),
-        value: [
-          [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-          Math.round(value)
-        ]
-      };
-    }
-
-
-    setInterval( () => {
-      console.log("asdad")
-      for (var i = 0; i < 5; i++) {
-        data.shift();
-        data.push(randomData());
-      }
-
-
-      this.chartPopularCareer.setOption<echarts.EChartsOption>({
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
         series: [
           {
-            data: data
+            name: 'Estado',
+            type: 'pie',
+            radius: '50%',
+            data: [
+              { value: this.projectsByStatus['created'], name: 'Creado', itemStyle: { color: 'rgba(115, 192, 222, 1)' } },
+              { value: 0, name: 'Aprobado', itemStyle: { color: 'rgba(145, 204, 117, 1)' } },
+              { value: 0, name: 'Rechazado', itemStyle: { color: 'rgba(238, 102, 102, 1)' } },
+              { value: 0, name: 'En revisión', itemStyle: { color: 'rgba(250, 200, 88, 1)' } }
+            ],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
           }
         ]
-      });
+      };
+    } else {
+      console.log(resultProject.error);
+    }
+
     
-    }, 1000);
+
+    // let data: DataItem[] = [];
+    // let now = new Date(1997, 9, 3);
+    // let oneDay = 24 * 3600 * 1000;
+    // let value = Math.random() * 1000;
+    // for (var i = 0; i < 1000; i++) {
+    //   data.push(randomData());
+    // }
+
+    // this.chartOptionPopularCareer = {
+    //   title: {
+    //     text: 'Dynamic Data & Time Axis'
+    //   },
+    //   tooltip: {
+    //     trigger: 'axis',
+    //     formatter: function (params: any) {
+    //       params = params[0];
+    //       var date = new Date(params.name);
+    //       return (
+    //         date.getDate() +
+    //         '/' +
+    //         (date.getMonth() + 1) +
+    //         '/' +
+    //         date.getFullYear() +
+    //         ' : ' +
+    //         params.value[1]
+    //       );
+    //     },
+    //     axisPointer: {
+    //       animation: false
+    //     }
+    //   },
+    //   xAxis: {
+    //     type: 'time',
+    //     splitLine: {
+    //       show: false
+    //     }
+    //   },
+    //   yAxis: {
+    //     type: 'value',
+    //     boundaryGap: [0, '100%'],
+    //     splitLine: {
+    //       show: false
+    //     }
+    //   },
+    //   series: [
+    //     {
+    //       name: 'Fake Data',
+    //       type: 'line',
+    //       showSymbol: false,
+    //       data: data
+    //     }
+    //   ]
+    // };
+
+
+    // function randomData(): DataItem {
+    //   now = new Date(+now + oneDay);
+    //   value = value + Math.random() * 21 - 10;
+    //   return {
+    //     name: now.toString(),
+    //     value: [
+    //       [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+    //       Math.round(value)
+    //     ]
+    //   };
+    // }
+
+
+    // setInterval( () => {
+    //   console.log("asdad")
+    //   for (var i = 0; i < 5; i++) {
+    //     data.shift();
+    //     data.push(randomData());
+    //   }
+
+
+    //   this.chartPopularCareer.setOption<echarts.EChartsOption>({
+    //     series: [
+    //       {
+    //         data: data
+    //       }
+    //     ]
+    //   });
+    
+    // }, 1000);
     
   }
 

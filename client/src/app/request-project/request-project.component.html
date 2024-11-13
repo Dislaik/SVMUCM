@@ -7,6 +7,11 @@
 		</div>
 		<div class="col-4 pe-2">
 			<input type="text" #inputRequestProjectName class="form-control shadow-none" required autocomplete="off" placeholder="Nombre del proyecto">
+			<div *ngIf="nameError !== ''">
+				<div class="message-error-container d-flex align-items-center">
+				  <p>{{nameError}}</p>
+				</div>
+			</div>
 		</div>
 		<div class="col-6 ps-2">
 			<div class="accordion" id="accordionExample1">
@@ -35,6 +40,11 @@
 				<option selected hidden value="">Elige una sede</option>
 				<option *ngFor="let item of headquarters;" value="{{item['name']}}">{{item['label']}}</option>
 			</select>
+      <div *ngIf="headquarterError !== ''">
+				<div class="message-error-container d-flex align-items-center">
+				  <p>{{headquarterError}}</p>
+				</div>
+			</div>
 		</div>
 		<div class="col-6 ps-2">
 			<div class="accordion" id="accordionExample2">
@@ -63,6 +73,11 @@
 				<option selected hidden value="">Elige una facultad</option>
 				<option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
 			</select>
+      <div *ngIf="facultyError !== ''">
+				<div class="message-error-container d-flex align-items-center">
+				  <p>{{facultyError}}</p>
+				</div>
+			</div>
 		</div>
 		<div class="col-6 ps-2">
 			<div class="accordion" id="accordionExample3">
@@ -87,10 +102,15 @@
 			<p class="mt-1">Carrera:</p>
 		</div>
 		<div class="col-4 pe-2">
-			<select #selectRequestProjectCareer class="form-control form-select" aria-label="Default select example">
+			<select #selectRequestProjectCareer disabled class="form-control form-select disabled" aria-label="Default select example">
 				<option selected hidden value="">Elige una carrera</option>
 				<option *ngFor="let item of careers;" value="{{item['name']}}">{{item['label']}}</option>
 			</select>
+      <div *ngIf="careerError !== ''">
+				<div class="message-error-container d-flex align-items-center">
+				  <p>{{careerError}}</p>
+				</div>
+			</div>
 		</div>
 		<div class="col-6 ps-2">
 			<div class="accordion" id="accordionExample4">
@@ -119,6 +139,11 @@
 				<option selected hidden value="">Elige una region</option>
 				<option *ngFor="let item of regions;" value="{{item['name']}}">{{item['label']}}</option>
 			</select>
+      <div *ngIf="regionError !== ''">
+				<div class="message-error-container d-flex align-items-center">
+				  <p>{{regionError}}</p>
+				</div>
+			</div>
 		</div>
 		<div class="col-6 ps-2">
 			<div class="accordion" id="accordionExample5">
@@ -143,10 +168,15 @@
 			<p class="mt-1">Ciudad:</p>
 		</div>
 		<div class="col-4 pe-2">
-			<select #selectRequestProjectCity class="form-control form-select" aria-label="Default select example">
+			<select #selectRequestProjectCity disabled class="form-control form-select disabled" aria-label="Default select example">
 				<option selected hidden value="">Elige una ciudad</option>
 				<option *ngFor="let item of cities;" value="{{item['name']}}">{{item['label']}}</option>
 			</select>
+      <div *ngIf="cityError !== ''">
+				<div class="message-error-container d-flex align-items-center">
+				  <p>{{cityError}}</p>
+				</div>
+			</div>
 		</div>
 		<div class="col-6 ps-2">
 			<div class="accordion" id="accordionExample6">
@@ -172,6 +202,11 @@
 		</div>
 		<div class="col-4 pe-2">
 			<input #inputRequestProjectStartDate type="date" class="form-control"/>
+      <div *ngIf="startDateError !== ''">
+				<div class="message-error-container d-flex align-items-center">
+				  <p>{{startDateError}}</p>
+				</div>
+			</div>
 		</div>
 		<div class="col-6 ps-2">
 			<div class="accordion" id="accordionExample7">
@@ -197,6 +232,11 @@
 		</div>
 		<div class="col-4 pe-2">
       <input #inputRequestProjectEndDate type="date" class="form-control"/>
+      <div *ngIf="endDateError !== ''">
+				<div class="message-error-container d-flex align-items-center">
+				  <p>{{endDateError}}</p>
+				</div>
+			</div>
 		</div>
 		<div class="col-6 ps-2">
 			<div class="accordion" id="accordionExample8">
@@ -224,6 +264,11 @@
 				</div>
 				<div class="col-8 pe-2">
 					<textarea #textareaRequestProjectDescription class="form-control" rows="5" placeholder="Describe el proyecto" ></textarea>
+          <div *ngIf="descriptionError !== ''">
+            <div class="message-error-container d-flex align-items-center">
+              <p>{{descriptionError}}</p>
+            </div>
+          </div>
 				</div>
 			</div>
 			<div class="d-grid gap-2 col-6 mx-auto mt-5 pb-2">

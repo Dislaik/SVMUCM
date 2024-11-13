@@ -1,4 +1,5 @@
 export class Headquarter {
+    id: number;
     name: String;
     label: String;
 

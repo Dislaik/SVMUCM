@@ -94,6 +94,30 @@ p {
 } 
 
 body.swal2-shown {
-  overflow-y: scroll !important;
+  overflow-y: hidden !important;
   padding-right: 0 !important;
+}
+
+.form-control {
+  border: none;
+  outline: none;
+  background-color: #d1d2d3;
+  border-radius: 3px;
+  color: #1E2124;
+}
+
+.form-control:focus {
+  border: none;
+  outline: none;
+  background-color: #d1d2d3;
+  border-radius: 3px;
+  color: #1E2124;
+}
+
+.form-control-sm {
+  border: none;
+  outline: none;
+  background-color: #d1d2d3;
+  border-radius: 3px;
+  color: #1E2124;
 }

@@ -5,7 +5,7 @@ class CareerController {
     try {
       const careers = await CareerService.getAll();
       
-      response.status(200).json(careers);
+      response.status(200).json({ ok: true, message: careers});
     } catch (error) {
       response.status(500).json({ error: 'Error fetching faculties' });
     }
@@ -16,7 +16,11 @@ class CareerController {
       const { id } = request.params;
       const career = await CareerService.getById(id)
 
-      response.status(200).json(career);
+      if (!career) {
+        response.status(200).json({ ok: true, message: null});
+      }
+
+      response.status(200).json({ ok: true, message: career});
     } catch (error) {
       response.status(500).json(null);
     }

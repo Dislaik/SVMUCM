@@ -2,14 +2,15 @@ import { Faculty } from "./faculty";
 import { Headquarter } from "./headquarter";
 
 export class Career {
-  name: String;
-  label: String;
+  id: number;
+  name: string;
+  label: string;
   id_faculty: Faculty;
   id_headquarter: Headquarter;
 
   constructor(
-    name: String = '', 
-    label: String = '',
+    name: string = '', 
+    label: string = '',
     id_faculty: Faculty = new Faculty(),
     id_headquarter: Headquarter = new Headquarter()
   ) {

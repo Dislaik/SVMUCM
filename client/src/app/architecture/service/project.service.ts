@@ -49,18 +49,18 @@ export class ProjectService {
     })
   };
 
-  public getByLabel(label: string): Promise<any> {
+  public getByUserId(id: number): Promise<any> {
     return new Promise((resolve) => {
-      this.httpClient.get<any>(this.URL + '/by-label/' + label).subscribe(
+      this.httpClient.get<Project[]>(this.URL + '/by-user-id/' + id).subscribe(
         data => {
-          resolve(data);
+          resolve(data)
         },
         error => {
-          resolve(error);
+          resolve(error)
         }
-      );
+      )
     })
-  };
+  }
 
   public create(project: Project): Promise<any> {
     return new Promise((resolve) => {

@@ -1,0 +1,195 @@
+<div class="container content">
+	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
+	<h1 class="mb-3">{{title}}</h1>
+  <div class="row mb-2">
+    <div class="col-3">
+      
+    </div>
+    <div class="col-5">
+
+    </div>
+    <div class="col-4 d-grid gap-2 d-md-flex justify-content-md-end">
+      <button type="button" class="btn btn-project-price" ><i class="bi bi-gear-fill"></i>Relizar Cotización</button>
+      <button type="button" class="btn btn-user-delete" (click)="ngOnDeleteProject()"><i class="bi bi-gear-fill"></i>Eliminar</button>
+      <button type="button" class="btn btn-user-edit" (click)="ngOnEditProject()"><i class="bi bi-gear-fill"></i>Editar</button>
+    </div>
+  </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="card profile-basic-info me-2 p-3 shadow">
+              <div *ngIf="isProjectLoaded; else elseBlockOnUserLoaded">
+          <div class="text-center mt-2 mb-3">
+            <h2 class="user-fullname">{{project.name}}</h2>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4">
+              ID:
+            </div>
+            <div class="col-8">
+              {{project.id}}
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4">
+              Nombre:
+            </div>
+            <div class="col-8">
+              {{project.name}}
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4">
+              Solicitante:
+            </div>
+            <div class="col-8">
+              {{project.id_user.username}}
+            </div>
+          </div>
+        </div>
+        <ng-template #elseBlockOnUserLoaded>
+          <svg viewBox="0 0 50 50" class="spinner">
+            <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+          </svg>
+        </ng-template>
+            </div>
+        </div>
+        <div class="col-8">
+      <div class="row mb-2">
+        <div class="card profile-general-info ms-2 shadow">
+          <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
+          <div class="card-body">
+            <div *ngIf="isProjectLoaded; else elseBlockOnUserLoaded">
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  ID:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.id}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Nombre:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.name}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Solicitante:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.id_user.username}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Descripción:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.description}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Estado:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.id_projectStatus.label}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Fecha de inicio:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.start_date}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Fecha de termino:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.end_date}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Ciudad:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.id_city.label}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Carrera:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.id_career.label}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Creado en:
+                </div>
+                <div class="col-6 ps-2">
+                  {{project.created_at}}
+                </div>
+              </div>
+            </div>
+            <ng-template #elseBlockOnUserLoaded>
+              <svg viewBox="0 0 50 50" class="spinner">
+                <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+              </svg>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="card profile-general-info ms-2 shadow">
+          <div class="card-header"><i class="bi bi-stack"></i>APUs Asociadas</div>
+          <div class="card-body">
+            <div *ngFor="let item of projectAPUs;" class="apu-container mb-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-2">
+                  <i class="bi bi-box-seam-fill"></i>{{item.id_apu.label}}
+                </div>
+                <!-- <button type="button" class="btn btn-remove-resource-apu" (click)="ngOnClickOpenModal()"><i class="bi bi-x-circle-fill"></i>Eliminar</button> -->
+              </div>
+              Mostrar recursos aqui*
+            </div>
+            <div class="add-apu d-flex align-items-center justify-content-center">
+              <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir APU</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div #modalAddAPU class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Selecciona un APU</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div *ngFor="let item of apus;" class="col-3 ps-2 pe-2 mb-2">
+            <button type="button" class="btn btn-add-resource-modal" (click)="ngOnClickSelectAPU(item)">
+              <i class="bi bi-box-fill"></i>{{item.label}}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-end">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -9,6 +9,8 @@ const User = sequelize.define('user', {
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   first_name: { type: DataTypes.STRING, allowNull: false },
   last_name: { type: DataTypes.STRING, allowNull: false },
+  address: {type: DataTypes.STRING, allowNull: true },
+  phone: { type: DataTypes.STRING, allowNull: true },
   image: { type: DataTypes.STRING, allowNull: false },
   id_role: { type: DataTypes.INTEGER, allowNull: false, references: { model: Role, key: 'id' } },
   created_at: { type: DataTypes.DATE,  allowNull: false }

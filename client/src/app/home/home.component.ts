@@ -33,13 +33,14 @@ export class HomeComponent implements OnInit{
       this.isLogged = false;
     }
   }
+  
 
   @HostListener('click', ['$event']) onClick(event: Event) {
     const buttonRequestCourse = this.elementReference.nativeElement.querySelector('#buttonRequestCourse')
 
     if (event.target === buttonRequestCourse) {
       if (this.isLogged) {
-        this.router.navigate(['/request-course'])
+        this.router.navigate(['/request-project'])
       } else {
         const modal = new bootstrap.Modal(this.requestCourseModal);
 
