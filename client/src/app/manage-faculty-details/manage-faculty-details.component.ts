@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Faculty } from '../architecture/model/faculty';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FacultyService } from '../architecture/service/faculty.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-manage-faculty-details',
@@ -13,26 +14,30 @@ export class ManageFacultyDetailsComponent implements OnInit {
   title: string = "Detalles de la facultad";
   id: number;
   pages: string;
+  isViewLoaded: boolean = false;
+
+  @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
 
   faculty: Faculty;
-  isFacultyLoaded: boolean = false;
+  enableEditItem: boolean;
 
   constructor(
     private router: Router,
-    private facultyService: FacultyService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService,
+    private facultyService: FacultyService
   ){
     this.activatedRoute.params.subscribe( params =>
       this.id = params['id']
     );
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.createBreadCrumb();
     this.getFaculty();
   }
 
-  createBreadCrumb(): void {
+  private createBreadCrumb(): void {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
@@ -44,21 +49,41 @@ export class ManageFacultyDetailsComponent implements OnInit {
   }
 
   async getFaculty(): Promise<void> {
-    const result = await this.facultyService.getById(this.id);
+    const response = await this.facultyService.getById(this.id);
 
-    if (result.ok) {
-      this.faculty = result.message;
-      this.isFacultyLoaded = true;
+    if (response.ok) {
+      this.faculty = response.message;
+      this.isViewLoaded = true;
     } else {
-      console.log(result.error);
+      console.log(response.error);
     }
   }
 
-  ngOnDeleteFaculty(): void {
-    
+  public async ngOnEditItemSave(): Promise<void> {
+    const label = this.inputItemEditLabel.nativeElement.value;
+
+    this.faculty.label = label;
+
+    const response = await this.facultyService.update(this.faculty.id, this.faculty);
+
+    if (response.ok) {
+      this.toastr.success('Se han guardado los cambios con exito');
+      this.enableEditItem = false;
+    } else {
+      console.log(response.error)
+    }
   }
 
-  ngOnEditFaculty(): void {
-    console.log("Edit faculty")
+  public ngOnEditItem(): void {
+    this.enableEditItem = true;
+    setTimeout(() => {
+      if (this.inputItemEditLabel) {
+        this.inputItemEditLabel.nativeElement.value = this.faculty.label;
+      }
+    });
+  }
+
+  public ngOnEditItemCancel(): void {
+    this.enableEditItem = false;
   }
 }

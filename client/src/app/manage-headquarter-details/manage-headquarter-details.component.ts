@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Headquarter } from '../architecture/model/headquarter';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeadquarterService } from '../architecture/service/headquarter.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-manage-headquarter-details',
@@ -14,25 +15,29 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
   id: number;
   pages: string;
 
+  @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
+
   headquarter: Headquarter;
-  isHeadquarterLoaded: boolean = false;
+  isViewLoaded: boolean = false;
+  enableEditItem: boolean;
 
   constructor(
     private router: Router,
-    private headquarterService: HeadquarterService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService,
+    private headquarterService: HeadquarterService
   ){
     this.activatedRoute.params.subscribe( params =>
       this.id = params['id']
     );
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.createBreadCrumb();
     this.getHeadquarter();
   }
 
-  createBreadCrumb(): void {
+  private createBreadCrumb(): void {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
@@ -43,23 +48,42 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
     this.pages = JSON.stringify(arrayPages);
   }
 
-  async getHeadquarter(): Promise<void> {
-    const result = await this.headquarterService.getById(this.id);
+  private async getHeadquarter(): Promise<void> {
+    const response = await this.headquarterService.getById(this.id);
 
-    if (result.ok) {
-      this.headquarter = result.message;
-      this.isHeadquarterLoaded = true;
+    if (response.ok) {
+      this.headquarter = response.message;
+      this.isViewLoaded = true;
     } else {
-      console.log(result.error);
+      console.log(response.error);
     }
   }
 
-  ngOnDeleteHeadquarter(): void {
-    
+  public async ngOnEditItemSave(): Promise<void> {
+    const label = this.inputItemEditLabel.nativeElement.value;
+
+    this.headquarter.label = label;
+
+    const response = await this.headquarterService.update(this.headquarter.id, this.headquarter);
+
+    if (response.ok) {
+      this.toastr.success('Se han guardado los cambios con exito');
+      this.enableEditItem = false;
+    } else {
+      console.log(response.error)
+    }
   }
 
-  ngOnEditHeadquarter(): void {
-    console.log("Edit role")
+  public ngOnEditItem(): void {
+    this.enableEditItem = true;
+    setTimeout(() => {
+      if (this.inputItemEditLabel) {
+        this.inputItemEditLabel.nativeElement.value = this.headquarter.label;
+      }
+    });
   }
 
+  public ngOnEditItemCancel(): void {
+    this.enableEditItem = false;
+  }
 }

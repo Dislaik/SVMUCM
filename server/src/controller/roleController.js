@@ -73,13 +73,14 @@ class RoleController {
       const { body } = request;
 
       const role = await roleService.update(id, body);
+
       if (!role) {
-        return response.status(404).json({ message: 'Role not found' });
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json(role);
+      return response.status(200).json({ ok: true, message: role});
     } catch (error) {
-      response.status(500).json({ error: 'Error updating role' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 

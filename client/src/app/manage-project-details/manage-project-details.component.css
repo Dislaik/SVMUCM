@@ -99,7 +99,7 @@
   
   .apu-container {
     background-color: #bebebe;
-    height: 60px;
+    height: auto;
     border-radius: 3px;
     padding: 10px;
   }

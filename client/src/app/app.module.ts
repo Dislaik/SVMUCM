@@ -38,6 +38,9 @@ import { ManageProjectDetailsComponent } from './manage-project-details/manage-p
 import { ManageAPUComponent } from './manage-apu/manage-apu.component';
 import { ManageAPUDetailsComponent } from './manage-apu-details/manage-apu-details.component';
 import { ManageResourceDetailsComponent } from './manage-resource-details/manage-resource-details.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -71,7 +74,8 @@ import { ManageResourceDetailsComponent } from './manage-resource-details/manage
     ManageAPUDetailsComponent,
     ManageResourceComponent,
     ManageResourceDetailsComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -80,7 +84,12 @@ import { ManageResourceDetailsComponent } from './manage-resource-details/manage
     FormsModule,
     NgxEchartsModule.forRoot({echarts: () => import('echarts')}),
     SweetAlert2Module.forRoot(),
-],
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    })
+  ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptor,

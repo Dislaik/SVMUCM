@@ -1,3 +1,4 @@
+const Headquarter = require('../model/headquarter');
 const CareerService = require('../service/careerService');
 
 class CareerController {
@@ -74,11 +75,31 @@ class CareerController {
   async create(request, response) {
     try {
       const { body } = request
-      const career = await CareerService.create(body);
+      let error = {};
 
-      response.status(200).json(career);
+      if (await CareerService.existsByName(body.name)) {
+        error.name = 'Este identificador ya esta registrado';
+      }
+
+      if (Object.keys(error).length === 0) {
+        const careerObject = {
+          name: body.name,
+          label: body.label,
+          id_headquarter: body.id_headquarter.id,
+          id_faculty: body.id_faculty.id
+        }
+
+        let career = await CareerService.create(careerObject);
+
+        career.id_headquarter = body.id_headquarter;
+        career.id_faculty = body.id_faculty;
+
+        return response.status(200).json({ ok: true, message: career});
+      }
+
+      return response.status(200).json({ ok: false, error: error});
     } catch (error) {
-      response.status(500).json({ error: 'Error creating career' });
+      return response.status(500).json({ ok: false,  error: error });
     }
   }
 
@@ -87,14 +108,25 @@ class CareerController {
       const { id } = request.params;
       const { body } = request;
 
-      const career = await CareerService.update(id, body);
-      if (!career) {
-        return response.status(404).json({ message: 'Role not found' });
+      const careerObject = {
+        name: body.name,
+        label: body.label,
+        id_headquarter: body.id_headquarter.id,
+        id_faculty: body.id_faculty.id
       }
 
-      response.status(200).json(career);
+      let career = await CareerService.update(id, careerObject);
+
+      if (!career) {
+        return response.status(404).json({ ok: false, message: 'Career not found'}); 
+      }
+
+      career.id_headquarter = body.id_headquarter;
+      career.id_faculty = body.id_faculty;
+
+      return response.status(200).json({ ok: true, message: career});
     } catch (error) {
-      response.status(500).json({ error: 'Error updating career' });
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
@@ -105,9 +137,9 @@ class CareerController {
 
       await CareerService.delete(id);
 
-      res.status(200).json(career);
+      return response.status(200).json({ ok: true, message: career});
     } catch (error) {
-      res.status(404).json({ error: error.message });
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 }

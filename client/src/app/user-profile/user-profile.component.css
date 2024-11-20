@@ -96,12 +96,3 @@
   background-color: #bb2d3b;
   color: #f5f5f5;
 }
-
-.message-error-container {
-  width: 100%;
-  height: auto;
-}
-
-.message-error-container p {
-  color: red !important;
-}

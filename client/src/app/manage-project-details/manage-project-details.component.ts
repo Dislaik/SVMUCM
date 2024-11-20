@@ -6,6 +6,9 @@ import { APU } from '../architecture/model/apu';
 import { ProjectAPU } from '../architecture/model/project-apu';
 import { APUService } from '../architecture/service/apu.service';
 import { ProjectAPUService } from '../architecture/service/project-apu.service';
+import { APUResource } from '../architecture/model/apuresource';
+import { APUResourceService } from '../architecture/service/apuresource.service';
+import { Utils } from '../utils';
 
 declare var bootstrap: any;
 
@@ -26,6 +29,7 @@ export class ManageProjectDetailsComponent implements OnInit {
   project: Project;
   apus: APU[];
   projectAPUs: ProjectAPU[];
+  apuResources: {};
   isProjectLoaded: boolean = false;
 
   constructor(
@@ -33,7 +37,8 @@ export class ManageProjectDetailsComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private projectService: ProjectService,
     private apuService: APUService,
-    private projectAPUService: ProjectAPUService
+    private projectAPUService: ProjectAPUService,
+    private apuResourceService: APUResourceService
   ){
     this.activatedRoute.params.subscribe( params =>
       this.id = params['id']
@@ -45,6 +50,20 @@ export class ManageProjectDetailsComponent implements OnInit {
     this.getProject();
     this.ngOnGetAllAPUs();
     this.ngOnGetAPUsByProjectId();
+    this.apuResources = {}
+  }
+
+  public async ngOnGetResourcesByAPUId(projectAPUs: ProjectAPU[]): Promise<void> {
+
+    projectAPUs.forEach(async element => {
+      const response = await this.apuResourceService.getByAPUId(element.id_apu.id);
+
+      if (response.ok) {
+        this.apuResources[String(element.id_apu.id)] = response.message;
+      } else {
+        console.log(response.error)
+      }
+    });
   }
 
   private createBreadCrumb(): void {
@@ -84,6 +103,8 @@ export class ManageProjectDetailsComponent implements OnInit {
 
     if (response.ok) {
       this.projectAPUs = response.message;
+
+      this.ngOnGetResourcesByAPUId(this.projectAPUs);
     } else {
       console.log(response.error)
     }
@@ -100,6 +121,10 @@ export class ManageProjectDetailsComponent implements OnInit {
     this.ngOnAddAPU(projectAPU);
   }
 
+  public UTCToChileTime(p1: Date, p2: boolean): string {
+    return Utils.convertToChileTime(p1, p2);
+  }
+
   private async ngOnAddAPU(projectAPU: ProjectAPU): Promise<void> {
     console.log(projectAPU)
     const response = await this.projectAPUService.create(projectAPU)
@@ -111,6 +136,8 @@ export class ManageProjectDetailsComponent implements OnInit {
       console.log(response.error);
     }
   }
+
+  
 
   ngOnDeleteProject(): void {
 

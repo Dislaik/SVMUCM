@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Resource } from '../architecture/model/resource';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../architecture/service/resource.service';
+import { Utils } from '../utils';
+import { ToastrService } from 'ngx-toastr';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-manage-resource-details',
@@ -13,12 +16,22 @@ export class ManageResourceDetailsComponent implements OnInit {
   title: string = "Detalles del recurso";
   id: number;
   pages: string;
+  isViewLoaded: boolean = false;
+  enableEditItem: boolean;
+
+  @ViewChild('inputItemEditName') inputItemEditName: ElementRef;
+  nameError: string = '';
+  @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
+  labelError: string = '';
+  @ViewChild('inputItemEditDescription') inputItemEditDescription: ElementRef;
+  @ViewChild('inputItemEditPrice') inputItemEditPrice: ElementRef;
 
   resource: Resource;
-  isResourceLoaded: boolean = false;
+
 
   constructor(
     private router: Router,
+    private toastr: ToastrService,
     private resourceService: ResourceService,
     private activatedRoute: ActivatedRoute
   ){
@@ -27,12 +40,12 @@ export class ManageResourceDetailsComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.createBreadCrumb();
     this.getResource();
   }
 
-  createBreadCrumb(): void {
+  private createBreadCrumb(): void {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
@@ -43,23 +56,135 @@ export class ManageResourceDetailsComponent implements OnInit {
     this.pages = JSON.stringify(arrayPages);
   }
 
-  async getResource(): Promise<void> {
-    const result = await this.resourceService.getById(this.id);
-    console.log(result)
-    if (result.ok) {
-      this.resource = result.message;
-      this.isResourceLoaded = true;
+  private async getResource(): Promise<void> {
+    const response = await this.resourceService.getById(this.id);
+
+    if (response.ok) {
+      this.resource = response.message;
+      this.isViewLoaded = true;
     } else {
-      console.log(result.error);
+      console.log(response.error);
     }
   }
 
-  ngOnClickDeleteResource(): void {
+  public ngOnEditItem(): void {
+    this.enableEditItem = true;
+    setTimeout(() => {
+      if (this.inputItemEditName) {
+        this.inputItemEditName.nativeElement.value = this.resource.name;
+      }
 
+      if (this.inputItemEditLabel) {
+        this.inputItemEditLabel.nativeElement.value = this.resource.label;
+      }
+
+      if (this.inputItemEditDescription) {
+        this.inputItemEditDescription.nativeElement.value = this.resource.description;
+      }
+
+      if (this.inputItemEditPrice) {
+        this.inputItemEditPrice.nativeElement.value = Utils.stringToPrice(String(this.resource.price));
+      }
+    });
   }
 
-  ngOnClickEditResource(): void {
-    console.log("Edit resource")
+  public async ngOnEditItemSave(): Promise<void> {
+    const name = this.inputItemEditName.nativeElement.value;
+    const label = this.inputItemEditLabel.nativeElement.value;
+    const description = this.inputItemEditDescription.nativeElement.value;
+    const price = this.inputItemEditPrice.nativeElement.value;
+    let success = 0;
+
+    if (name.trim() === '') {
+      this.nameError = 'Debe ingresar un identificador';
+    } else {
+      this.nameError = '';
+      success+= 1;
+    }
+
+    if (label.trim() === '') {
+      this.labelError = 'Debe ingresar una etiqueta';
+    } else {
+      this.labelError = '';
+      success+= 1;
+    }
+
+    if (success === 2) {
+      this.resource.name = name;
+      this.resource.label = label;
+      this.resource.description = description;
+      this.resource.price = this.priceToNumber(price);
+
+      const response = await this.resourceService.update(this.resource.id, this.resource);
+
+      if (response.ok) {
+        this.toastr.success('Se han guardado los cambios con exito');
+        this.enableEditItem = false;
+      } else {
+        if (Object.keys(response.error).length > 0) {
+          this.nameError = response.error.name;
+        }
+      }
+    }
   }
 
+  public ngOnEditItemCancel(): void {
+    this.enableEditItem = false;
+    this.nameError = '';
+    this.labelError = '';
+  }
+
+  public ngOnDeleteItem(): void {
+    Swal.fire({
+      title: '¿Estas seguro que quieres eliminar esta carrera?',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await this.resourceService.delete(this.resource.id)
+
+        if (response.ok) {
+          Swal.fire('Recurso eliminado', '', 'success');
+
+          this.router.navigate(['/panel/manage/resource']);
+        } else {
+          Swal.fire(response.error, '', 'warning');
+        }
+      }
+    }); 
+  }
+
+  public nameIdentifier(): void {
+    Utils.formatNameIdentifier(this.inputItemEditName.nativeElement);
+  }
+
+  public priceCLP(): void {
+    Utils.formatCLP(this.inputItemEditPrice.nativeElement);
+  }
+
+  public priceToNumber(p1: string): number {
+    return Utils.priceToNumber(p1);
+  }
+  
+
+  public numberToPrice(p1: number): string {
+    if (p1 === 0) {
+      return "Gratis"
+    }
+
+    return '$' + Utils.stringToPrice(String(p1));
+  }
+
+  public checkDescription(p1: string): string {
+    if (p1.trim() === '') {
+      return "Sin descripción";
+    }
+
+    return p1;
+  }
+
+  public UTCToChileTime(p1: Date, p2: boolean): string {
+    return Utils.convertToChileTime(p1, p2);
+  }
 }

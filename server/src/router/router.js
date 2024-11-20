@@ -3,6 +3,7 @@ const authRouter = require('./authRouter');
 const apuRouter = require('./apuRouter');
 const roleRouter = require('./roleRouter')
 const userRouter = require('./userRouter');
+const userStatusRouter = require('./userStatusRouter');
 const headquarterRouter = require('./headquarterRouter');
 const facultyRouter = require('./facultyRouter');
 const careerRouter = require('./careerRouter');
@@ -27,6 +28,7 @@ router.stack = router.stack.concat(facultyRouter.stack);
 router.stack = router.stack.concat(careerRouter.stack);
 router.stack = router.stack.concat(roleRouter.stack);
 router.stack = router.stack.concat(userRouter.stack);
+router.stack = router.stack.concat(userStatusRouter.stack);
 router.stack = router.stack.concat(apuResource.stack);
 router.stack = router.stack.concat(projectAPU.stack);
 

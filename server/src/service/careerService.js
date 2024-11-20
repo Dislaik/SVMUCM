@@ -58,6 +58,10 @@ class CareerService {
   async delete(id) {
     return await CareerRepository.delete(id);
   }
+
+  async existsByName(name) {
+    return await CareerRepository.existsByName(name);
+  }
 }
 
 module.exports = new CareerService();

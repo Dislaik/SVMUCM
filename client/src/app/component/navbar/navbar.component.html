@@ -1,8 +1,13 @@
 <nav *ngIf="showComponent" class="navbar navbar-expand-lg navbar-light bg-light shadow fixed-top">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" [routerLink]="['/']">
+    <a *ngIf="!isOnPanel; else elseBlockOnPanelImage" class="navbar-brand d-flex align-items-center" [routerLink]="['/']">
       <img src="../../../assets/img/logoucm.png" alt="Logo" width="180" class="d-inline-block align-text-top">
     </a>
+    <ng-template #elseBlockOnPanelImage>
+      <a class="navbar-brand d-flex align-items-center" [routerLink]="['/panel']">
+        <img src="../../../assets/img/logoucm.png" alt="Logo" width="180" class="d-inline-block align-text-top">
+      </a>
+    </ng-template>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>

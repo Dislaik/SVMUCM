@@ -71,16 +71,15 @@ class HeadquarterController {
     try {
       const { id } = request.params;
       const { body } = request;
-
       const headquarter = await HeadquarterService.update(id, body);
 
       if (!headquarter) {
-        response.status(404).json({ ok: false, error: 'Sede no encontrada' });
+        return response.status(404).json({ ok: false, error: 'Sede no encontrada' });
       }
 
-      response.status(200).json({ ok: true, message: headquarter });
+      return response.status(200).json({ ok: true, message: headquarter });
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 

@@ -8,8 +8,10 @@ class UserService {
       const userJSON = user.toJSON();
 
       userJSON.id_role = userJSON.role;
+      userJSON.id_user_status = userJSON.user_status;
 
       delete userJSON.role;
+      delete userJSON.user_status;
 
       return userJSON;
     });
@@ -24,8 +26,10 @@ class UserService {
       const restructuredUser = user.toJSON();
 
       restructuredUser.id_role = restructuredUser.role;
+      restructuredUser.id_user_status = restructuredUser.user_status;
 
       delete restructuredUser.role;
+      delete restructuredUser.user_status;
 
       return restructuredUser;
     }
@@ -40,8 +44,10 @@ class UserService {
       const restructuredUser = user.toJSON();
 
       restructuredUser.id_role = restructuredUser.role;
+      restructuredUser.id_user_status = restructuredUser.user_status;
 
       delete restructuredUser.role;
+      delete restructuredUser.user_status;
 
       return restructuredUser;
     }

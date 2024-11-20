@@ -83,33 +83,6 @@ export class RequestProjectComponent implements OnInit{
     this.getAllRegions();
     this.getAllFaculties();
     this.getAllProjectStatus();
-
-    // this.user = await this.userService.getByUsername(Utils.getUsernameByBrowser());
-    // this.cities = await this.cityService.getAll();
-    // console.log(this.cities); 
-    // const headquarter = await this.headquarterService.getAll();
-
-    // if (headquarter.ok) {
-    //   this.headquarter = headquarter.message;
-    // } else {
-    //   console.log(headquarter.error)
-    // }
-
-    // const courseDuration = await this.courseDurationService.getAll();
-
-    // if (courseDuration.ok) {
-    //   this.courseDuration = courseDuration.message;
-    // } else {
-    //   console.log(courseDuration.error);
-    // }
-
-    // const courseMode = await this.courseModeService.getAll();
-
-    // if (courseMode.ok) {
-    //   this.courseMode = courseMode.message;
-    // } else {
-    //   console.log(courseDuration.error);
-    // }
   }
 
   createBreadCrumb(): void {

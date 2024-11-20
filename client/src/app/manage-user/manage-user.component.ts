@@ -6,6 +6,9 @@ import { User } from '../architecture/model/user';
 import { Utils } from '../utils';
 import { Role } from '../architecture/model/role';
 import { RoleService } from '../architecture/service/role.service';
+import { UserStatus } from '../architecture/model/user-status';
+import { UserStatusService } from '../architecture/service/user-status.service';
+import { ToastrService } from 'ngx-toastr';
 
 declare var bootstrap: any;
 
@@ -18,56 +21,64 @@ declare var bootstrap: any;
 export class ManageUserComponent implements OnInit{
   title: string = "Usuarios";
   pages: string;
+  isViewLoaded: boolean = false;
 
-  @ViewChild('buttonCreateUser') buttonCreateUser: ElementRef;
-  @ViewChild('modalCreateUser') modalCreateUser: ElementRef;
-  modalCreateUserInstance: any;
+  @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
+  modalCreateItemInstance: any;
+  @ViewChild('inputSearchItem') inputSearchItem: ElementRef;
 
-  @ViewChild('inputModalCreateUserUsername') inputModalCreateUserUsername: ElementRef;
+  @ViewChild('inputUsername') inputUsername: ElementRef;
   usernameError: String = '';
-  @ViewChild('inputModalCreateUserPassword') inputModalCreateUserPassword: ElementRef;
+  @ViewChild('inputModalCreateItemPassword') inputModalCreateItemPassword: ElementRef;
   passwordError: string = '';
-  @ViewChild('inputModalCreateUserEmail') inputModalCreateUserEmail: ElementRef;
+  @ViewChild('inputModalCreateItemEmail') inputModalCreateItemEmail: ElementRef;
   emailError: string = '';
-  @ViewChild('inputModalCreateUserFirstName') inputModalCreateUserFirstName: ElementRef;
+  @ViewChild('inputModalCreateItemFirstName') inputModalCreateItemFirstName: ElementRef;
   firstNameError: string = '';
-  @ViewChild('inputModalCreateUserLastName') inputModalCreateUserLastName: ElementRef;
+  @ViewChild('inputModalCreateItemLastName') inputModalCreateItemLastName: ElementRef;
   lastNameError: string = '';
-  @ViewChild('selectModalCreateUserRole') selectModalCreateUserRole: ElementRef;
+  @ViewChild('inputModalCreateItemAddress') inputModalCreateItemAddress: ElementRef;
+  @ViewChild('inputModalCreateItemPhone') inputModalCreateItemPhone: ElementRef;
+  @ViewChild('selectModalCreateItemRole') selectModalCreateItemRole: ElementRef;
   roleError: string = '';
-  @ViewChild('buttonModalCreateUserCreate') buttonModalCreateUserCreate: ElementRef;
 
   roles: Role[];
+  userStatus: UserStatus[]
   users: User[];
 
+  //// PAGINATION VARIABLES ////
   pagination: number;
-  paginationShowUsers: User[];
+  paginationItems: any[]
+  paginationShowItems: any[];
   paginationLengh: number;
   paginationMax: number;
   paginationList: number[];
+  paginationListShow: number[];
+  paginationRow: number;
+  isNavigationContainFirstPage: boolean;
+  isNavigationContainLastPage: boolean;
+  isOnFilter: boolean;
+  //// PAGINATION VARIABLES ////
 
-  userRoles: string = 'community';
 
   constructor(
     private router: Router,
     private elementReference: ElementRef,
+    private toastr: ToastrService,
     private authService: AuthService,
     private userService: UserService,
-    private roleService: RoleService
+    private roleService: RoleService,
+    private userStatusService: UserStatusService
   ) {}
 
-  async ngOnInit(): Promise<void> {
+  public async ngOnInit(): Promise<void> {
     this.createBreadCrumb();
     this.getAllRoles();
-
-    this.pagination = 1;
-    this.users = await this.userService.getAll();
-    this.showPage(this.users, this.pagination, 10)
-    this.paginationMax = this.getTotalPages(this.users, 10)
-    this.paginationList = this.createRange(this.paginationMax);
+    this.getAllUserStatus();
+    this.ngOnCreatePagination(1, 10);
   }
 
-  createBreadCrumb(): void {
+  private createBreadCrumb(): void {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
@@ -77,60 +88,231 @@ export class ManageUserComponent implements OnInit{
     this.pages = JSON.stringify(arrayPages);
   }
 
-  async getAllRoles(): Promise<void> {
-    const roles = await this.roleService.getAll();
+  private async getAllUsers(): Promise<User[]> {
+    const response = await this.userService.getAll();
 
-    if (roles.ok) {
-      this.roles = roles.message;
+    if (response.ok) {
+      return response.message;
     } else {
-      console.log(roles.error)
+      console.log(response.error)
+    }
+
+    return [];
+  }
+
+  private async getAllRoles(): Promise<void> {
+    const response = await this.roleService.getAll();
+
+    if (response.ok) {
+      this.roles = response.message;
+    } else {
+      console.log(response.error)
     }
   }
 
-  ngOnUserDetails(user): void {
-    this.router.navigate(['/panel/manage/user', user.value.id]);
+  private async getAllUserStatus(): Promise<void> {
+    const response = await this.userStatusService.getAll();
+
+    if (response.ok) {
+      this.userStatus = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
-  ngOnPaginationNext(): void {
+  ///// PAGINATION START /////
+
+  private async ngOnCreatePagination(p1: number, p2: number): Promise<void> {
+    this.users = await this.getAllUsers();
+    this.paginationItems = this.users;
+    this.pagination = p1;
+    this.paginationRow = p2;
+    this.ngOnStartPagination(this.users);
+    this.isNavigationContainFirstPage = false;
+    
+    if (this.paginationMax < 4) {
+      this.isNavigationContainLastPage = true;
+    } else {
+      this.isNavigationContainLastPage = false;
+    }
+
+    this.isOnFilter = false;
+    this.isViewLoaded = true;
+  }
+
+  private ngOnStartPagination(p1: any[]): void {
+    this.ngOnShowPage(p1, this.pagination)
+    this.paginationMax = this.getTotalPages(p1, this.paginationRow)
+    this.paginationList = this.createRange(this.paginationMax);
+    this.paginationListShow = this.paginationList.slice(0, 3);
+  }
+
+  public ngOnClearSearchItem(): void {
+    this.inputSearchItem.nativeElement.value = '';
+    this.pagination = 1;
+    this.toastr.info('Se ha eliminado el filtrado');
+    this.isOnFilter = false;
+    this.paginationItems = this.users;
+    this.ngOnStartPagination(this.paginationItems);
+    this.ngOnNavigationStartEndPages();
+  }
+
+  public ngOnSearchItem(): void {
+    const search = this.inputSearchItem.nativeElement.value;
+
+    if (search === '') {
+      this.pagination = 1;
+      this.paginationItems = this.users;
+      this.ngOnStartPagination(this.paginationItems);
+      this.ngOnNavigationStartEndPages();
+      this.toastr.info('Se ha eliminado el filtrado');
+      this.isOnFilter = false;
+    } else {
+      this.pagination = 1;
+      this.paginationItems = this.ngOnFilterPaginationItems(search);
+      this.ngOnStartPagination(this.paginationItems);
+      this.ngOnNavigationStartEndPages();
+      this.toastr.info('Se ha aplicado el filtrado');
+      this.isOnFilter = true;
+    }
+
+    this.ngOnNavigationStartEndPages();
+  }
+
+  private ngOnFilterPaginationItems(p1: string): any[] {
+    return this.users.filter(user =>
+      String(user.id).toLowerCase().includes(p1.toLowerCase()) ||
+      user.username.toLowerCase().includes(p1.toLowerCase()) ||
+      user.first_name.toLowerCase().includes(p1.toLowerCase()) ||
+      user.last_name.toLowerCase().includes(p1.toLowerCase()) ||
+      user.id_role.label.toLowerCase().includes(p1.toLowerCase()) ||
+      user.id_user_status.label.toLowerCase().includes(p1.toLowerCase()) ||
+      String(user.created_at).toLowerCase().includes(p1.toLowerCase()) ||
+      user.email.toLowerCase().includes(p1.toLowerCase())
+    );
+  }
+
+  public ngOnItemDetails(p1: any): void {
+    this.router.navigate(['/panel/manage/user', p1.id]);
+  }
+
+  public ngOnPaginationNext(): void {
     this.pagination += 1;
 
-    this.showPage(this.users, this.pagination, 10)
+    this.ngOnShowPage(this.paginationItems, this.pagination)
+    if (this.pagination >= 3 && this.pagination < this.paginationMax) {
+      const newPaginationList = this.paginationListShow.map(page => page + 1);
+      this.paginationListShow = newPaginationList
+    }
+
+    this.ngOnNavigationStartEndPages();
   }
 
-  ngOnPaginationBack(): void {
+  public ngOnPaginationBack(): void {
     this.pagination -= 1;
 
-    this.showPage(this.users, this.pagination, 10)
-  }
-
-  ngOnPaginationItem(index: number): void {
-    this.showPage(this.users, index, 10)
-    this.pagination = index;
-    console.log(index);
-  }
-
-  showPage(list: User[], page: number, elementByPage: number): void {
-    const start = (page - 1) * elementByPage;
-    const end = start + elementByPage;
+    this.ngOnShowPage(this.paginationItems, this.pagination)
     
-    this.paginationShowUsers = list.slice(start, end);
-    this.paginationLengh = this.paginationShowUsers.length;
+    if (this.pagination >= 2 && this.pagination !== this.paginationMax - 1) {
+      const newPaginationList = this.paginationListShow.map(page => page - 1);
+      this.paginationListShow = newPaginationList
+    }
+
+    this.ngOnNavigationStartEndPages();
   }
 
-  getTotalPages(p1: User[], p2: number): number {
+  public ngOnPaginationItem(p1: number): void {
+    this.ngOnShowPage(this.paginationItems, p1)
+
+    if (p1 === 1) {
+      const firstElement = this.paginationListShow[0];
+      const asd = firstElement - 1;
+      const newPaginationList = this.paginationListShow.map(page => page - asd);
+
+      this.paginationListShow = newPaginationList;
+    } else if (this.pagination > p1) {
+      if (p1 >= 2 && p1 !== this.paginationMax - 1) {
+        const newPaginationList = this.paginationListShow.map(page => page - 1);
+        this.paginationListShow = newPaginationList
+      }
+    } else if (p1 === this.paginationMax) {
+      const lastElement = this.paginationListShow[this.paginationListShow.length - 1];
+      const asd = this.paginationMax - lastElement; 
+      const newPaginationList = this.paginationListShow.map(page => page + asd);
+
+      this.paginationListShow = newPaginationList
+    } else {
+      if (p1 >= 3 && p1 < this.paginationMax) {
+        const newPaginationList = this.paginationListShow.map(page => page + 1);
+        this.paginationListShow = newPaginationList
+      }
+    }
+
+    this.ngOnNavigationStartEndPages();
+
+    this.pagination = p1;
+  }
+
+  private ngOnShowPage(p1: any[], p2: number): void {
+    const start = (p2 - 1) * this.paginationRow;
+    const end = start + this.paginationRow;
+    
+    this.paginationShowItems = p1.slice(start, end);
+    this.paginationLengh = this.paginationShowItems.length;
+  }
+
+  private ngOnNavigationStartEndPages(): void {
+    if (this.paginationListShow.includes(this.paginationMax)) {
+      this.isNavigationContainLastPage = true;
+    } else {
+      this.isNavigationContainLastPage = false;
+    }
+
+    if (this.paginationListShow.includes(1)) {
+      this.isNavigationContainFirstPage = true;
+    } else {
+      this.isNavigationContainFirstPage = false;
+    }
+  }
+
+  private getTotalPages(p1: any[], p2: number): number {
+    if (p1.length === 0) {
+      return 1;
+    }
+    
     return Math.ceil(p1.length / p2);
   }
 
-  createRange(number){
-    return new Array(number).fill(0)
-      .map((n, index) => index + 1);
+  private createRange(number){
+    return new Array(number).fill(0).map((n, index) => index + 1);
   }
 
-  UTCToChileTime(p1: Date, p2: boolean): string {
-    return Utils.convertToChileTime(p1, p2);
+  ///// PAGINATION END /////
+
+  ///// MODAL START ///// 
+
+  public ngOnCreateModalItem(): void {
+    this.modalCreateItemInstance = new bootstrap.Modal(this.modalCreateItem.nativeElement);
+
+    this.modalCreateItemInstance.show();
+  } 
+
+  public ngOnModelCreateItem(): void {
+    const username = this.inputUsername.nativeElement.value.toLowerCase();
+    const password = this.inputModalCreateItemPassword.nativeElement.value
+    const email = this.inputModalCreateItemEmail.nativeElement.value.toLowerCase();
+    const firstName = this.inputModalCreateItemFirstName.nativeElement.value;
+    const lastName = this.inputModalCreateItemLastName.nativeElement.value;
+    const address = this.inputModalCreateItemAddress.nativeElement.value;
+    const phone = this.inputModalCreateItemPhone.nativeElement.value;
+    const role = <Role>this.roles.find(role => role.name === this.selectModalCreateItemRole.nativeElement.value);
+    const userStatus = <UserStatus>this.userStatus.find(status => status.id === 1);
+    const user = new User(username, password, email, firstName, lastName, address, phone, null, role, userStatus, new Date());
+
+    this.ngOnCreateItem(user);
   }
 
-  async ngOnCreateUser(user: User): Promise<void> {
+  private async ngOnCreateItem(user: User): Promise<void> {
     let success = 0;
 
     if (user.username.trim() === '') {
@@ -187,12 +369,11 @@ export class ManageUserComponent implements OnInit{
       const userCreated = await this.userService.create(user);
 
       if (userCreated.ok) {
-        this.modalCreateUserInstance.hide();
+        this.modalCreateItemInstance.hide();
         this.users.push(userCreated.message);
-        console.log(this.users);
-        this.showPage(this.users, this.pagination, 10);
+        this.ngOnShowPage(this.paginationItems, this.pagination);
+        this.toastr.success('Se ha creado el usuario con exito');
       } else {
-
         if (Object.keys(userCreated.error).length > 0) {
           this.usernameError = userCreated.error.username;
           this.emailError = userCreated.error.email;
@@ -201,42 +382,29 @@ export class ManageUserComponent implements OnInit{
     }
   }
 
-  @HostListener('input', ['$event']) onInput(event: Event) {
-    let username = this.inputModalCreateUserUsername.nativeElement as HTMLInputElement;
+  ///// MODAL END /////
 
-    if (event.target === username) {
-
-      Utils.formatRUN(username);
-    }
+  public UTCToChileTime(p1: Date, p2: boolean): string {
+    return Utils.convertToChileTime(p1, p2);
   }
 
-  @HostListener('click', ['$event']) onClick(event: Event) {
-    if (this.buttonCreateUser && event.target === this.buttonCreateUser.nativeElement) {
-      this.modalCreateUserInstance = new bootstrap.Modal(this.modalCreateUser.nativeElement);
+  public ngOnFormatUsername(): void {
+    Utils.formatRUN(this.inputUsername.nativeElement);
+  }
 
-      this.modalCreateUserInstance.show();
-    }
-
-    if (this.buttonModalCreateUserCreate && event.target === this.buttonModalCreateUserCreate.nativeElement) {
-      const username = this.inputModalCreateUserUsername.nativeElement.value.toLowerCase();
-      const password = this.inputModalCreateUserPassword.nativeElement.value
-      const email = this.inputModalCreateUserEmail.nativeElement.value.toLowerCase();
-      const firstName = this.inputModalCreateUserFirstName.nativeElement.value;
-      const lastName = this.inputModalCreateUserLastName.nativeElement.value;
-      const role = <Role>this.roles.find(role => role.name === this.selectModalCreateUserRole.nativeElement.value);
-      //const user = new User(username, password, email, firstName, lastName, role);
-
-      //this.ngOnCreateUser(user); DISLAIK
-    }
+  public ngOnInputValidatePhone(): void {
+    Utils.validatePhoneNumber(this.inputModalCreateItemPhone.nativeElement)
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {
-    this.inputModalCreateUserUsername.nativeElement.value = '';
-    this.inputModalCreateUserPassword.nativeElement.value = '';
-    this.inputModalCreateUserEmail.nativeElement.value = '';
-    this.inputModalCreateUserFirstName.nativeElement.value = '';
-    this.inputModalCreateUserLastName.nativeElement.value = '';
-    this.selectModalCreateUserRole.nativeElement.value = '';
+    this.inputUsername.nativeElement.value = '';
+    this.inputModalCreateItemPassword.nativeElement.value = '';
+    this.inputModalCreateItemEmail.nativeElement.value = '';
+    this.inputModalCreateItemFirstName.nativeElement.value = '';
+    this.inputModalCreateItemLastName.nativeElement.value = '';
+    this.inputModalCreateItemAddress.nativeElement.value = '';
+    this.inputModalCreateItemPhone.nativeElement.value = '';
+    this.selectModalCreateItemRole.nativeElement.value = '';
     this.usernameError = '';
     this.passwordError = '';
     this.emailError = '';

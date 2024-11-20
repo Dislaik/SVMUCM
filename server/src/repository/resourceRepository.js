@@ -8,6 +8,14 @@ class ResourceRepository {
   async findById(id) {
     return await Resource.findByPk(id);
   }
+
+  async findByName(name) {
+    return await Resource.findOne({ where: { name: name } });
+  }
+
+  async findByLabel(label) {
+    return await Resource.findOne({ where: { label: label } });
+  }
   
   async create(data) {
     return await Resource.create(data);
@@ -31,6 +39,16 @@ class ResourceRepository {
     }
 
     return await resource.destroy();
+  }
+
+  async existsByName(name) {
+    const resource = await this.findByName(name);
+
+    if (!resource) {
+      return false;
+    }
+
+    return true;
   }
 }
 

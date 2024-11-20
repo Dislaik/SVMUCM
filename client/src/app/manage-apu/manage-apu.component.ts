@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { APU } from '../architecture/model/apu';
 import { APUService } from '../architecture/service/apu.service';
 import { Utils } from '../utils';
+import { ToastrService } from 'ngx-toastr';
 
 declare var bootstrap: any;
 
@@ -15,39 +16,43 @@ declare var bootstrap: any;
 export class ManageAPUComponent implements OnInit {
   title: string = "APU";
   pages: string;
+  isViewLoaded: boolean = false;
 
-  @ViewChild('modalCreateAPU') modalCreateAPU: ElementRef;
-  modalCreateAPUInstance: any;
+  @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
+  modalCreateItemInstance: any;
+  @ViewChild('inputSearchItem') inputSearchItem: ElementRef;
+
   @ViewChild('inputName') inputName: ElementRef;
   nameError: string = '';
   @ViewChild('inputLabel') inputLabel: ElementRef;
   labelError: string = '';
   @ViewChild('inputDescription') inputDescription: ElementRef;
 
-
   apus: APU[];
-  resourceCreateAt: string;
 
-
+  //// PAGINATION VARIABLES ////
   pagination: number;
-  paginationShowAPUS: APU[];
+  paginationItems: any[]
+  paginationShowItems: any[];
   paginationLengh: number;
   paginationMax: number;
   paginationList: number[];
+  paginationListShow: number[];
+  paginationRow: number;
+  isNavigationContainFirstPage: boolean;
+  isNavigationContainLastPage: boolean;
+  isOnFilter: boolean;
+  //// PAGINATION VARIABLES ////
 
   constructor(
     private router: Router,
+    private toastr: ToastrService,
     private apuService: APUService
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.createBreadCrumb();
-    await this.getAllResources();
-
-    this.pagination = 1;
-    this.showPage(this.apus, this.pagination, 10)
-    this.paginationMax = this.getTotalPages(this.apus, 10)
-    this.paginationList = this.createRange(this.paginationMax);
+    this.ngOnCreatePagination(1, 10);
   }
 
   private createBreadCrumb(): void {
@@ -60,28 +65,190 @@ export class ManageAPUComponent implements OnInit {
     this.pages = JSON.stringify(arrayPages);
   }
 
-  public UTCToChileTime(p1: Date, p2: boolean): string {
-    return Utils.convertToChileTime(p1, p2);
+  private async getAllAPUs(): Promise<APU[]> {
+    const response = await this.apuService.getAll();
+
+    if (response.ok) {
+      return response.message
+    } else {
+      console.log(response.error)
+    }
+
+    return [];
   }
 
-  private async getAllResources(): Promise<void> {
-    const resources = await this.apuService.getAll();
+  ///// PAGINATION START /////
 
-    if (resources.ok) {
-      this.apus = resources.message
-      console.log(this.apus)
+  private async ngOnCreatePagination(p1: number, p2: number): Promise<void> {
+    this.apus = await this.getAllAPUs();
+    this.paginationItems = this.apus;
+    this.pagination = p1;
+    this.paginationRow = p2;
+    this.ngOnStartPagination(this.paginationItems);
+    this.isNavigationContainFirstPage = false;
+    
+    if (this.paginationMax < 4) {
+      this.isNavigationContainLastPage = true;
     } else {
-      console.log(resources.error)
+      this.isNavigationContainLastPage = false;
+    }
+
+    this.isOnFilter = false;
+    this.isViewLoaded = true;
+  }
+
+  private ngOnStartPagination(p1: any[]): void {
+    this.ngOnShowPage(p1, this.pagination)
+    this.paginationMax = this.getTotalPages(p1, this.paginationRow)
+    this.paginationList = this.createRange(this.paginationMax);
+    this.paginationListShow = this.paginationList.slice(0, 3);
+  }
+
+  public ngOnClearSearchItem(): void {
+    this.inputSearchItem.nativeElement.value = '';
+    this.pagination = 1;
+    this.toastr.info('Se ha eliminado el filtrado');
+    this.isOnFilter = false;
+    this.paginationItems = this.apus;
+    this.ngOnStartPagination(this.paginationItems);
+    this.ngOnNavigationStartEndPages();
+  }
+
+  public ngOnSearchItem(): void {
+    const search = this.inputSearchItem.nativeElement.value;
+
+    if (search === '') {
+      this.pagination = 1;
+      this.paginationItems = this.apus;
+      this.ngOnStartPagination(this.paginationItems);
+      this.ngOnNavigationStartEndPages();
+      this.toastr.info('Se ha eliminado el filtrado');
+      this.isOnFilter = false;
+    } else {
+      this.pagination = 1;
+      this.paginationItems = this.ngOnFilterPaginationItems(search);
+      this.ngOnStartPagination(this.paginationItems);
+      this.ngOnNavigationStartEndPages();
+      this.toastr.info('Se ha aplicado el filtrado');
+      this.isOnFilter = true;
+    }
+
+    this.ngOnNavigationStartEndPages();
+  }
+
+  private ngOnFilterPaginationItems(p1: string): any[] {
+    return this.apus.filter(resource =>
+      String(resource.id).toLowerCase().includes(p1.toLowerCase()) ||
+      resource.name.toLowerCase().includes(p1.toLowerCase()) ||
+      resource.label.toLowerCase().includes(p1.toLowerCase()) ||
+      resource.description.toLowerCase().includes(p1.toLowerCase())
+    );
+  }
+
+  public ngOnItemDetails(p1: any): void {
+    this.router.navigate(['/panel/manage/apu', p1.id]);
+  }
+
+  public ngOnPaginationNext(): void {
+    this.pagination += 1;
+
+    this.ngOnShowPage(this.paginationItems, this.pagination)
+    if (this.pagination >= 3 && this.pagination < this.paginationMax) {
+      const newPaginationList = this.paginationListShow.map(page => page + 1);
+      this.paginationListShow = newPaginationList
+    }
+
+    this.ngOnNavigationStartEndPages();
+  }
+
+  public ngOnPaginationBack(): void {
+    this.pagination -= 1;
+
+    this.ngOnShowPage(this.paginationItems, this.pagination)
+    
+    if (this.pagination >= 2 && this.pagination !== this.paginationMax - 1) {
+      const newPaginationList = this.paginationListShow.map(page => page - 1);
+      this.paginationListShow = newPaginationList
+    }
+
+    this.ngOnNavigationStartEndPages();
+  }
+
+  public ngOnPaginationItem(p1: number): void {
+    this.ngOnShowPage(this.paginationItems, p1)
+
+    if (p1 === 1) {
+      const firstElement = this.paginationListShow[0];
+      const asd = firstElement - 1;
+      const newPaginationList = this.paginationListShow.map(page => page - asd);
+
+      this.paginationListShow = newPaginationList;
+    } else if (this.pagination > p1) {
+      if (p1 >= 2 && p1 !== this.paginationMax - 1) {
+        const newPaginationList = this.paginationListShow.map(page => page - 1);
+        this.paginationListShow = newPaginationList
+      }
+    } else if (p1 === this.paginationMax) {
+      const lastElement = this.paginationListShow[this.paginationListShow.length - 1];
+      const asd = this.paginationMax - lastElement; 
+      const newPaginationList = this.paginationListShow.map(page => page + asd);
+
+      this.paginationListShow = newPaginationList
+    } else {
+      if (p1 >= 3 && p1 < this.paginationMax) {
+        const newPaginationList = this.paginationListShow.map(page => page + 1);
+        this.paginationListShow = newPaginationList
+      }
+    }
+
+    this.ngOnNavigationStartEndPages();
+
+    this.pagination = p1;
+  }
+
+  private ngOnShowPage(p1: any[], p2: number): void {
+    const start = (p2 - 1) * this.paginationRow;
+    const end = start + this.paginationRow;
+    
+    this.paginationShowItems = p1.slice(start, end);
+    this.paginationLengh = this.paginationShowItems.length;
+  }
+
+  private ngOnNavigationStartEndPages(): void {
+    if (this.paginationListShow.includes(this.paginationMax)) {
+      this.isNavigationContainLastPage = true;
+    } else {
+      this.isNavigationContainLastPage = false;
+    }
+
+    if (this.paginationListShow.includes(1)) {
+      this.isNavigationContainFirstPage = true;
+    } else {
+      this.isNavigationContainFirstPage = false;
     }
   }
 
-  public ngOnModalCreateAPU(): void {
-    this.modalCreateAPUInstance = new bootstrap.Modal(this.modalCreateAPU.nativeElement);
-
-    this.modalCreateAPUInstance.show();
+  private getTotalPages(p1: any[], p2: number): number {
+    if (p1.length === 0) {
+      return 1;
+    }
+    
+    return Math.ceil(p1.length / p2);
   }
 
-  public ngOnCreateAPUSubmit(): void {
+  private createRange(number){
+    return new Array(number).fill(0).map((n, index) => index + 1);
+  }
+
+  ///// PAGINATION END /////
+
+  public ngOnCreateModalItem(): void {
+    this.modalCreateItemInstance = new bootstrap.Modal(this.modalCreateItem.nativeElement);
+
+    this.modalCreateItemInstance.show();
+  }
+
+  public ngOnModelCreateItem(): void {
     const name = this.inputName.nativeElement.value.toLowerCase();
     const label = this.inputLabel.nativeElement.value
     const description = this.inputDescription.nativeElement.value;
@@ -89,7 +256,7 @@ export class ManageAPUComponent implements OnInit {
     let success = 0;
 
     if (name.trim() === '') {
-      this.nameError = 'Debe ingresar un nombre'
+      this.nameError = 'Debe ingresar un identificador'
     } else {
       this.nameError = '';
       success+= 1;
@@ -102,79 +269,47 @@ export class ManageAPUComponent implements OnInit {
       success+= 1;
     }
 
-    if (description.trim() === '') {
-      descriptionAlt = 'Sin Descripción'
-    } else {
-      descriptionAlt = description
-    }
-
     if (success === 2) {
-      const resource = new APU(name, label, descriptionAlt);
+      const apu = new APU(name, label, description, new Date());
 
-      this.ngOnCreateAPU(resource);
+      this.ngOnCreateItem(apu);
     }
   }
 
-  private async ngOnCreateAPU(object: APU): Promise<void> {
-    const response = await this.apuService.create(object);
+  private async ngOnCreateItem(p1: APU): Promise<void> {
+    const response = await this.apuService.create(p1);
 
     if (response.ok) {
-      this.modalCreateAPUInstance.hide();
+      this.modalCreateItemInstance.hide();
       this.apus.push(response.message);
-      this.showPage(this.apus, this.pagination, 10);
+      this.ngOnShowPage(this.paginationItems, this.pagination);
+      this.toastr.success('Se ha creado la APU con exito');
     } else {
-      console.log(response.error)
+      if (Object.keys(response.error).length > 0) {
+        this.nameError = response.error.name;
+      }
     }
   }
 
-  
-  ngOnClickAPUDetails(apu): void {
-    console.log(apu.value.id);
-    this.router.navigate([this.router.url + '/', apu.value.id]);
-  }
-
-  ngOnPaginationNext(): void {
-    this.pagination += 1;
-
-    this.showPage(this.apus, this.pagination, 10)
-  }
-
-  ngOnPaginationBack(): void {
-    this.pagination -= 1;
-
-    this.showPage(this.apus, this.pagination, 10)
-  }
-
-  ngOnPaginationItem(index: number): void {
-    this.showPage(this.apus, index, 10)
-    this.pagination = index;
-  }
-
-  showPage(list: APU[], page: number, elementByPage: number): void {
-    const start = (page - 1) * elementByPage;
-    const end = start + elementByPage;
-    
-    if (list) {
-      this.paginationShowAPUS = list.slice(start, end);
-      this.paginationLengh = this.paginationShowAPUS.length;
+  public checkDescription(p1: string): string {
+    if (p1.trim() === '') {
+      return "Sin descripción";
     }
+
+    return p1;
   }
 
-  getTotalPages(p1: APU[], p2: number): number {
-    if (p1) {
-      return Math.ceil(p1.length / p2);
-    }
-    return null;
-  }
-
-  createRange(number){
-    return new Array(number).fill(0)
-      .map((n, index) => index + 1);
-  }
-
-  priceCLP(event: Event): void {
+  public priceCLP(event: Event): void {
     const input = event.target as HTMLInputElement;
     Utils.formatCLP(input);
+  }
+
+  public UTCToChileTime(p1: Date, p2: boolean): string {
+    return Utils.convertToChileTime(p1, p2);
+  }
+
+  public nameIdentifier(): void {
+    Utils.formatNameIdentifier(this.inputName.nativeElement);
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {

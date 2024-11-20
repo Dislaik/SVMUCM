@@ -7,9 +7,9 @@ class UserController {
     try {
       const users = await userService.getAll();
       
-      response.status(200).json(users);
+      response.status(200).json({ ok: true, message: users});
     } catch (error) {
-      response.status(500).json({ error: 'Error fetching users' });
+      response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -69,11 +69,13 @@ class UserController {
           phone: body.phone,
           image: 'http://localhost:8080/attachments/avatarDefault.png',
           id_role: body.id_role.id,
-          created_at: utils.getCurrentUTCTimeZone()
+          id_user_status: body.id_user_status.id,
+          created_at: body.created_at
         }
 
         let user = await userService.create(userObject);
         user.id_role = body.id_role;
+        user.id_user_status = body.id_user_status;
 
         return response.status(200).json({ ok: true, message: user});
       }
@@ -90,7 +92,7 @@ class UserController {
       const { body } = request;
       const user = await userService.getById(id)
       let password;
-      console.log(body.password === user.password)
+
       if (body.password === user.password) {
         password = user.password;
       } else {
@@ -108,9 +110,9 @@ class UserController {
         phone: body.phone,
         image: 'http://localhost:8080/attachments/avatarDefault.png',
         id_role: body.id_role.id,
+        id_user_status: body.id_user_status.id,
         created_at: body.created_at
       } 
-      console.log(userObject)
 
       const userUpdate = await userService.update(id, userObject);
       if (!userUpdate) {
@@ -130,9 +132,9 @@ class UserController {
 
       await userService.delete(id);
 
-      res.status(200).json(user);
+      response.status(200).json(user);
     } catch (error) {
-      res.status(404).json({ error: error.message });
+      response.status(404).json({ error: error.message });
     }
   }
 }

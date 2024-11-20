@@ -71,15 +71,15 @@ class FacultyController {
     try {
       const { id } = request.params;
       const { body } = request;
-
       const faculty = await FacultyService.update(id, body);
+
       if (!faculty) {
-        return response.status(404).json({ message: 'Role not found' });
+        return response.status(404).json({ ok: false, error: 'Sede no encontrada' });
       }
 
-      response.status(200).json(faculty);
+      return response.status(200).json({ ok: true, message: faculty });
     } catch (error) {
-      response.status(500).json({ error: 'Error updating faculty' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 

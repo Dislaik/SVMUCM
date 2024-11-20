@@ -10,9 +10,9 @@ export class UserService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public getAll(): Promise<User[]> {
+  public getAll(): Promise<any> {
     return new Promise((resolve) => {
-      this.httpClient.get<User[]>(this.URL).subscribe(
+      this.httpClient.get<any>(this.URL).subscribe(
         data => {
           resolve(data)
         },

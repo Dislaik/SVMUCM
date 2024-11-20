@@ -43,7 +43,7 @@ export class PanelComponent implements OnInit{
 
   ngAfterViewInit() {
       // Inicializa el gráfico
-      this.chartPopularCareer = echarts.init(this.chartPopularCareerDOM.nativeElement);
+      //this.chartPopularCareer = echarts.init(this.chartPopularCareerDOM.nativeElement);
       //this.chartInstance.setOption(this.chartOptionPopularCarreer); // Configura las opciones iniciales
   }
 
@@ -54,28 +54,32 @@ export class PanelComponent implements OnInit{
     };
     this.pages = JSON.stringify(arrayPages);
   }
-  
-  async ngOnInit(): Promise<void> {
-    this.createBreadCrumb();
 
-    this.users = await this.userService.getAll();
-    
-    if (this.users) {
+  private async echartsUser(): Promise<void> {
+    const response = await this.userService.getAll();
+
+    if (response.ok) {
+      this.users = response.message;
       this.isChartUsersLoaded = true;
       const countUsers = this.users.length;
-      this.usersByRole = this.users.reduce((acc: { [key: string]: number }, user: User) => {
-        const asd = <string>user.id_role.name;
 
-        if (acc[asd]) {
-          acc[asd]++;
+      this.usersByRole = this.users.reduce((acc: { [key: string]: { count: number; label: string } }, user: User) => {
+        const roleName = <string>user.id_role.name; // Nombre del rol
+        const roleLabel = <string>user.id_role.label; // Etiqueta del rol
+      
+        if (acc[roleName]) {
+          acc[roleName].count++;
         } else {
-          acc[asd] = 1;
+          acc[roleName] = {
+            count: 1,
+            label: roleLabel,
+          };
         }
-
+      
         return acc;
       }, {});
 
-      console.log(this.usersByRole)
+      console.log()
       
       this.chartOptionsUsers = {
         title: {
@@ -96,14 +100,14 @@ export class PanelComponent implements OnInit{
             type: 'pie',
             radius: '50%',
             data: [
-              { value: this.usersByRole['admin'], name: 'Administrador', label: { show: false }, labelLine: { show: false } },
-              { value: 0, name: 'Coordinador', label: {show:true} },
-              { value: 0, name: 'Vinculador con el medio' },
-              { value: 0, name: 'Decano' },
-              { value: 0, name: 'Jefe de carrera' },
-              { value: 0, name: 'Docente' },
-              { value: 0, name: 'Alumno voluntario' },
-              { value: this.usersByRole['community'], name: 'Comunidad' },
+              { value: this.usersByRole['admin'] ? this.usersByRole['admin'].count : 0, name: 'Administrador', label: { show: false }, labelLine: { show: false } },
+              { value: this.usersByRole['externalrelationscoordinator'] ? this.usersByRole['externalrelationscoordinator'].count : 0, name: 'Coordinador', label: {show:true} },
+              { value: this.usersByRole['externalrelations'] ? this.usersByRole['externalrelations'].count : 0, name: 'Vinculador con el medio' },
+              { value: this.usersByRole['dean'] ? this.usersByRole['dean'].count : 0, name: 'Decano' },
+              { value: this.usersByRole['careerdirector'] ? this.usersByRole['careerdirector'].count : 0, name: 'Jefe de carrera' },
+              { value: this.usersByRole['professor'] ? this.usersByRole['professor'].count : 0, name: 'Docente' },
+              { value: this.usersByRole['student'] ? this.usersByRole['student'].count : 0, name: 'Alumno voluntario' },
+              { value: this.usersByRole['community'] ? this.usersByRole['community'].count : 0, name: 'Comunidad' },
             ],
             emphasis: {
               itemStyle: {
@@ -115,12 +119,16 @@ export class PanelComponent implements OnInit{
           }
         ]
       };
+    } else {
+      console.log(response.error)
     }
+  }
 
-    const resultProject = await this.projectService.getAll();
+  private async echartsProject(): Promise<void> {
+    const response = await this.projectService.getAll();
 
-    if (resultProject.ok) {
-      this.projects = resultProject.message;
+    if (response.ok) {
+      this.projects = response.message;
       const countProjects = this.projects.length;
 
       this.projectsByStatus = this.projects.reduce((acc: { [key: string]: number }, project: Project) => {
@@ -170,9 +178,14 @@ export class PanelComponent implements OnInit{
         ]
       };
     } else {
-      console.log(resultProject.error);
+      console.log(response.error)
     }
-
+  }
+  
+  public ngOnInit(): void {
+    this.createBreadCrumb();
+    this.echartsUser();
+    this.echartsProject();
     
 
     // let data: DataItem[] = [];

@@ -104,7 +104,7 @@
                   Fecha de inicio:
                 </div>
                 <div class="col-6 ps-2">
-                  {{project.start_date}}
+                  {{UTCToChileTime(project.start_date, true)}}
                 </div>
               </div>
               <div class="row mb-2">
@@ -112,7 +112,7 @@
                   Fecha de termino:
                 </div>
                 <div class="col-6 ps-2">
-                  {{project.end_date}}
+                  {{UTCToChileTime(project.end_date, true)}}
                 </div>
               </div>
               <div class="row mb-2">
@@ -136,7 +136,7 @@
                   Creado en:
                 </div>
                 <div class="col-6 ps-2">
-                  {{project.created_at}}
+                  {{UTCToChileTime(project.created_at, false)}}
                 </div>
               </div>
             </div>
@@ -150,6 +150,26 @@
       </div>
       <div class="row mb-2">
         <div class="card profile-general-info ms-2 shadow">
+          <div class="card-header"><i class="bi bi-stack"></i>Asignacion de docentes</div>
+          <div class="card-body">
+            <div class="add-apu d-flex align-items-center justify-content-center">
+              <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir docente</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="card profile-general-info ms-2 shadow">
+          <div class="card-header"><i class="bi bi-stack"></i>Asignacion de alumnos voluntarios</div>
+          <div class="card-body">
+            <div class="add-apu d-flex align-items-center justify-content-center">
+              <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir Alumno voluntario</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="card profile-general-info ms-2 shadow">
           <div class="card-header"><i class="bi bi-stack"></i>APUs Asociadas</div>
           <div class="card-body">
             <div *ngFor="let item of projectAPUs;" class="apu-container mb-2">
@@ -157,9 +177,11 @@
                 <div class="d-flex gap-2">
                   <i class="bi bi-box-seam-fill"></i>{{item.id_apu.label}}
                 </div>
-                <!-- <button type="button" class="btn btn-remove-resource-apu" (click)="ngOnClickOpenModal()"><i class="bi bi-x-circle-fill"></i>Eliminar</button> -->
+                <button type="button" class="btn btn-remove-resource-apu" (click)="ngOnClickOpenModal()"><i class="bi bi-x-circle-fill"></i>Eliminar</button> 
               </div>
-              Mostrar recursos aqui*
+              <div *ngFor="let apu of apuResources[item.id_apu.id];">
+                {{apu.id_resource.label}} - x{{apu.amount}}
+              </div>
             </div>
             <div class="add-apu d-flex align-items-center justify-content-center">
               <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir APU</button>

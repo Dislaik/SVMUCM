@@ -12,6 +12,7 @@ const City = require('./model/city');
 const Faculty = require('./model/faculty');
 const Career = require('./model/career');
 const projectStatus = require('./model/projectStatus');
+const UserStatus = require('./model/userStatus');
 const port = 8080;
 const app = express();
 
@@ -141,11 +142,16 @@ async function initTable() {
   await Role.findOrCreate({ where: {name: 'professor'}, defaults: {label: 'Docente'} });
   await Role.findOrCreate({ where: {name: 'student'}, defaults: {label: 'Alumno voluntario'} });
   await Role.findOrCreate({ where: {name: 'community'}, defaults: {label: 'Comunidad'} });
-  await User.findOrCreate({ where: { username: '20.349.272-3' }, defaults: {password: await authentication.cryptPassword('123'), email: 'matias.salas@alu.ucm.cl', first_name: 'Matias Nicolas', last_name: 'Salas Sepulveda', address: 'Santa María 660', phone: '+56930853894', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 1, created_at: new Date()} })
-  await User.findOrCreate({ where: { username: '20.564.236-6' }, defaults: {password: await authentication.cryptPassword('123'), email: 'alex.gajardo@alu.ucm.cl', first_name: 'Alex Nicolas', last_name: 'Gajardo Sanchez', address: '9 Ote. 30 sur Pje. 31 493 Villa Brisas Del Maule', phone: '+56936341033', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 8, created_at: new Date()} })
-  await Headquarter.findOrCreate({ where: {name: 'ucm1'}, defaults: {label: 'Campus San Miguel', created_at: new Date()} });
-  await Headquarter.findOrCreate({ where: {name: 'ucm2'}, defaults: {label: 'Campus Nuestra Señora del Carmen', created_at: new Date()} });
-  await Headquarter.findOrCreate({ where: {name: 'ucm3'}, defaults: {label: 'Campus San Isidro', created_at: new Date()} });
+  await UserStatus.findOrCreate({ where: {name: 'active'}, defaults: {label: 'Activo'} });
+  await UserStatus.findOrCreate({ where: {name: 'inactive'}, defaults: {label: 'Inactivo'} });
+  await User.findOrCreate({ where: { username: '20.349.272-3' }, defaults: {password: await authentication.cryptPassword('123'), email: 'matias.salas@alu.ucm.cl', first_name: 'Matias Nicolas', last_name: 'Salas Sepulveda', address: 'Santa María 660', phone: '+56930853894', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 1, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '20.564.236-6' }, defaults: {password: await authentication.cryptPassword('123'), email: 'alex.gajardo@alu.ucm.cl', first_name: 'Alex Nicolas', last_name: 'Gajardo Sanchez', address: '9 Ote. 30 sur Pje. 31 493 Villa Brisas Del Maule', phone: '+56936341033', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 8, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '8.698.796-1' }, defaults: {password: await authentication.cryptPassword('123'), email: 'mjarur@ucm.cl', first_name: 'Mary Carmen', last_name: 'Jarur Muñoz', address: 'Chorrillos 1167', phone: '+56712203306', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 6, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '7.817.164-2' }, defaults: {password: await authentication.cryptPassword('123'), email: 'haraya@ucm.cl', first_name: 'Hugo Antonio', last_name: 'Araya Carrasco', address: 'Vi Galilea 9 Pte 0 228', phone: '+56712633436', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 5, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '16.303.922-2' }, defaults: {password: await authentication.cryptPassword('123'), email: 'ccastrob@ucm.cl', first_name: 'Carlos Andres', last_name: 'Castro Bustamante', address: 'Mataquito 90 Licanten', phone: null, image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 5, id_user_status: 1, created_at: new Date()} });
+  await Headquarter.findOrCreate({ where: {name: 'ucm1'}, defaults: {label: 'Campus San Miguel'} });
+  await Headquarter.findOrCreate({ where: {name: 'ucm2'}, defaults: {label: 'Campus Nuestra Señora del Carmen'} });
+  await Headquarter.findOrCreate({ where: {name: 'ucm3'}, defaults: {label: 'Campus San Isidro'} });
   await Faculty.findOrCreate({ where: {name: 'medicina'}, defaults: {label: 'Facultad de Medicina'} });
   await Faculty.findOrCreate({ where: {name: 'educacion'}, defaults: {label: 'Facultad de Ciencias de la Educación'} })
   await Faculty.findOrCreate({ where: {name: 'salud'}, defaults: {label: 'Facultad de Ciencias de la Salud'} });
@@ -216,25 +222,41 @@ async function initTable() {
   await projectStatus.findOrCreate({ where: {name: 'rejected'}, defaults: {label: 'Rechazado'} });
 }
 
-/// CREAR SOLICITUD, CAMBIAR LOS CURSOS X PROYECTOS
-/// CREAR ESTATUS DEL PROYECTO (EN REVISION, RECHAZADO, APROBADO)
-// HABLAR DE CARACTERISTICAS, MEDIA PAGINA APROXIMADAMENTE HABLAR DE LOS FRONTS, EXPLICAR DETALLES BENEFICIOS, 
-// CONSIDERANDO LOS BENEFICIOS DE ANGULAR, (PORQUE USAMOS ANGULAR), SE ALINIAN A LAS NECESIDADES DE ESTE PROYECTO, 
-// HABLAR DE OTROS FRAMEWORKS DE FRONTS Y EL POQUUE OCUPAOS ANGULAR (HABLAR EL ORIGEN, BENEFCIOS Y CARACTERISTICAS)
-// BENEFICIOS EN FORMA DE VIÑETAS
-// OCUPAR GRAFICOS REFERENCIA, TOP EN BUSQUEDAS
-// DESARROLLO DE HABILIDADES PROFESIONALES, MERCADO LABORAR CHILENO ANGULAR, DECISIONES TECNICAS,
-// NODE.JS HABLAR DEL Y LUEGO DE EXPRESS EN BACKEND
-// CUADROS COMPARATIVOS, TENDECIA A NIVEL DE CHILE, 
-// SECCION DE CONTROL DE VERSIONES, HABLAR DE ORIGEN, EL PORQUE SIRVE EL CONTROL DE VERSION, HABLAR DE LOS DISTINTOS VERSIONES DE CONTROL DE VERSIONES
-// BACKEND HABLAR DE POSTMAN, HERRAMIENTAS PARA PROBAR EL BACKEND,
-// introduccion conceptos BASCISO ,ANTES DE CONTINUAS SE HACE NECESARIO LA DEFINICION DE ALGUNOS CONCEPTOS
-//  CAP 2, ABAJO DE INTRODUCCION , CONCEPTOS FUNDAMENTALES (VIÑETA) (REFERENCIA, DE DONDE SE SACO)
-// METODOLOGIA- HABLAR DE OTRAS METOLOGIAS, HABLAR DE PRO Y CONTRAS, HABLARA DE SCRUM, EL PORQUE SE ELIGIO ESA METOLOGIA
-// INDICAR ESCUELA EN SOLICITUD DE PROYECTO
-// LISTADO DE CARRERAS DESDE LA FACULTAD SELECCIONADA
+
+// HABLAR DE CARACTERISTICAS, MEDIA PAGINA APROXIMADAMENTE HABLAR DE LOS FRONTS, EXPLICAR DETALLES BENEFICIOS, -- DOCUMENTO
+
+// CONSIDERANDO LOS BENEFICIOS DE ANGULAR, (PORQUE USAMOS ANGULAR), SE ALINIAN A LAS NECESIDADES DE ESTE PROYECTO,  -- DOCUMENTO
+
+// HABLAR DE OTROS FRAMEWORKS DE FRONTS Y EL POQUUE OCUPAOS ANGULAR (HABLAR EL ORIGEN, BENEFCIOS Y CARACTERISTICAS) -- DOCUMENTO
+
+// BENEFICIOS EN FORMA DE VIÑETAS -- DOCUMENTO
+
+// OCUPAR GRAFICOS REFERENCIA, TOP EN BUSQUEDAS -- DOCUMENTO
+
+// DESARROLLO DE HABILIDADES PROFESIONALES, MERCADO LABORAR CHILENO ANGULAR, DECISIONES TECNICAS, -- DOCUMENTO
+
+// NODE.JS HABLAR DEL Y LUEGO DE EXPRESS EN BACKEND -- DOCUMENTO
+
+// CUADROS COMPARATIVOS, TENDECIA A NIVEL DE CHILE -- DOCUMENTO
+
+// SECCION DE CONTROL DE VERSIONES, HABLAR DE ORIGEN, EL PORQUE SIRVE EL CONTROL DE VERSION, HABLAR DE LOS DISTINTOS VERSIONES DE CONTROL DE VERSIONES -- DOCUMENTO
+
+// BACKEND HABLAR DE POSTMAN, HERRAMIENTAS PARA PROBAR EL BACKEND, -- DOCUMENTO
+
+// introduccion conceptos BASCISO ,ANTES DE CONTINUAS SE HACE NECESARIO LA DEFINICION DE ALGUNOS CONCEPTOS -- DOCUMENTO
+
+//  CAP 2, ABAJO DE INTRODUCCION , CONCEPTOS FUNDAMENTALES (VIÑETA) (REFERENCIA, DE DONDE SE SACO) -- DOCUMENTO
+
+// METODOLOGIA- HABLAR DE OTRAS METOLOGIAS, HABLAR DE PRO Y CONTRAS, HABLARA DE SCRUM, EL PORQUE SE ELIGIO ESA METOLOGIA -- DOCUMENTO
+
+// INDICAR ESCUELA EN SOLICITUD DE PROYECTO  -- CUMPLIDO
+
+// LISTADO DE CARRERAS DESDE LA FACULTAD SELECCIONADA -- CUMPLIDO
+
 // COORDINADOR PUEDE CORREGIR LA SOLICITUD
+
 // NO ES NECSARIO NOTIFICAR CAMBIOS EN LA SOLICITUD
+
 // crear 4° cuarto estado, puede ser modificado mientras no este en revisado
 // solicitante puede modificar mientras no este en revision
 // seleccionar la carrera
@@ -266,3 +288,22 @@ async function initTable() {
 // COTIZACION VA A TENER TODO LOS RECOPILADO DEL PROYECTO
 // AÑADIR FECHA DE CIERRE AL CERRAR UN PROECTO, LO REALIZA VINCULADOR CON EL MEDIO
 // UN PROYECTO PUEDE ESTAR UN TIEMPO CONSIDERABLEMENTE LARGO ABIERTO
+
+
+
+// APU 1 UNIDAD QUITAR AMOUNT
+// EN COTIZACION SE MODIFICA LA APU
+// CREAR TABLA COTIZACION 
+// MAS DE UNA APU IGUAL
+
+//PRECIO UNITARIO X LA CANTIDAD, PRECIO TOTAL Y PRECIO CON IVA Y SIN IVA
+
+// VER DETALLES 
+// MOSTRAR INFORMACION BASICA, APUS Y RESUMEN DE VALORRES (CON IVA Y SIN IVA)
+
+// NUEVA COTIZACION
+// NOMBRE COTIZACION FECHA, ESTADO, AGREGAR APUS
+// AGREGAR APU (RECURSO, PRECIO UNITARIO, CANTIDAD, SUBTOTAL
+// SUBTOTAL PRECIO X CANTIDAD
+// listado profesores sacar desde la pagina de ucm
+// Añadir animacion de transicion a los input cuando se va a editar un item

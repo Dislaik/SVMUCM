@@ -1,21 +1,22 @@
 const Role = require('../model/role');
 const User = require('../model/user');
+const UserStatus = require('../model/userStatus');
 
 class UserRepository {
   async findAll() {
-    return await User.findAll({ include: [Role] });
+    return await User.findAll({ include: [Role, UserStatus] });
   }
 
   async findById(id) {
-    return await User.findByPk(id, { include: [Role] });
+    return await User.findByPk(id, { include: [Role, UserStatus] });
   }
 
   async findByUsername(username) {
-    return await User.findOne({ where: { username: username }, include: [Role] });
+    return await User.findOne({ where: { username: username }, include: [Role, UserStatus] });
   }
 
   async findByEmail(email) {
-    return await User.findOne({ where: { email: email }, include: [Role] });
+    return await User.findOne({ where: { email: email }, include: [Role,UserStatus] });
   }
 
   async create(data) {

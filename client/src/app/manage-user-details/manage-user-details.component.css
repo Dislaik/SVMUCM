@@ -84,15 +84,6 @@
   color: #f5f5f5;
 }
 
-.btn-user-edit {
-  background-color: #ffca2c;
-  color: #1E2124;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.btn-user-edit:hover, .btn-user-edit:active {
-  background-color: #ffca2c;
-  color: #1E2124;
+.form-select {
+  width: 158px;
 }

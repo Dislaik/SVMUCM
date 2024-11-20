@@ -49,6 +49,16 @@ class CareerRepository {
 
     return await career.destroy();
   }
+
+  async existsByName(name) {
+    const user = await this.findByName(name);
+
+    if (!user) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 module.exports = new CareerRepository();

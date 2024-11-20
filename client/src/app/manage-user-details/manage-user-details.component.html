@@ -1,22 +1,23 @@
 <div class="container content">
 	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
 	<h1 class="mb-3">{{title}}</h1>
-  <div class="row mb-2">
-    <div class="col-3">
-      
+  <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
+    <div class="row mb-2">
+      <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
+        <div class="d-flex flex-row-reverse gap-2">
+          <button type="button" class="btn btn-edit-save" (click)="ngOnEditItemSave()"><i class="bi bi-gear-fill"></i>Guardar cambios</button>
+          <button type="button" class="btn btn-edit-cancel" (click)="ngOnEditItemCancel()"><i class="bi bi-gear-fill"></i>Deshacer cambios</button>
+        </div>
+      </ng-template>
+      <ng-template #elseBlockEditItem>
+        <div class="d-flex flex-row-reverse">
+          <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-gear-fill"></i>Editar</button>
+        </div>
+      </ng-template>
     </div>
-    <div class="col-6">
-
-    </div>
-    <div class="col-3 d-grid gap-2 d-md-flex justify-content-md-end">
-      <button type="button" class="btn btn-user-delete" (click)="ngOnDeleteUser()"><i class="bi bi-gear-fill"></i>Eliminar</button>
-      <button type="button" class="btn btn-user-edit" (click)="ngOnEditUser()"><i class="bi bi-gear-fill"></i>Editar</button>
-    </div>
-  </div>
-    <div class="row">
-      <div class="col-4">
-        <div class="card profile-basic-info me-2 p-3 shadow">
-          <div *ngIf="isUserLoaded; else elseBlockOnUserLoaded">
+      <div class="row">
+        <div class="col-4">
+          <div class="card profile-basic-info me-2 p-3 shadow">
             <div class="text-center mt-2 mb-3">
               <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo">
               <h2 class="user-fullname">{{user.first_name}} {{user.last_name}}</h2>
@@ -38,20 +39,13 @@
               </div>
             </div>
           </div>
-          <ng-template #elseBlockOnUserLoaded>
-            <svg viewBox="0 0 50 50" class="spinner">
-              <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-            </svg>
-          </ng-template>
         </div>
-      </div>
-      <div class="col-8">
-        <div class="row mb-2">
-          <div class="card profile-general-info ms-2 shadow">
-          <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
-          <div class="card-body">
-            <div *ngIf="isUserLoaded; else elseBlockOnUserLoaded">
-              <div class="row mb-2">
+        <div class="col-8">
+          <div class="row mb-2">
+            <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
+            <div class="card-body">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   RUN:
                 </div>
@@ -59,78 +53,172 @@
                   {{user.username}}
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Contraseña:
                 </div>
                 <div class="col-6 ps-2">
-                  ************
+                  <input *ngIf="enableEditItem; else elseBlockEditItemPassword" #inputItemEditPassword type="password" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="passwordError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{passwordError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemPassword>
+                    ************
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Nombres:
                 </div>
                 <div class="col-6 ps-2">
-                  {{user.first_name}}
+                  <input *ngIf="enableEditItem; else elseBlockEditItemFirstName" #inputItemEditFirstName type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="firstNameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{firstNameError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemFirstName>
+                    {{user.first_name}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Apellidos:
                 </div>
                 <div class="col-6 ps-2">
-                  {{user.last_name}}
+                  <input *ngIf="enableEditItem; else elseBlockEditItemLastName" #inputItemEditLastName type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="lastNameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{lastNameError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemLastName>
+                    {{user.last_name}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Correo electronico:
                 </div>
                 <div class="col-6 ps-2">
-                  {{user.email}}
+                  <input *ngIf="enableEditItem; else elseBlockEditItemEmail" #inputItemEditEmail type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="emailError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{emailError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemEmail>
+                    {{user.email}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Dirección:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemAddres" #inputItemEditAddress type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="addressError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{addressError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemAddres>
+                    {{user.address}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Teléfono:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemPhone" #inputItemEditPhone type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div *ngIf="phoneError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{phoneError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemPhone>
+                    {{user.phone}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Rol:
                 </div>
                 <div class="col-6 ps-2">
-                  {{user.id_role.label}}
+                  <select *ngIf="enableEditItem; else elseBlockEditItemRole" #selectItemEditRole class="form-select form-select-sm">
+                    <option *ngFor="let item of roles;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <div *ngIf="roleError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{roleError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemRole>
+                    {{user.id_role.label}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Estado:
+                </div>
+                <div class="col-6 ps-2">
+                  <select *ngIf="enableEditItem; else elseBlockEditItemUserStatus" #selectItemEditUserStatus class="form-select form-select-sm">
+                    <option *ngFor="let item of userStatus;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <div *ngIf="userStatusError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{userStatusError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemUserStatus>
+                    {{user.id_user_status.label}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Creado en:
                 </div>
                 <div class="col-6 ps-2">
-                  {{user.created_at}}
+                  {{UTCToChileTime(user.created_at, false)}}
                 </div>
               </div>
             </div>
-            <ng-template #elseBlockOnUserLoaded>
-              <svg viewBox="0 0 50 50" class="spinner">
-                <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-              </svg>
-            </ng-template>
           </div>
         </div>
-      </div>
-      <div class="row mb-2">
-        <div class="card profile-general-info ms-2 shadow">
-          <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
-          <div class="card-body">
-            <div class="row mb-2">
-              <div class="col-6 pe-2">
-                Proyectos:
-              </div>
-              <div class="col-6 ps-2">
-                0
+        <div class="row mb-2">
+          <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  Proyectos:
+                </div>
+                <div class="col-6 ps-2">
+                  0
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-template>
+  <ng-template #elseBlockViewLoaded>
+    <div class="loading">
+      <svg viewBox="0 0 50 50" class="spinner">
+        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+      </svg>
+    </div>
+  </ng-template>
 </div>

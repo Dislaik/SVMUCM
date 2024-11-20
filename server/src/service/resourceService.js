@@ -15,6 +15,26 @@ class ResourceService {
     return resource;
   }
 
+  async getByName(name) {
+    const resource = await ResourceRepository.findByName(name);
+    
+    if (!resource) {
+      throw new Error('Resource not found');
+    }
+
+    return resource;
+  }
+
+  async getByLabel(label) {
+    const resource = await ResourceRepository.findByLabel(label);
+    
+    if (!resource) {
+      throw new Error('Resource not found');
+    }
+
+    return resource;
+  }
+
   async create(data) {
     return await ResourceRepository.create(data);
   }
@@ -25,6 +45,10 @@ class ResourceService {
 
   async delete(id) {
     return await ResourceRepository.delete(id);
+  }
+
+  async existsByName(name) {
+    return await ResourceRepository.existsByName(name);
   }
 }
 
