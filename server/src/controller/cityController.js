@@ -5,9 +5,9 @@ class CityController {
     try {
       const cities = await CityService.getAll();
       
-      response.status(200).json(cities);
+      response.status(200).json({ ok: true, message: cities});
     } catch (error) {
-      response.status(500).json({ error: 'Error fetching cities' });
+      response.status(500).json({ ok: false, error: error});
     }
   }
 

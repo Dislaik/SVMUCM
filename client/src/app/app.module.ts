@@ -41,6 +41,8 @@ import { ManageResourceDetailsComponent } from './manage-resource-details/manage
 import { NotFoundComponent } from './not-found/not-found.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { ManageQuotationComponent } from './manage-quotation/manage-quotation.component';
+import { ManageQuotationDetailsComponent } from './manage-quotation-details/manage-quotation-details.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +76,8 @@ import { ToastrModule } from 'ngx-toastr';
     ManageAPUDetailsComponent,
     ManageResourceComponent,
     ManageResourceDetailsComponent,
+    ManageQuotationComponent,
+    ManageQuotationDetailsComponent,
     BreadcrumbComponent,
     NotFoundComponent
   ],

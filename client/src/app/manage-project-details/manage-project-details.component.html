@@ -1,65 +1,64 @@
 <div class="container content">
 	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
 	<h1 class="mb-3">{{title}}</h1>
-  <div class="row mb-2">
-    <div class="col-3">
-      
-    </div>
-    <div class="col-5">
-
-    </div>
-    <div class="col-4 d-grid gap-2 d-md-flex justify-content-md-end">
-      <button type="button" class="btn btn-project-price" ><i class="bi bi-gear-fill"></i>Relizar Cotización</button>
-      <button type="button" class="btn btn-user-delete" (click)="ngOnDeleteProject()"><i class="bi bi-gear-fill"></i>Eliminar</button>
-      <button type="button" class="btn btn-user-edit" (click)="ngOnEditProject()"><i class="bi bi-gear-fill"></i>Editar</button>
-    </div>
-  </div>
-    <div class="row">
-        <div class="col-4">
-            <div class="card profile-basic-info me-2 p-3 shadow">
-              <div *ngIf="isProjectLoaded; else elseBlockOnUserLoaded">
-          <div class="text-center mt-2 mb-3">
-            <h2 class="user-fullname">{{project.name}}</h2>
-          </div>
-          <div class="row mb-2">
-            <div class="col-4">
-              ID:
-            </div>
-            <div class="col-8">
-              {{project.id}}
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-4">
-              Nombre:
-            </div>
-            <div class="col-8">
-              {{project.name}}
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-4">
-              Solicitante:
-            </div>
-            <div class="col-8">
-              {{project.id_user.username}}
-            </div>
-          </div>
+  <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
+    <div class="row mb-2">
+      <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
+        <div class="d-flex flex-row-reverse gap-2">
+          <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
+          <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
         </div>
-        <ng-template #elseBlockOnUserLoaded>
-          <svg viewBox="0 0 50 50" class="spinner">
-            <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-          </svg>
-        </ng-template>
+      </ng-template>
+      <ng-template #elseBlockEditItem>
+        <div class="d-flex flex-row-reverse gap-2">
+          <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+          <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button>
+          <button *ngIf="!existsQuotation; else elseBlockExistsQuotation" type="button" class="btn btn-primary" (click)="ngOnCreateQuotation()"><i class="bi bi-file-earmark-bar-graph-fill"></i>Crear cotización</button>
+          <ng-template #elseBlockExistsQuotation>
+            <button type="button" class="btn btn-primary" (click)="ngOnGoQuotation()"><i class="bi bi-file-earmark-bar-graph-fill"></i>Ir a Cotización</button>
+          </ng-template>
+        </div>
+      </ng-template>
+    </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="card profile-basic-info me-2 p-3 shadow">
+            <div class="text-center mt-2 mb-3">
+              <!-- <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo"> -->
+              <h2 class="user-fullname">{{project.name}}</h2>
             </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                ID:
+              </div>
+              <div class="col-8">
+                {{project.id}}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                Nombre:
+              </div>
+              <div class="col-8">
+                {{project.name}}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                Solicitante:
+              </div>
+              <div class="col-8">
+                {{project.id_user.username}}
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col-8">
-      <div class="row mb-2">
-        <div class="card profile-general-info ms-2 shadow">
-          <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
-          <div class="card-body">
-            <div *ngIf="isProjectLoaded; else elseBlockOnUserLoaded">
-              <div class="row mb-2">
+          <div class="row mb-2">
+            <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
+            <div class="card-body">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   ID:
                 </div>
@@ -67,15 +66,7 @@
                   {{project.id}}
                 </div>
               </div>
-              <div class="row mb-2">
-                <div class="col-6 pe-2">
-                  Nombre:
-                </div>
-                <div class="col-6 ps-2">
-                  {{project.name}}
-                </div>
-              </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Solicitante:
                 </div>
@@ -83,55 +74,110 @@
                   {{project.id_user.username}}
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Nombre:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemName" #inputItemEditName type="text" class="form-control shadow-none" required autocomplete="off">
+                  <div *ngIf="nameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{nameError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemName>
+                    {{project.name}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Descripción:
                 </div>
                 <div class="col-6 ps-2">
-                  {{project.description}}
+                  <textarea *ngIf="enableEditItem; else elseBlockEditItemDescription" #inputItemEditDescription class="form-control shadow-none" rows="3"></textarea>
+                  <div *ngIf="descriptionError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{descriptionError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemDescription>
+                    {{project.description}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Estado:
                 </div>
                 <div class="col-6 ps-2">
-                  {{project.id_projectStatus.label}}
+                  <select *ngIf="enableEditItem; else elseBlockEditItemProjectStatus" #selectItemEditProjectStatus class="form-select shadow-none">
+                    <option *ngFor="let item of projectStatus;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <ng-template #elseBlockEditItemProjectStatus>
+                    {{project.id_projectStatus.label}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Fecha de inicio:
                 </div>
                 <div class="col-6 ps-2">
-                  {{UTCToChileTime(project.start_date, true)}}
+                  <input *ngIf="enableEditItem; else elseBlockEditItemStartDate" #inputItemEditStartDate type="date" class="form-control shadow-none">
+                  <div *ngIf="startDateError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{startDateError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemStartDate>
+                    {{UTCToChileTime(project.start_date, true)}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Fecha de termino:
                 </div>
                 <div class="col-6 ps-2">
-                  {{UTCToChileTime(project.end_date, true)}}
+                  <input *ngIf="enableEditItem; else elseBlockEditItemEndDate" #inputItemEditEndDate type="date" class="form-control shadow-none">
+                  <div *ngIf="endDateError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{endDateError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemEndDate>
+                    {{UTCToChileTime(project.end_date, true)}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Ciudad:
                 </div>
                 <div class="col-6 ps-2">
-                  {{project.id_city.label}}
+                  <select *ngIf="enableEditItem; else elseBlockEditItemCity" #selectItemEditCity class="form-select shadow-none">
+                    <option *ngFor="let item of cities;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <ng-template #elseBlockEditItemCity>
+                    {{project.id_city.label}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Carrera:
                 </div>
                 <div class="col-6 ps-2">
-                  {{project.id_career.label}}
+                  <select *ngIf="enableEditItem; else elseBlockEditItemCareer" #selectItemEditCareer class="form-select shadow-none">
+                    <option *ngFor="let item of careers;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <ng-template #elseBlockEditItemCareer>
+                    {{project.id_career.label}}
+                  </ng-template>
                 </div>
               </div>
-              <div class="row mb-2">
+              <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Creado en:
                 </div>
@@ -140,58 +186,83 @@
                 </div>
               </div>
             </div>
-            <ng-template #elseBlockOnUserLoaded>
-              <svg viewBox="0 0 50 50" class="spinner">
-                <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-              </svg>
-            </ng-template>
           </div>
         </div>
-      </div>
-      <div class="row mb-2">
-        <div class="card profile-general-info ms-2 shadow">
-          <div class="card-header"><i class="bi bi-stack"></i>Asignacion de docentes</div>
-          <div class="card-body">
-            <div class="add-apu d-flex align-items-center justify-content-center">
-              <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir docente</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row mb-2">
-        <div class="card profile-general-info ms-2 shadow">
-          <div class="card-header"><i class="bi bi-stack"></i>Asignacion de alumnos voluntarios</div>
-          <div class="card-body">
-            <div class="add-apu d-flex align-items-center justify-content-center">
-              <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir Alumno voluntario</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row mb-2">
-        <div class="card profile-general-info ms-2 shadow">
-          <div class="card-header"><i class="bi bi-stack"></i>APUs Asociadas</div>
-          <div class="card-body">
-            <div *ngFor="let item of projectAPUs;" class="apu-container mb-2">
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex gap-2">
-                  <i class="bi bi-box-seam-fill"></i>{{item.id_apu.label}}
+        <div class="row mb-2">
+          <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-6 pe-2">
+                  x:
                 </div>
-                <button type="button" class="btn btn-remove-resource-apu" (click)="ngOnClickOpenModal()"><i class="bi bi-x-circle-fill"></i>Eliminar</button> 
+                <div class="col-6 ps-2">
+                  0
+                </div>
               </div>
-              <div *ngFor="let apu of apuResources[item.id_apu.id];">
-                {{apu.id_resource.label}} - x{{apu.amount}}
-              </div>
-            </div>
-            <div class="add-apu d-flex align-items-center justify-content-center">
-              <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir APU</button>
             </div>
           </div>
         </div>
+        <div class="row mb-2">
+          <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Asignacion de docentes</div>
+            <div class="card-body">
+              <div class="add-apu d-flex align-items-center justify-content-center">
+                <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir docente</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Asignacion de alumnos voluntarios</div>
+            <div class="card-body">
+              <div class="add-apu d-flex align-items-center justify-content-center">
+                <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir Alumno voluntario</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="row mb-2">
+          <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>APUs Asociadas</div>
+            <div class="card-body">
+              <div *ngFor="let item of projectAPUs;" class="apu-container mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex gap-2">
+                    <i class="bi bi-box-seam-fill"></i>{{item.id_apu.label}}
+                  </div>
+                  <button type="button" class="btn btn-remove-resource-apu" (click)="ngOnClickOpenModal()"><i class="bi bi-x-circle-fill"></i>Eliminar</button> 
+                </div>
+                <div *ngFor="let apu of apuResources[item.id_apu.id];">
+                  {{apu.id_resource.label}} - x{{apu.amount}}
+                </div>
+              </div>
+              <div class="add-apu d-flex align-items-center justify-content-center">
+                <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir APU</button>
+              </div>
+            </div>
+          </div>
+        </div> -->
       </div>
     </div>
-  </div>
+  </ng-template>
+  <ng-template #elseBlockViewLoaded>
+    <div class="loading">
+      <svg viewBox="0 0 50 50" class="spinner">
+        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+      </svg>
+    </div>
+  </ng-template>
 </div>
+
+
+
+
+
+
+
+
 
 <div #modalAddAPU class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
@@ -203,9 +274,9 @@
       <div class="modal-body">
         <div class="row">
           <div *ngFor="let item of apus;" class="col-3 ps-2 pe-2 mb-2">
-            <button type="button" class="btn btn-add-resource-modal" (click)="ngOnClickSelectAPU(item)">
+            <!-- <button type="button" class="btn btn-add-resource-modal" (click)="ngOnClickSelectAPU(item)">
               <i class="bi bi-box-fill"></i>{{item.label}}
-            </button>
+            </button> -->
           </div>
         </div>
       </div>

@@ -54,7 +54,7 @@ export class ManageResourceComponent implements OnInit{
     private resourceService: ResourceService
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.createBreadCrumb();
     this.ngOnCreatePagination(1, 10);
   }

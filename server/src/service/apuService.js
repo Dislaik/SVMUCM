@@ -46,6 +46,10 @@ class APUService {
   async delete(id) {
     return await APURepository.delete(id);
   }
+
+  async existsByName(name) {
+    return await APURepository.existsByName(name);
+  }
 }
 
 module.exports = new APUService();

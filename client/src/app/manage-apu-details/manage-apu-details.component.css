@@ -14,46 +14,6 @@
   height: auto;
 }
 
-.spinner {
-  animation: rotation 2s linear infinite;
-  z-index: 10;
-  position: relative;
-  top: 50%;
-  left: 50%;
-  margin: -25px 0 0 -25px;
-  width: 50px;
-  height: 50px
-}
-
-.spinner .path {
-  stroke: #1E3F85;
-  stroke-linecap: round;
-  animation: spinner 1.5s ease-in-out infinite
-}
-
-@keyframes rotation {
-  to {
-      transform: rotate(360deg)
-  }
-}
-
-@keyframes spinner {
-  0% {
-      stroke-dasharray: 1, 150;
-      stroke-dashoffset: 0
-  }
-
-  50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -35
-  }
-
-  to {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -124
-  }
-}
-
 .card-header {
   display: flex;
   align-items: center;
@@ -71,32 +31,6 @@
   font-size: 24px;
 }
 
-.btn-user-delete {
-  background-color: #DC3545;
-  color: #f5f5f5;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.btn-user-delete:hover, .btn-user-delete:active {
-  background-color: #bb2d3b;
-  color: #f5f5f5;
-}
-
-.btn-user-edit {
-  background-color: #ffca2c;
-  color: #1E2124;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.btn-user-edit:hover, .btn-user-edit:active {
-  background-color: #ffca2c;
-  color: #1E2124;
-}
-
 .apu-container {
   background-color: #bebebe;
   height: 60px;
@@ -109,60 +43,17 @@
   height: 75px;
 }
 
-.btn-add-resource {
-  background-color: #0d6efd;
-  color: #1E2124;
-  display: flex;
-  align-items: center;
-  height: 50px;
-  gap: 10px;
-}
-
-.btn-add-resource:hover, .btn-add-resource:active {
-  background-color: #0b5ed7 ;
-  color: #1E2124;
-}
-
-.btn-add-resource-modal {
-  background-color: #0d6efd;
-  color: #1E2124;
+.btn-resource {
+  background-color: #1E3F85;
+  color: #f5f5f5;
   display: flex;
   align-items: center;
   height: 60px;
   width: 100%;
-  gap: 10px;
+  gap: 5px;
 }
 
-.btn-add-resource-modal:hover, .btn-add-resource-modal:active {
-  background-color: #0b5ed7 ;
-  color: #1E2124;
-}
-
-.wrap-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: auto;
-}
-
-.btn-remove-resource-apu {
-  background-color: #DC3545;
-  color: #1E2124;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.btn-remove-resource-apu:hover, .btn-remove-resource-apu:active {
-  background-color: #c22e3d ;
-  color: #1E2124;
-}
-
-.message-error-container {
-  width: 100%;
-  height: auto;
-}
-
-.message-error-container p {
-  color: red !important;
+.btn-resource:hover, .btn-resource:active {
+  background-color: #244da5 ;
+  color: #f5f5f5;
 }

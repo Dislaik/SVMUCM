@@ -13,6 +13,7 @@ const Faculty = require('./model/faculty');
 const Career = require('./model/career');
 const projectStatus = require('./model/projectStatus');
 const UserStatus = require('./model/userStatus');
+const QuotationStatus = require('./model/quotationStatus');
 const port = 8080;
 const app = express();
 
@@ -140,7 +141,6 @@ async function initTable() {
   await Role.findOrCreate({ where: {name: 'dean'}, defaults: {label: 'Decano'} });
   await Role.findOrCreate({ where: {name: 'careerdirector'}, defaults: {label: 'Jefe de carrera'} });
   await Role.findOrCreate({ where: {name: 'professor'}, defaults: {label: 'Docente'} });
-  await Role.findOrCreate({ where: {name: 'student'}, defaults: {label: 'Alumno voluntario'} });
   await Role.findOrCreate({ where: {name: 'community'}, defaults: {label: 'Comunidad'} });
   await UserStatus.findOrCreate({ where: {name: 'active'}, defaults: {label: 'Activo'} });
   await UserStatus.findOrCreate({ where: {name: 'inactive'}, defaults: {label: 'Inactivo'} });
@@ -220,6 +220,8 @@ async function initTable() {
   await projectStatus.findOrCreate({ where: {name: 'underreview'}, defaults: {label: 'En revisión'} });
   await projectStatus.findOrCreate({ where: {name: 'approved'}, defaults: {label: 'Aprobado'} });
   await projectStatus.findOrCreate({ where: {name: 'rejected'}, defaults: {label: 'Rechazado'} });
+  await QuotationStatus.findOrCreate({ where: {name: 'active'}, defaults: {label: 'Vigente'} });
+  await QuotationStatus.findOrCreate({ where: {name: 'expired'}, defaults: {label: 'Vencido'} });
 }
 
 
@@ -258,52 +260,87 @@ async function initTable() {
 // NO ES NECSARIO NOTIFICAR CAMBIOS EN LA SOLICITUD
 
 // crear 4° cuarto estado, puede ser modificado mientras no este en revisado
+
 // solicitante puede modificar mientras no este en revision
-// seleccionar la carrera
-// APUS = capsulas no modificables
+
+// seleccionar la carrera -- CUMPLIDO
+
+// APUS = capsulas no modificables -- CUMPLIDO
+
 // COTIZACION en la apu el recurso  puede ser x0
+
 // Vincuador con el medio por facultad
+
 // VINCULADOR CON EL MEDIO PUEDE VER OTRAS SOLICITUDES DE OTRAS FACULTADES
+
 // ESTADO DE PROYECTO DEBEN SER MÁS DE 5
+
 // LISTADO CON FILTRO DE PROYECTO
+
 // ADMINISTRADOR POR FACULTAD, ADMINISTRAR FACULTAD, ASIGNAR MIENMBROS, ETC.
+
 // COORDINADOR DE VINCULACION DE LA FACULTAD - INGRID LOPEZ, FILTRO 1, DESIGNA LA VINCULACION POR CARRERA, ASIGNA LA SOLICITUD A LAS CARRERAS
+
 // COORDINADOR DE VICULACION DE CARRERAS - ASIGNA PROFESORES, APROBAR O RECHZAR UN PROYECTO
+
 // VISTA DE PROFESORES VER PROYECTOS DE SU CARRERA
+
 // ALMACENAMIENTO DE ARCHIVOS, USAR SERVICIO EXTERNO
+
 // ENCARGAO DE LA CARRERA VINCULACION Y PASA A COTIZACION
+
 // SOLICITUD, AÑADIR CAMPO DE CONTACTO
-// ENCARGADO DE VINCULACION ASIGNA, 
-// ALUMNO NO ENTRA AL SISTEMA
-// PROFESOR PUEDE VER LOS POYECTOS DE LA CARRERA QUE ESTA ASOCIADO
-// ESTADO DE USUARIO (ACTIVO Y NO ACTIVO) LO PUEDE MODIFICAR EL ENCARGADO DE LA CARRERA
+
+// ENCARGADO DE VINCULACION ASIGNA
+
+// ALUMNO NO ENTRA AL SISTEMA -- CUMPLIDO
+
+// PROFESOR PUEDE VER LOS POYECTOS DE LA CARRERA QUE ESTA ASOCIADO 
+
+// ESTADO DE USUARIO (ACTIVO Y NO ACTIVO) LO PUEDE MODIFICAR EL ENCARGADO DE LA CARRERA -- CUMPLIDO
+
 // TODOS LOS PROFESOR PUEDEN VER LOS PROYECTOS
-// DIRECCION DEL SOLICITANTE (GEOLOCALIZACION A FUTURO)(A FUTURO)
+
+// DIRECCION DEL SOLICITANTE (GEOLOCALIZACION A FUTURO)(A FUTURO) -- CUMPLIDO
+
 // CREAR CATEGORIA SI EL SOLICITANTE ES UN ORGANISMO O PERSONA
-// REGISTER AÑADIR EL TELEFONO 
+
+// REGISTER AÑADIR EL TELEFONO -- CUMPLIDO
+
 // COTIZACION, LO QUE SE VA HACER Y CUANTO VA A COSTAR
-// COTIZACION PARA LEVANTAR COSTOS, 
+
+// COTIZACION PARA LEVANTAR COSTOS,
+
 // PROFESOR RESPONSABLE DE LA EJECUCION COTIZACIONES, PROFESOR RESPONSABLE DE LA EJECUCION OBLIGATORIO
+
 // COTIZACION AÑADIR ESTUDIANTE ENCARGO DE VINCULACION CON EL MEDIO
+
 // COTIZACION VA A TENER TODO LOS RECOPILADO DEL PROYECTO
+
 // AÑADIR FECHA DE CIERRE AL CERRAR UN PROECTO, LO REALIZA VINCULADOR CON EL MEDIO
+
 // UN PROYECTO PUEDE ESTAR UN TIEMPO CONSIDERABLEMENTE LARGO ABIERTO
 
 
 
-// APU 1 UNIDAD QUITAR AMOUNT
-// EN COTIZACION SE MODIFICA LA APU
+
+// APU 1 UNIDAD QUITAR AMOUNT - CUMPLIDO
+
+// EN COTIZACION SE MODIFICA LA APU 
+
 // CREAR TABLA COTIZACION 
-// MAS DE UNA APU IGUAL
 
-//PRECIO UNITARIO X LA CANTIDAD, PRECIO TOTAL Y PRECIO CON IVA Y SIN IVA
+// SE PUEDE AÑADIR A LA CONTIZACION MAS DE UNA APU IGUAL
 
-// VER DETALLES 
+// PRECIO UNITARIO X LA CANTIDAD, PRECIO TOTAL Y PRECIO CON IVA Y SIN IVA
+
+// COTIZACION VER DETALLES
+
 // MOSTRAR INFORMACION BASICA, APUS Y RESUMEN DE VALORRES (CON IVA Y SIN IVA)
 
 // NUEVA COTIZACION
 // NOMBRE COTIZACION FECHA, ESTADO, AGREGAR APUS
-// AGREGAR APU (RECURSO, PRECIO UNITARIO, CANTIDAD, SUBTOTAL
+// AGREGAR APU (RECURSO, PRECIO UNITARIO, CANTIDAD, SUBTOTAL)
 // SUBTOTAL PRECIO X CANTIDAD
 // listado profesores sacar desde la pagina de ucm
 // Añadir animacion de transicion a los input cuando se va a editar un item

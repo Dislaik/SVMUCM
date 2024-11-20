@@ -29,6 +29,8 @@ import { ManageAPUComponent } from './manage-apu/manage-apu.component';
 import { ManageAPUDetailsComponent } from './manage-apu-details/manage-apu-details.component';
 import { ManageResourceDetailsComponent } from './manage-resource-details/manage-resource-details.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { ManageQuotationComponent } from './manage-quotation/manage-quotation.component';
+import { ManageQuotationDetailsComponent } from './manage-quotation-details/manage-quotation-details.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -59,6 +61,8 @@ const routes: Routes = [
   {path: 'panel/manage/apu/:id', component: ManageAPUDetailsComponent},
   {path: 'panel/manage/resource', component: ManageResourceComponent},
   {path: 'panel/manage/resource/:id', component: ManageResourceDetailsComponent},
+  {path: 'panel/manage/quotation', component: ManageQuotationComponent},
+  {path: 'panel/manage/quotation/:id', component: ManageQuotationDetailsComponent},
   { path: '**', component: NotFoundComponent }
 ];
 

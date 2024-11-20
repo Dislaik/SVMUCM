@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-manage-quotation-details',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './manage-quotation-details.component.html',
   styleUrl: './manage-quotation-details.component.css'
 })

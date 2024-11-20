@@ -4,10 +4,10 @@
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
       <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-create-item" (click)="ngOnCreateModalItem()">Crear nueva APU</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnCreateModalItem()">Crear nueva APU</button>
         <div class="d-flex">
           <div class="input-group">
-            <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar {{title.toLowerCase()}}" (keydown.enter)="ngOnSearchItem()">
+            <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar APU" (keydown.enter)="ngOnSearchItem()">
             <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
               <i class="bi bi-x-circle"></i>
             </button>
@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <div class="card mt-3 mb-3 height-list-user">
+    <div class="card mt-3 mb-3 dataTable-height">
       <div class="card-header">{{title}}</div>
       <div class="card-body p-0">
         <ul class="list-group rounded-0">
@@ -36,8 +36,8 @@
             <div class="col-2 text-center wrap-text">{{item.name}}</div>
             <div class="col-4 text-center wrap-text">{{item.label}}</div>
             <div class="col-4 text-center wrap-text">{{checkDescription(item.description)}}</div>
-            <div class="col-1 text-center">
-              <button type="button" class="btn btn-user-details btn-sm" (click)="ngOnItemDetails(item)">
+            <div class="col-1 d-flex justify-content-center">
+              <button type="button" class="btn btn-primary btn-sm" (click)="ngOnItemDetails(item)">
                 Ver detalles
               </button>
             </div>
@@ -50,17 +50,17 @@
       <ul class="d-flex navigation-container justify-content-between">
           <li *ngIf="pagination === 1; then thenPaginationBackBlock else elsePaginationBackBlock"></li>
           <ng-template #thenPaginationBackBlock>
-            <button type="button" class="btn btn-pagination shadow-none disabled" disabled>Anterior</button>
+            <button type="button" class="btn btn-primary shadow-none disabled" disabled>Anterior</button>
           </ng-template>
           <ng-template #elsePaginationBackBlock>
-            <button type="button" class="btn btn-pagination shadow-none" (click)="ngOnPaginationBack()">Anterior</button>
+            <button type="button" class="btn btn-primary shadow-none" (click)="ngOnPaginationBack()">Anterior</button>
           </ng-template>
 
         <div class="pages">
           <div *ngIf="isNavigationContainFirstPage || pagination === 1; else elseNavigationFirstPage">
           </div>
           <ng-template #elseNavigationFirstPage>
-            <button class="btn btn-pagination shadow-none" (click)="ngOnPaginationItem(1)">1</button>
+            <button class="btn btn-primary shadow-none" (click)="ngOnPaginationItem(1)">1</button>
             <div class="pagination-dots">
               ...
             </div>
@@ -68,10 +68,10 @@
           <div *ngFor="let i of paginationListShow" class="page-item">
             <div *ngIf="pagination == i; then thenPaginationItemBlock else elsePaginationItemBlock"></div>
             <ng-template #thenPaginationItemBlock>
-              <button type="button" class="btn btn-pagination shadow-none disabled" disabled>{{i}}</button>
+              <button type="button" class="btn btn-primary shadow-none disabled" disabled>{{i}}</button>
             </ng-template>
             <ng-template #elsePaginationItemBlock>
-              <button type="button" class="btn btn-pagination shadow-none" (click)="ngOnPaginationItem(i)">{{i}}</button>
+              <button type="button" class="btn btn-primary shadow-none" (click)="ngOnPaginationItem(i)">{{i}}</button>
             </ng-template>
           </div>
           <div *ngIf="isNavigationContainLastPage || pagination === paginationMax; else elseNavigationLastPage">
@@ -81,17 +81,17 @@
             <div class="pagination-dots">
               ...
             </div>
-            <button class="btn btn-pagination shadow-none" (click)="ngOnPaginationItem(paginationMax)">{{paginationMax}}</button>
+            <button class="btn btn-primary shadow-none" (click)="ngOnPaginationItem(paginationMax)">{{paginationMax}}</button>
           </ng-template>
         </div>
 
         <div class="justify-content-end">
           <li *ngIf="pagination === paginationMax; then thenPaginationNextBlock else elsePaginationNextBlock"></li>
           <ng-template #thenPaginationNextBlock>
-            <button class="btn btn-pagination shadow-none disabled" disabled>Siguiente</button>
+            <button class="btn btn-primary shadow-none disabled" disabled>Siguiente</button>
           </ng-template>
           <ng-template #elsePaginationNextBlock>
-            <button class="btn btn-pagination shadow-none" (click)="ngOnPaginationNext()">Siguiente</button>
+            <button class="btn btn-primary shadow-none" (click)="ngOnPaginationNext()">Siguiente</button>
           </ng-template>
         </div>
       </ul>

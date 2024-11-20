@@ -29,7 +29,7 @@ class APUController {
   async getByName(request, response) {
     try {
       const { name } = request.params;
-      const apu = await RegionService.getByName(name);
+      const apu = await APUService.getByName(name);
       
       if (!apu) {
         return response.status(200).json({ ok: true, message: null});
@@ -44,7 +44,7 @@ class APUController {
   async getByLabel(request, response) {
     try {
       const { label } = request.params;
-      const apu = await RegionService.getByLabel(label);
+      const apu = await APUService.getByLabel(label);
 
       if (!apu) {
         return response.status(200).json({ ok: true, message: null});
@@ -57,14 +57,34 @@ class APUController {
   }
 
   async create(request, response) {
+    const { body } = request
+    console.log(await APUService.existsByName(body.name))
     try {
       const { body } = request
-      console.log(body)
-      const apu = await APUService.create(body);
+      let error = {};
 
-      return response.status(200).json({ ok: true, message: apu});
+      if (await APUService.existsByName(body.name)) {
+        error.name = 'Este identificador ya esta registrado'
+      }
+
+      if (Object.keys(error).length === 0) {
+        const apuObject = {
+          name: body.name,
+          label: body.label,
+          description: body.description,
+          created_at: body.created_at
+        }
+
+        let apu = await APUService.create(apuObject);
+
+        /// Add relations (not have lol, but I put this comment anyway);
+
+        return response.status(200).json({ ok: true, message: apu});
+      }
+
+      return response.status(200).json({ ok: false, error: error});
     } catch (error) {
-      return response.status(500).json({ error: 'Error creating apu' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -72,15 +92,35 @@ class APUController {
     try {
       const { id } = request.params;
       const { body } = request;
+      const aux = await APUService.getByName(body.name)
+      let error = {};
 
-      const apu = await APUService.update(id, body);
-      if (!apu) {
-        return response.status(404).json({ message: 'APU not found' });
+      if (body.name === aux.name && Number(id) !== aux.id) {
+        error.name = 'Este Identificador ya esta registrado';
       }
 
-      return response.status(200).json(apu);
+      if (Object.keys(error).length === 0) {
+        const apuObject = {
+          name: body.name,
+          label: body.label,
+          description: body.description,
+          created_at: body.created_at
+        }
+
+        const apu = await APUService.update(id, apuObject);
+
+        if (!apu) {
+          return response.status(404).json({ ok: false, error: 'APU not found'});
+        }
+
+        /// Add relations (not have lol, but I put this comment anyway);
+
+        return response.status(200).json({ ok: true, message: apu});
+      }
+
+      return response.status(200).json({ ok: false, error: error});
     } catch (error) {
-      return response.status(500).json({ error: 'Error updating apu' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -91,9 +131,9 @@ class APUController {
 
       await APUService.delete(id);
 
-      res.status(200).json(apu);
+      return response.status(200).json({ ok: true, message: apu});
     } catch (error) {
-      res.status(404).json({ error: error.message });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 }

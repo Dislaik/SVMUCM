@@ -59,7 +59,6 @@ class APUResourceController {
       const object = {
         id_apu: body.id_apu.id,
         id_resource: body.id_resource.id,
-        amount: body.amount,
         created_at: body.created_at
       }
       
@@ -69,7 +68,7 @@ class APUResourceController {
 
       return response.status(200).json({ ok: true, message: apuResource});
     } catch (error) {
-      response.status(500).json({ error: 'Error creating apuResource' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -80,12 +79,12 @@ class APUResourceController {
 
       const apuResource = await APUResourceService.update(id, body);
       if (!apuResource) {
-        return response.status(404).json({ message: 'Role not found' });
+        return response.status(404).json({ message: 'APU-Resource not found' });
       }
 
-      response.status(200).json(apuResource);
+      return response.status(200).json({ ok: true, message: apuResource});
     } catch (error) {
-      response.status(500).json({ error: 'Error updating apuResource' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -96,9 +95,9 @@ class APUResourceController {
 
       await APUResourceService.delete(id);
 
-      res.status(200).json(apuResource);
+      return response.status(200).json({ ok: true, message: apuResource});
     } catch (error) {
-      res.status(404).json({ error: error.message });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 }

@@ -12,6 +12,8 @@ import Swal from 'sweetalert2';
 
 declare var bootstrap: any;
 
+///WEIRD STUFF SOLVED LOL
+
 @Component({
   selector: 'app-manage-apudetails',
   standalone: false,
@@ -33,11 +35,14 @@ export class ManageAPUDetailsComponent implements OnInit{
 
   @ViewChild('modalAddResource') modalAddResource: ElementRef;
   modalAddResourceInstance: any;
+  @ViewChild('modalListResources') modalListResources: ElementRef;
 
   apu: APU;
   resources: Resource[];
   APUResources: APUResource[];
-
+  APUResourcesAUX: APUResource[];
+  buttonResources: any[] = [];
+  
   constructor(
     private router: Router,
     private toastr: ToastrService,
@@ -95,12 +100,14 @@ export class ManageAPUDetailsComponent implements OnInit{
 
     if (response.ok) {
       this.APUResources = response.message;
+      this.APUResourcesAUX = [...this.APUResources] // LITTLE HACK
+      console.log(this.APUResourcesAUX)
     } else {
       console.log(response.error)
     }
   }
 
-
+  ///START EDIT
   public ngOnEditItem(): void {
     this.enableEditItem = true;
     setTimeout(() => {
@@ -116,6 +123,17 @@ export class ManageAPUDetailsComponent implements OnInit{
         this.inputItemEditDescription.nativeElement.value = this.apu.description;
       }
     });
+
+    if (this.buttonResources.length === 0) {
+      const HTMLElementResources = this.modalListResources.nativeElement as HTMLElement;
+
+      for (let i = 0; i < HTMLElementResources.childNodes.length - 1; i++) {
+        const element = HTMLElementResources.childNodes[i];
+        this.buttonResources.push(element.childNodes[0] as HTMLButtonElement);
+      }
+    }
+    
+    console.log(this.buttonResources)
   }
 
   public async ngOnEditItemSave(): Promise<void> {
@@ -144,10 +162,54 @@ export class ManageAPUDetailsComponent implements OnInit{
       this.apu.description = description;
 
       const response = await this.apuService.update(this.apu.id, this.apu);
-
+      
       if (response.ok) {
+        if (!this.compareLists(this.APUResourcesAUX, this.APUResources)) {
+          let removed = '';
+          let added = '';
+
+          for (let i = 0; i < this.APUResources.length; i++) {
+            const element = this.APUResources[i];
+            const response = await this.apuResourceService.delete(element.id);
+
+            if (response.ok) {
+              if (i === this.APUResources.length - 1) {
+                removed += element.id_resource.name + ' ';
+              } else {
+                removed += element.id_resource.name + ', ';
+              }
+            } else {
+              console.log(response.error)
+            }            
+          }
+          // this.toastr.success('Se han eliminado los siguientes recursos [' + removed + '] de la APU');
+          this.APUResources = [];
+
+          for (let i = 0; i < this.APUResourcesAUX.length; i++) {
+            const element = this.APUResourcesAUX[i];
+            const response = await this.apuResourceService.create(element);
+            
+            if (response.ok) {
+              if (i === this.APUResourcesAUX.length - 1) {
+                added += element.id_resource.name + ' ';
+              } else {
+                added += element.id_resource.name + ', ';
+              }
+
+              this.APUResources.push(response.message)
+            } else {
+              console.log(response.error)
+            }
+          }
+          // this.toastr.success('Se han agregado los siguientes recursos [' + removed + '] a la APU');
+          this.APUResourcesAUX = [...this.APUResources];
+        }
+
+
+        
         this.toastr.success('Se han guardado los cambios con exito');
         this.enableEditItem = false;
+
       } else {
         if (Object.keys(response.error).length > 0) {
           this.nameError = response.error.name;
@@ -160,6 +222,7 @@ export class ManageAPUDetailsComponent implements OnInit{
     this.enableEditItem = false;
     this.nameError = '';
     this.labelError = '';
+    this.clearAPUResourceAUX(true);
   }
 
   public ngOnDeleteItem(): void {
@@ -170,14 +233,16 @@ export class ManageAPUDetailsComponent implements OnInit{
       cancelButtonText: 'Cancelar'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const response = await this.resourceService.delete(this.apu.id)
-
+        const response = await this.apuService.delete(this.apu.id)
+        console.log(response)
         if (response.ok) {
           Swal.fire('APU eliminada', '', 'success');
 
-          this.router.navigate(['/panel/manage/resource']);
+          this.router.navigate(['/panel/manage/apu']);
         } else {
-          Swal.fire(response.error, '', 'warning');
+          if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
+            Swal.fire('La APU no puede ser eliminada debio a tablas relacionadas', '', 'warning');
+          }
         }
       }
     }); 
@@ -191,39 +256,34 @@ export class ManageAPUDetailsComponent implements OnInit{
     this.modalAddResourceInstance.show();
   }
 
+  public async ngOnModalAddResource(resource: Resource): Promise<void> {
+    const apuResource = new APUResource(this.apu, resource);
+    const buttonElement = this.buttonResources.find(button => Number(button.getAttribute('data-resource-id')) === resource.id);
+
+    buttonElement.disabled = true;
+    this.APUResourcesAUX.push(apuResource);
+    console.log(this.APUResourcesAUX)
+  }
 
 
+  public async ngOnRemoveResource(apuResource: APUResource): Promise<void> {
+    const ResourceId = apuResource.id_resource.id;
+    const index = this.APUResourcesAUX.findIndex(element => element.id_resource.id === ResourceId);
 
-  public async ngOnModalAddResource(p1: Resource): Promise<void> {
+    if (index !== -1) {
+      this.APUResourcesAUX.splice(index, 1);
+    }
+
+    this.buttonResources.forEach(element => {
+      if (Number(element.getAttribute('data-resource-id')) === ResourceId) {
+        element.disabled = false;
+      }
+    });
     
+    console.log(this.APUResourcesAUX)
   }
 
-
-  public async ngOnClickOpenModal(): Promise<void> {
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  ///// MODAL END /////
 
   public nameIdentifier(): void {
     Utils.formatNameIdentifier(this.inputItemEditName.nativeElement);
@@ -240,86 +300,56 @@ export class ManageAPUDetailsComponent implements OnInit{
 
     return p1;
   }
+
+  public numberToPrice(p1: number): string {
+    if (p1 === 0) {
+      return "Gratis"
+    }
+
+    return '$' + Utils.stringToPrice(String(p1));
+  }
+
+  private clearAPUResourceAUX(p1: boolean): void {
+    const compare = this.buttonResources.filter(item1 => this.APUResourcesAUX.some(item2 => Number(item1.getAttribute('data-resource-id')) === item2.id_resource.id));
+
+    compare.forEach(button => {
+      button.disabled = false;
+    });
+
+    if (p1) {
+      this.APUResourcesAUX = [...this.APUResources];
+    }
+  }
+
+  public aLittleHackLOL(p1: number): string {
+    return String(p1);
+  }
+
+  private compareLists(p1: any[], p2: any[]): boolean {
+    if (p1.length !== p2.length) {
+      return false;
+    }
+  
+    for (let i = 0; i < p1.length; i++) {
+      console.log(p1[i], p2[i])
+      if (p1[i].id_resource.id !== p2[i].id_resource.id) {
+        return false;
+      }
+    }
+
+    return true
+  }
+
+  @HostListener('document:show.bs.modal', ['$event']) onModalClick(event: Event) {
+    const compare = this.buttonResources.filter(item1 => !this.APUResourcesAUX.some(item2 => Number(item1.getAttribute('data-resource-id')) === item2.id_resource.id));
+    const compare2 = this.buttonResources.filter(item1 => this.APUResourcesAUX.some(item2 => Number(item1.getAttribute('data-resource-id')) === item2.id_resource.id));
+    
+    compare2.forEach(button => {
+      button.disabled = true;
+    });
+
+    compare.forEach(button => {
+      button.disabled = false;
+    });
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//   public ngOnClickAddResource(): void {
-//     const amount = this.inputAmount.nativeElement.value;
-//     const resource = this.modalAddResourceAmountInstance.arguments.resource;
-//     let success = 0;
-
-
-//     if (amount.trim() === '') {
-//       this.amountError = 'Debe ingresar una cantidad'
-//     } else {
-//       this.amountError = '';
-//       success+= 1;
-//     }
-
-//     if (success === 1) {
-//       const apuResource = new APUResource(this.apu, resource, Number(amount));
-//       this.ngOnAddResource(apuResource);
-//     }
-//   }
-
-//   public ngOnClickBackToSelectResource(): void {
-//     this.modalAddResourceAmountInstance.hide();
-//     this.modalAddResourceInstance.show()
-//   }
-
-
-
-//   public ngOnOnlyNumbers(event: Event): void {
-//     const input = event.target as HTMLInputElement;
-//     Utils.onlyNumbers(input);
-//   }
-
-//   private async ngOnAddResource(object: APUResource): Promise<void> {
-//     const response = await this.apuResourceService.create(object);
-
-//     if (response.ok) {
-//       this.modalAddResourceInstance.hide();
-//       this.APUResources.push(response.message);
-//       this.modalAddResourceAmountInstance.hide();
-//     } else {
-//       console.log(response.error)
-//     }
-//   }
-
-
-
-//   ngOnClickDeleteResource(): void {
-
-//   }
-
-//   ngOnClickEditResource(): void {
-//     console.log("Edit apu")
-//   }
-
-//   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {
-//     this.inputAmount.nativeElement.value = '';
-//   }
-// }

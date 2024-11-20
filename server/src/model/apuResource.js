@@ -7,7 +7,6 @@ const APUResource = sequelize.define('apu_resource', {
   id: { type: DataTypes.INTEGER, allowNull: false, autoIncrement: true, primaryKey: true },
   id_apu: { type: DataTypes.INTEGER, allowNull: false, references: { model: APU, key: 'id' } },
   id_resource: { type: DataTypes.INTEGER, allowNull: false, references: { model: Resource, key: 'id' }},
-  amount: { type: DataTypes.INTEGER, allowNull: false },
   created_at: { type: DataTypes.DATE,  allowNull: false }
 });
 

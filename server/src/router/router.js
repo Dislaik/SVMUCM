@@ -12,8 +12,10 @@ const cityRouter = require('./cityRouter');
 const projectStatusRouter = require('./projectStatusRouter');
 const resourceRouter = require('./resourceRouter');
 const project = require('./projectRouter');
+const quotationStatusRouter = require('./quotationStatusRouter')
 const apuResource = require('./apuResourceRouter');
 const projectAPU = require('./projectApuRouter');
+const quotationRouter = require('./quotationRouter');
 let router = express.Router();
 
 router.stack = router.stack.concat(authRouter.stack);
@@ -21,6 +23,7 @@ router.stack = router.stack.concat(apuRouter.stack);
 router.stack = router.stack.concat(resourceRouter.stack);
 router.stack = router.stack.concat(projectStatusRouter.stack);
 router.stack = router.stack.concat(project.stack);
+router.stack = router.stack.concat(quotationStatusRouter.stack);
 router.stack = router.stack.concat(cityRouter.stack);
 router.stack = router.stack.concat(regionRouter.stack);
 router.stack = router.stack.concat(headquarterRouter.stack);
@@ -31,5 +34,6 @@ router.stack = router.stack.concat(userRouter.stack);
 router.stack = router.stack.concat(userStatusRouter.stack);
 router.stack = router.stack.concat(apuResource.stack);
 router.stack = router.stack.concat(projectAPU.stack);
+router.stack = router.stack.concat(quotationRouter.stack);
 
 module.exports = router;

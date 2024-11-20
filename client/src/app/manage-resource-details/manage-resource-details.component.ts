@@ -136,7 +136,7 @@ export class ManageResourceDetailsComponent implements OnInit {
 
   public ngOnDeleteItem(): void {
     Swal.fire({
-      title: '¿Estas seguro que quieres eliminar esta carrera?',
+      title: '¿Estas seguro que quieres eliminar este recurso?',
       showCancelButton: true,
       confirmButtonText: 'Confirmar',
       cancelButtonText: 'Cancelar'
@@ -149,7 +149,9 @@ export class ManageResourceDetailsComponent implements OnInit {
 
           this.router.navigate(['/panel/manage/resource']);
         } else {
-          Swal.fire(response.error, '', 'warning');
+          if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
+            Swal.fire('El recurso no puede ser eliminado debio a tablas relacionadas', '', 'warning');
+          }
         }
       }
     }); 

@@ -43,8 +43,6 @@ class ResourceController {
           price: body.price,
           created_at: body.created_at
         }
-        console.log(resourceObject)
-
         let resource = await ResourceService.create(resourceObject);
 
         /// Add relations (not have lol, but I put this comment anyway);
@@ -77,8 +75,7 @@ class ResourceController {
           price: body.price,
           created_at: body.created_at
         }
-        console.log(resourceObject)
-        const resource = await ResourceService.update(id, resourceObject);
+        let resource = await ResourceService.update(id, resourceObject);
 
         if (!resource) {
           return response.status(404).json({ ok: false, error: 'Resource not found'});

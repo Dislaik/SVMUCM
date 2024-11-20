@@ -65,8 +65,13 @@
               {{user.first_name}} {{user.last_name}}
             </button>
             <div class="dropdown-menu flex-column" aria-labelledby="navbarDropdownMenuLink">
+              <ng-template [ngIf]="isOnPanel" [ngIfElse]="elseBlockNotOnPanel">
+                <button *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/']"><i class="bi bi-house"></i>Inicio</button>
+              </ng-template>
+              <ng-template #elseBlockNotOnPanel>
+                <button *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/panel']"><i class="bi bi-pencil-fill"></i>Panel de administración</button>
+              </ng-template>
               <button type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/my-profile']"><i class="bi bi-person-lines-fill"></i>Mi perfil</button>
-              <button *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/panel']"><i class="bi bi-pencil-fill"></i>Panel de administración</button>
               <button type="button" class="btn btn-user-dropdown text-start" (click)="ngOnLoggout()"><i class="bi bi-box-arrow-in-right"></i>Cerrar sesión</button>
             </div>
           </div>

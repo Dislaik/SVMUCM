@@ -5,14 +5,14 @@
     <div class="row mb-2">
       <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
         <div class="d-flex flex-row-reverse gap-2">
-          <button type="button" class="btn btn-edit-save" (click)="ngOnEditItemSave()"><i class="bi bi-gear-fill"></i>Guardar cambios</button>
-          <button type="button" class="btn btn-edit-cancel" (click)="ngOnEditItemCancel()"><i class="bi bi-gear-fill"></i>Deshacer cambios</button>
+          <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
+          <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
         </div>
       </ng-template>
       <ng-template #elseBlockEditItem>
         <div class="d-flex flex-row-reverse gap-2">
-          <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-gear-fill"></i>Editar</button>
-          <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-gear-fill"></i>Eliminar</button>
+          <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+          <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button>
         </div>
       </ng-template>
     </div>

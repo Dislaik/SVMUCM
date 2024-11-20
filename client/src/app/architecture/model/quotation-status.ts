@@ -1,6 +1,6 @@
-export class Region {
-  id: number;
-  name: String;
+export class QuotationStatus {
+	id: number;
+	name: String;
   label: String;
 
   constructor(

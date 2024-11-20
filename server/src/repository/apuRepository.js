@@ -40,6 +40,16 @@ class APURepository {
 
     return await apu.destroy();
   }
+
+  async existsByName(name) {
+    const apu = await this.findByName(name);
+
+    if (!apu) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 module.exports = new APURepository();
