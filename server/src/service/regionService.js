@@ -46,6 +46,10 @@ class RegionService {
   async delete(id) {
     return await RegionRepository.delete(id);
   }
+
+  async existsByName(name) {
+    return await RegionRepository.existsByName(name);
+  }
 }
 
 module.exports = new RegionService();

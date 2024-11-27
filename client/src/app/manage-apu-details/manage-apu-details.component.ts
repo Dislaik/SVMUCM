@@ -9,6 +9,8 @@ import { APUResourceService } from '../architecture/service/apuresource.service'
 import { Utils } from '../utils';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
 
 declare var bootstrap: any;
 
@@ -25,7 +27,8 @@ export class ManageAPUDetailsComponent implements OnInit{
   id: number;
   pages: string;
   isViewLoaded: boolean = false;
-  enableEditItem: boolean;
+  enableEditItem: boolean = false;
+  browserUser: User;
 
   @ViewChild('inputItemEditName') inputItemEditName: ElementRef;
   nameError: string = '';
@@ -46,6 +49,7 @@ export class ManageAPUDetailsComponent implements OnInit{
   constructor(
     private router: Router,
     private toastr: ToastrService,
+    private userService: UserService,
     private apuService: APUService,
     private resourceService: ResourceService,
     private apuResourceService: APUResourceService,
@@ -58,6 +62,7 @@ export class ManageAPUDetailsComponent implements OnInit{
 
   ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.ngOnGetAPU();
     this.ngOnGetAllResources();
     this.ngOnGetResourcesByAPUId();
@@ -67,11 +72,21 @@ export class ManageAPUDetailsComponent implements OnInit{
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'APU', url: '/panel/manage/apu'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'APU', url: '/panel/apu'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async ngOnGetAPU(): Promise<void> {
@@ -132,8 +147,6 @@ export class ManageAPUDetailsComponent implements OnInit{
         this.buttonResources.push(element.childNodes[0] as HTMLButtonElement);
       }
     }
-    
-    console.log(this.buttonResources)
   }
 
   public async ngOnEditItemSave(): Promise<void> {
@@ -238,7 +251,7 @@ export class ManageAPUDetailsComponent implements OnInit{
         if (response.ok) {
           Swal.fire('APU eliminada', '', 'success');
 
-          this.router.navigate(['/panel/manage/apu']);
+          this.router.navigate(['/panel/apu']);
         } else {
           if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
             Swal.fire('La APU no puede ser eliminada debio a tablas relacionadas', '', 'warning');
@@ -249,7 +262,6 @@ export class ManageAPUDetailsComponent implements OnInit{
   }
 
   ///// MODAL START /////
-
 
   public ngOnCreateModalAddResource(): void {
     this.modalAddResourceInstance = new bootstrap.Modal(this.modalAddResource.nativeElement);
@@ -267,20 +279,18 @@ export class ManageAPUDetailsComponent implements OnInit{
 
 
   public async ngOnRemoveResource(apuResource: APUResource): Promise<void> {
-    const ResourceId = apuResource.id_resource.id;
-    const index = this.APUResourcesAUX.findIndex(element => element.id_resource.id === ResourceId);
+    const resourceId = apuResource.id_resource.id;
+    const index = this.APUResourcesAUX.findIndex(element => element.id_resource.id === resourceId);
 
     if (index !== -1) {
       this.APUResourcesAUX.splice(index, 1);
     }
 
     this.buttonResources.forEach(element => {
-      if (Number(element.getAttribute('data-resource-id')) === ResourceId) {
+      if (Number(element.getAttribute('data-resource-id')) === resourceId) {
         element.disabled = false;
       }
     });
-    
-    console.log(this.APUResourcesAUX)
   }
 
   ///// MODAL END /////
@@ -331,13 +341,16 @@ export class ManageAPUDetailsComponent implements OnInit{
     }
   
     for (let i = 0; i < p1.length; i++) {
-      console.log(p1[i], p2[i])
       if (p1[i].id_resource.id !== p2[i].id_resource.id) {
         return false;
       }
     }
 
     return true
+  }
+
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
   }
 
   @HostListener('document:show.bs.modal', ['$event']) onModalClick(event: Event) {

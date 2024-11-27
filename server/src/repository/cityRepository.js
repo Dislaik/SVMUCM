@@ -51,6 +51,16 @@ class CityRepository {
 
     return await city.destroy();
   }
+
+  async existsByName(name) {
+    const city = await this.findByName(name);
+
+    if (!city) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 module.exports = new CityRepository();

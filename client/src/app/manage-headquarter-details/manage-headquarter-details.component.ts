@@ -3,6 +3,9 @@ import { Headquarter } from '../architecture/model/headquarter';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeadquarterService } from '../architecture/service/headquarter.service';
 import { ToastrService } from 'ngx-toastr';
+import { Utils } from '../utils';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
 
 @Component({
   selector: 'app-manage-headquarter-details',
@@ -14,17 +17,19 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
   title: string = "Detalles de la sede";
   id: number;
   pages: string;
+  isViewLoaded: boolean = false;
+  enableEditItem: boolean = false;
+  browserUser: User;
 
   @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
 
   headquarter: Headquarter;
-  isViewLoaded: boolean = false;
-  enableEditItem: boolean;
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
+    private userService: UserService,
     private headquarterService: HeadquarterService
   ){
     this.activatedRoute.params.subscribe( params =>
@@ -34,6 +39,7 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getHeadquarter();
   }
 
@@ -41,11 +47,21 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'Sedes', url: '/panel/manage/headquarter'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'Sedes', url: '/panel/headquarter'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getHeadquarter(): Promise<void> {
@@ -85,5 +101,9 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
 
   public ngOnEditItemCancel(): void {
     this.enableEditItem = false;
+  }
+
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
   }
 }

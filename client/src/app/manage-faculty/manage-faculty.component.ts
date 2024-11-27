@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { FacultyService } from '../architecture/service/faculty.service';
 import { Utils } from '../utils';
 import { ToastrService } from 'ngx-toastr';
+import { UserService } from '../architecture/service/user.service';
+import { User } from '../architecture/model/user';
 
 @Component({
   selector: 'app-manage-faculty',
@@ -16,6 +18,7 @@ export class ManageFacultyComponent implements OnInit {
   pages: string;
   faculties: Faculty[];
   isViewLoaded: boolean = false;
+  browserUser: User;
 
   @ViewChild('inputSearchItem') inputSearchItem: ElementRef;
 
@@ -36,11 +39,13 @@ export class ManageFacultyComponent implements OnInit {
   constructor(
     private router: Router,
     private toastr: ToastrService,
+    private userService: UserService,
     private facultyService: FacultyService
   ){}
 
   public ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.ngOnCreatePagination(1, 10);
   }
 
@@ -48,10 +53,20 @@ export class ManageFacultyComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getAllFaculties(): Promise<Faculty[]> {
@@ -134,7 +149,7 @@ export class ManageFacultyComponent implements OnInit {
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/faculty', p1.id]);
+    this.router.navigate(['/panel/faculty', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -232,5 +247,9 @@ export class ManageFacultyComponent implements OnInit {
 
   private UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);
+  }
+  
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
   }
 }

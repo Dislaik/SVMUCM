@@ -50,22 +50,37 @@ export class NavbarComponent implements OnInit {
         this.showComponent = this.router.url !== '/login' && this.router.url !== '/register';
         this.isLogged = Utils.getStorage('isLogged') || false;
         this.isOnPanel = this.currentPage.split('/')[1] === 'panel';
-        this.isOnManage = this.currentPage.split('/')[2] === 'manage';
+        this.ngOnManagePages(this.currentPage);
         
         if (await this.authService.verify()) {
           this.isLogged = true;
-          const result = await this.userService.getByUsername(Utils.getUsernameByBrowser());
+          const response = await this.userService.getByUsername(Utils.getUsernameByBrowser());
 
-          if (result.ok) {
-            this.user = result.message;
+          if (response.ok) {
+            this.user = response.message;
           } else {
-            console.log(result.error)
+            console.log(response.error)
           }
         } else {
           this.isLogged = false;
         }
       }
     });
+  }
+
+  ngOnManagePages(p1: string): void {
+    const pages = ["user", "role", "student-volunteer", "headquarter", "faculty", "career", "project", "apu", "resource"];
+    const currentPage = p1.split('/')[2];
+
+    if (currentPage) {
+      if (pages.includes(currentPage)) {
+        this.isOnManage = true;
+
+        return
+      }
+    }
+
+    this.isOnManage = false;
   }
 
   ngOnLogin(): void {
@@ -87,6 +102,10 @@ export class NavbarComponent implements OnInit {
     this.user = null;
   }
 
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.user, p1)
+  }
+
   @HostListener('click', ['$event']) onClick(event: Event) {
 
     if (this.navHome && event.target === this.navHome.nativeElement) {
@@ -101,18 +120,6 @@ export class NavbarComponent implements OnInit {
       }
     } else if (this.navProject && event.target === this.navProject.nativeElement) {
       this.router.navigate(['/project']);
-    }
-
-    if (this.navPanel && event.target === this.navPanel.nativeElement) {
-      this.router.navigate(['/panel']);
-    } else if (this.navManage && event.target === this.navManage.nativeElement) {
-      this.router.navigate(['/panel/manage']);
-    } else if (this.navPanelManageUser && event.target === this.navPanelManageUser.nativeElement) {
-      this.router.navigate(['/panel/manage/user']);
-    } else if (this.navPanelManageRole && event.target === this.navPanelManageRole.nativeElement) {
-      this.router.navigate(['/panel/manage/role']);
-    } else if (this.navPanelManageProject && event.target === this.navPanelManageProject.nativeElement) {
-      this.router.navigate(['/panel/manage/project']);
     }
   }
 }

@@ -40,6 +40,16 @@ class RegionRepository {
 
     return await region.destroy();
   }
+
+  async existsByName(name) {
+    const region = await this.findByName(name);
+
+    if (!region) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 module.exports = new RegionRepository();

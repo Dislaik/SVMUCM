@@ -19,7 +19,7 @@ class ResourceService {
     const resource = await ResourceRepository.findByName(name);
     
     if (!resource) {
-      throw new Error('Resource not found');
+      return null
     }
 
     return resource;

@@ -5,18 +5,18 @@ export class Quotation {
   id: number;
   id_project: Project;
   id_quotation_status: QuotationStatus;
-  durationDay: number;
+  end_date: Date;
   created_at: Date;
 
   constructor(
     id_project: Project = new Project(), 
     id_quotation_status: QuotationStatus = new QuotationStatus(),
-    durationDay: number = 10,
+    end_date: Date = new Date(),
     created_at: Date = new Date()
   ) {
     this.id_project = id_project;
     this.id_quotation_status = id_quotation_status;
-    this.durationDay = durationDay;
+    this.end_date = end_date;
     this.created_at = created_at;
   } 
 }

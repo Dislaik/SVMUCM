@@ -52,8 +52,7 @@ export class ManageQuotationComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
   }
@@ -141,7 +140,7 @@ export class ManageQuotationComponent implements OnInit {
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/resource', p1.id]);
+    this.router.navigate(['/panel/quotation', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -236,7 +235,7 @@ export class ManageQuotationComponent implements OnInit {
   }
 
   ///// PAGINATION END /////
-
+  
 
   public UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);

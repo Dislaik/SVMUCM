@@ -8,6 +8,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Headquarter } from '../architecture/model/headquarter';
 import { Faculty } from '../architecture/model/faculty';
 import Swal from 'sweetalert2';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
+import { Utils } from '../utils';
 
 @Component({
   selector: 'app-manage-career-details',
@@ -20,7 +23,8 @@ export class ManageCareerDetailsComponent  implements OnInit {
   id: number;
   pages: string;  
   isViewLoaded: boolean = false;
-  enableEditItem: boolean;
+  enableEditItem: boolean = false;
+  browserUser: User;
 
   @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
   labelError: string = '';
@@ -36,6 +40,7 @@ export class ManageCareerDetailsComponent  implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
+    private userService: UserService,
     private careerService: CareerService,
     private headquarterService: HeadquarterService,
     private facultyService: FacultyService
@@ -47,6 +52,7 @@ export class ManageCareerDetailsComponent  implements OnInit {
 
   public ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getAllHeadquarters();
     this.getAllFaculties();
     this.getCareer();
@@ -56,11 +62,21 @@ export class ManageCareerDetailsComponent  implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'Carreras', url: '/panel/manage/career'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'Carreras', url: '/panel/career'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getAllHeadquarters(): Promise<void> {
@@ -157,11 +173,15 @@ export class ManageCareerDetailsComponent  implements OnInit {
         if (response.ok) {
           Swal.fire('Carrera eliminada', '', 'success');
 
-          this.router.navigate(['/panel/manage/career']);
+          this.router.navigate(['/panel/career']);
         } else {
           Swal.fire(response.error, '', 'warning');
         }
       }
     }); 
+  }
+
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
   }
 }

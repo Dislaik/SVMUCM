@@ -260,7 +260,7 @@ export class RequestProjectComponent implements OnInit{
             const city = this.cities.find(city => city.name === cityValue);
             const status = this.projectStatus.find(status => status.name === 'created');
 
-            const project = new Project(nameValue, descriptionValue, user, startDateValue, endDateValue, career, city, status);
+            const project = new Project(nameValue, descriptionValue, user, new Date(startDateValue + "T00:00:00"), new Date(endDateValue + "T00:00:00"), career, city, status);
 
             await this.projectService.create(project)
             this.router.navigate(['/project']);

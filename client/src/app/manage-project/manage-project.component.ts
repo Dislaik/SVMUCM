@@ -53,8 +53,7 @@ export class ManageProjectComponent implements OnInit{
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
   }
@@ -140,7 +139,7 @@ export class ManageProjectComponent implements OnInit{
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/project', p1.id]);
+    this.router.navigate(['/panel/project', p1.id]);
   }
 
   public ngOnPaginationNext(): void {

@@ -95,7 +95,7 @@ class APUController {
       const aux = await APUService.getByName(body.name)
       let error = {};
 
-      if (body.name === aux.name && Number(id) !== aux.id) {
+      if (aux && body.name === aux.name && Number(id) !== aux.id) {
         error.name = 'Este Identificador ya esta registrado';
       }
 

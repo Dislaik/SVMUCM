@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { HeadquarterService } from '../architecture/service/headquarter.service';
 import { Utils } from '../utils';
 import { ToastrService } from 'ngx-toastr';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
 
 @Component({
   selector: 'app-manage-headquarter',
@@ -16,6 +18,7 @@ export class ManageHeadquarterComponent implements OnInit {
   pages: string;
   headquarters: Headquarter[];
   isViewLoaded: boolean = false;
+  browserUser: User;
 
   @ViewChild('inputSearchItem') inputSearchItem: ElementRef;
 
@@ -36,11 +39,13 @@ export class ManageHeadquarterComponent implements OnInit {
   constructor(
     private router: Router,
     private toastr: ToastrService,
+    private userService: UserService,
     private headquarterService: HeadquarterService
   ){}
 
   public ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.ngOnCreatePagination(1, 10);
   }
 
@@ -48,10 +53,20 @@ export class ManageHeadquarterComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getAllHeadquarters(): Promise<Headquarter[]> {
@@ -134,7 +149,7 @@ export class ManageHeadquarterComponent implements OnInit {
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/headquarter', p1.id]);
+    this.router.navigate(['/panel/headquarter', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -232,6 +247,10 @@ export class ManageHeadquarterComponent implements OnInit {
 
   private UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);
+  }
+
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
   }
 
 }

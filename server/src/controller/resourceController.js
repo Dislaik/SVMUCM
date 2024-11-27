@@ -62,8 +62,8 @@ class ResourceController {
       const { body } = request;
       const aux = await ResourceService.getByName(body.name)
       let error = {};
-
-      if (body.name === aux.name && Number(id) !== aux.id) {
+      
+      if (aux && body.name === aux.name && Number(id) !== aux.id) {
         error.name = 'Este identificador ya esta registrado';
       }
 

@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode";
+import { User } from "./architecture/model/user";
 
 export class Utils {
 
@@ -54,9 +55,14 @@ export class Utils {
 
   public static getUsernameByBrowser(): any {
     const token = this.getStorage('keyToken');
-    const decoded = jwtDecode(token);
 
-    return decoded['username']
+    if (token) {
+      const decoded = jwtDecode(token);
+
+      return decoded['username']
+    }
+
+    return null
   }
 
   public static convertToChileTime(date: Date | string, onlyDay: boolean): string {
@@ -149,5 +155,26 @@ export class Utils {
     let value = p1.value;
 
     p1.value = value.replace(/[^a-zA-Z0-9-_]/g, '');
+  }
+
+  public static getUniqueId(p1: number): string {
+    const stringArr = [];
+
+    for(let i = 0; i< p1; i++){
+      const S4 = (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      stringArr.push(S4);
+    }
+
+    return stringArr.join('-');
+  }
+  
+  public static haveRole(p1: User, p2: any[]) {
+    const role = p1.id_role.name;
+
+    if(p2.includes(role)) {
+      return true;
+    }
+
+    return false;
   }
 }

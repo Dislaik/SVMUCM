@@ -4,6 +4,8 @@ import { APU } from '../architecture/model/apu';
 import { APUService } from '../architecture/service/apu.service';
 import { Utils } from '../utils';
 import { ToastrService } from 'ngx-toastr';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
 
 declare var bootstrap: any;
 
@@ -17,6 +19,7 @@ export class ManageAPUComponent implements OnInit {
   title: string = "APU";
   pages: string;
   isViewLoaded: boolean = false;
+  browserUser: User;
 
   @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
   modalCreateItemInstance: any;
@@ -47,11 +50,13 @@ export class ManageAPUComponent implements OnInit {
   constructor(
     private router: Router,
     private toastr: ToastrService,
+    private userService: UserService,
     private apuService: APUService
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.ngOnCreatePagination(1, 10);
   }
 
@@ -59,10 +64,20 @@ export class ManageAPUComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getAllAPUs(): Promise<APU[]> {
@@ -146,7 +161,7 @@ export class ManageAPUComponent implements OnInit {
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/apu', p1.id]);
+    this.router.navigate(['/panel/apu', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -310,6 +325,10 @@ export class ManageAPUComponent implements OnInit {
 
   public nameIdentifier(): void {
     Utils.formatNameIdentifier(this.inputName.nativeElement);
+  }
+
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {

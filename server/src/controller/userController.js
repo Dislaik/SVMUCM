@@ -43,6 +43,21 @@ class UserController {
     }
   }
 
+  async getByEmail(request, response) {
+    try {
+      const { email } = request.params;
+      const user = await userService.getByEmail(email)
+
+      if (user) {
+        return response.status(200).json({ ok: true, message: user});
+      }
+
+      response.status(404).json({ ok: false, error: 'User not found'});
+    } catch (error) {
+      response.status(500).json(null);
+    }
+  }
+
   async create(request, response) {
     try {
       const { body } = request;
@@ -114,10 +129,13 @@ class UserController {
         created_at: body.created_at
       } 
 
-      const userUpdate = await userService.update(id, userObject);
+      let userUpdate = await userService.update(id, userObject);
       if (!userUpdate) {
         return response.status(404).json({ ok: false,  error: 'User not found' });
       }
+
+      userUpdate.id_role = body.id_role;
+      userUpdate.id_user_status = body.id_user_status;
 
       return response.status(200).json({ ok: true, message: userUpdate});
     } catch (error) {

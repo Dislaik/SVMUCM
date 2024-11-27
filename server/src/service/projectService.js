@@ -26,28 +26,27 @@ class ProjectService {
   async getById(id) {
     const project = await ProjectRepository.findById(id);
 
-    if (project) {
-      const restructuredProject = project.toJSON();
-
-      restructuredProject.id_user = restructuredProject.user;
-      restructuredProject.id_career = restructuredProject.career;
-      restructuredProject.id_city = restructuredProject.city;
-      restructuredProject.id_projectStatus = restructuredProject.project_status;
-
-      delete restructuredProject.user;
-      delete restructuredProject.career;
-      delete restructuredProject.city;
-      delete restructuredProject.project_status;
-
-      return restructuredProject;
+    if (!project) {
+      return null
     }
 
-    throw new Error('Project not found');
+    const restructuredProject = project.toJSON();
+
+    restructuredProject.id_user = restructuredProject.user;
+    restructuredProject.id_career = restructuredProject.career;
+    restructuredProject.id_city = restructuredProject.city;
+    restructuredProject.id_projectStatus = restructuredProject.project_status;
+
+    delete restructuredProject.user;
+    delete restructuredProject.career;
+    delete restructuredProject.city;
+    delete restructuredProject.project_status;
+
+    return restructuredProject;
   }
 
   async getByUserId(id) {
     const projects = await ProjectRepository.findByUserId(id);
-    console.log(projects)
 
     const restructuredProject = projects.map(project => {
       const restructuredProject = project.toJSON();

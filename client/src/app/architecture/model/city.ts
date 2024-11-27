@@ -1,17 +1,18 @@
 import { Region } from "./region";
 
 export class City {
+  id: number
   name: String;
   label: String;
-  region: Region
+  id_region: Region
 
   constructor(
     name: String = '', 
     label: String = '',
-    region: Region = new Region()
+    id_region: Region = new Region()
   ) {
     this.name = name;
     this.label = label;
-    this.region = region;
+    this.id_region = id_region;
   }
 }

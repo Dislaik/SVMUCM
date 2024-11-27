@@ -19,6 +19,9 @@ export class ManageUserDetailsComponent implements OnInit {
   title: string = "Detalles de usuario";
   id: number;
   pages: string;
+  isViewLoaded: boolean = false;
+  enableEditItem: boolean = false;
+  browserUser: User;
 
   @ViewChild('inputItemEditPassword') inputItemEditPassword: ElementRef;
   passwordError: string = '';
@@ -41,8 +44,7 @@ export class ManageUserDetailsComponent implements OnInit {
   user: User;
   roles: Role[];
   userStatus: UserStatus[];
-  isViewLoaded: boolean;
-  enableEditItem: boolean;
+  
 
 
   constructor(
@@ -61,6 +63,7 @@ export class ManageUserDetailsComponent implements OnInit {
   public ngOnInit(): void {
     this.isViewLoaded = false;
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getAllRoles();
     this.getAllUserStatus();
     this.getItem();
@@ -70,11 +73,21 @@ export class ManageUserDetailsComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'Usuarios', url: '/panel/manage/user'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'Usuarios', url: '/panel/user'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
   
   private async getAllRoles(): Promise<void> {
@@ -109,6 +122,7 @@ export class ManageUserDetailsComponent implements OnInit {
   }
   
   public async ngOnEditItemSave(): Promise<void> {
+    
     const password = this.inputItemEditPassword.nativeElement.value;
     const firstName = this.inputItemEditFirstName.nativeElement.value;
     const lastName = this.inputItemEditLastName.nativeElement.value;
@@ -116,7 +130,12 @@ export class ManageUserDetailsComponent implements OnInit {
     const address = this.inputItemEditAddress.nativeElement.value;
     const phone = this.inputItemEditPhone.nativeElement.value;
     const role = this.roles.find(role => role.name === this.selectItemEditRole.nativeElement.value);
-    const userStatus = this.userStatus.find(status => status.name === this.selectItemEditUserStatus.nativeElement.value);
+
+    let userStatus = this.user.id_user_status;
+    if (this.selectItemEditUserStatus) {
+      userStatus = this.userStatus.find(status => status.name === this.selectItemEditUserStatus.nativeElement.value);
+    }
+    console.log(userStatus)
     let success = 0;
 
     if (password.trim() === '') {
@@ -159,21 +178,7 @@ export class ManageUserDetailsComponent implements OnInit {
       success+= 1;
     }
 
-    if (address.trim() === '') {
-      this.addressError = 'Debe ingresar un correo electronico';
-    } else {
-      this.addressError = '';
-      success+= 1;
-    }
-
-    if (phone.trim() === '') {
-      this.phoneError = 'Debe ingresar un correo electronico';
-    } else {
-      this.phoneError = '';
-      success+= 1;
-    }
-
-    if (success === 6) {
+    if (success === 4) {
       if (password !== '') {
         this.user.password = password;
       }
@@ -199,6 +204,12 @@ export class ManageUserDetailsComponent implements OnInit {
 
   public ngOnEditItem(): void {
     this.enableEditItem = true;
+
+    if (this.haveRole(['dean'])) {
+      const toRemove = ['admin', 'externalrelationscoordinator', 'externalrelations', 'dean'];
+      this.roles = this.roles.filter(role => !toRemove.includes(<string>role.name));
+    }
+    
     setTimeout(() => {
       if (this.inputItemEditFirstName) {
         this.inputItemEditFirstName.nativeElement.value = this.user.first_name;
@@ -234,8 +245,35 @@ export class ManageUserDetailsComponent implements OnInit {
     this.enableEditItem = false;
   }
 
+  public checkField(p1: string): string {
+    console.log(p1)
+
+    if (p1.trim() === '') {
+      return "No proporcionado";
+    }
+
+    return p1;
+  }
+
   public UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);
   }
 
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
+  }
+
+  // public canEdit(): boolean {
+
+  //   if (this.browserUser.id_role.id > this.user.id_role.id) {
+  //     return false
+  //   }
+    
+  //   if (this.browserUser.id !== this.user.id) {
+  //     return true
+  //   }
+
+
+  //   return false
+  // }
 }

@@ -135,4 +135,8 @@ export class RegisterComponent implements OnInit{
       }
     }
   }
+
+  public ngOnInputValidatePhone(): void {
+    Utils.validatePhoneNumber(this.inputPhone.nativeElement)
+  }
 }

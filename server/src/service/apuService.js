@@ -19,7 +19,7 @@ class APUService {
     const apu = await APURepository.findByName(name);
     
     if (!apu) {
-      throw new Error('APU not found');
+      return null
     }
 
     return apu;

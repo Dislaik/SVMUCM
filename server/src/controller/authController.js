@@ -77,11 +77,13 @@ class AuthController {
           address: address,
           phone: phone,
           image: 'http://localhost:8080/attachments/avatarDefault.png',
-          id_role: 8,
-          created_at: utils.getCurrentUTCTimeZone()
+          id_role: 7,
+          id_user_status: 1,
+          created_at: new Date()
         }
 
         const user = await userService.create(userObject)
+        
 
         if (user) {
           const keyToken = auth.generateToken(username);
@@ -95,7 +97,7 @@ class AuthController {
       }
       
     } catch (error) {
-      response.status(500).json('Hubo un error inesperado');
+       response.status(500).json('Hubo un error inesperado');
     };
   };
 

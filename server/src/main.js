@@ -145,7 +145,7 @@ async function initTable() {
   await UserStatus.findOrCreate({ where: {name: 'active'}, defaults: {label: 'Activo'} });
   await UserStatus.findOrCreate({ where: {name: 'inactive'}, defaults: {label: 'Inactivo'} });
   await User.findOrCreate({ where: { username: '20.349.272-3' }, defaults: {password: await authentication.cryptPassword('123'), email: 'matias.salas@alu.ucm.cl', first_name: 'Matias Nicolas', last_name: 'Salas Sepulveda', address: 'Santa María 660', phone: '+56930853894', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 1, id_user_status: 1, created_at: new Date()} });
-  await User.findOrCreate({ where: { username: '20.564.236-6' }, defaults: {password: await authentication.cryptPassword('123'), email: 'alex.gajardo@alu.ucm.cl', first_name: 'Alex Nicolas', last_name: 'Gajardo Sanchez', address: '9 Ote. 30 sur Pje. 31 493 Villa Brisas Del Maule', phone: '+56936341033', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 8, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '20.564.236-6' }, defaults: {password: await authentication.cryptPassword('123'), email: 'alex.gajardo@alu.ucm.cl', first_name: 'Alex Nicolas', last_name: 'Gajardo Sanchez', address: '9 Ote. 30 sur Pje. 31 493 Villa Brisas Del Maule', phone: '+56936341033', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 7, id_user_status: 1, created_at: new Date()} });
   await User.findOrCreate({ where: { username: '8.698.796-1' }, defaults: {password: await authentication.cryptPassword('123'), email: 'mjarur@ucm.cl', first_name: 'Mary Carmen', last_name: 'Jarur Muñoz', address: 'Chorrillos 1167', phone: '+56712203306', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 6, id_user_status: 1, created_at: new Date()} });
   await User.findOrCreate({ where: { username: '7.817.164-2' }, defaults: {password: await authentication.cryptPassword('123'), email: 'haraya@ucm.cl', first_name: 'Hugo Antonio', last_name: 'Araya Carrasco', address: 'Vi Galilea 9 Pte 0 228', phone: '+56712633436', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 5, id_user_status: 1, created_at: new Date()} });
   await User.findOrCreate({ where: { username: '16.303.922-2' }, defaults: {password: await authentication.cryptPassword('123'), email: 'ccastrob@ucm.cl', first_name: 'Carlos Andres', last_name: 'Castro Bustamante', address: 'Mataquito 90 Licanten', phone: null, image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 5, id_user_status: 1, created_at: new Date()} });
@@ -220,10 +220,12 @@ async function initTable() {
   await projectStatus.findOrCreate({ where: {name: 'underreview'}, defaults: {label: 'En revisión'} });
   await projectStatus.findOrCreate({ where: {name: 'approved'}, defaults: {label: 'Aprobado'} });
   await projectStatus.findOrCreate({ where: {name: 'rejected'}, defaults: {label: 'Rechazado'} });
+  await QuotationStatus.findOrCreate({ where: {name: 'waiting'}, defaults: {label: 'En espera'} });
   await QuotationStatus.findOrCreate({ where: {name: 'active'}, defaults: {label: 'Vigente'} });
   await QuotationStatus.findOrCreate({ where: {name: 'expired'}, defaults: {label: 'Vencido'} });
 }
 
+//20.564.236-6
 
 // HABLAR DE CARACTERISTICAS, MEDIA PAGINA APROXIMADAMENTE HABLAR DE LOS FRONTS, EXPLICAR DETALLES BENEFICIOS, -- DOCUMENTO
 
@@ -251,33 +253,18 @@ async function initTable() {
 
 // METODOLOGIA- HABLAR DE OTRAS METOLOGIAS, HABLAR DE PRO Y CONTRAS, HABLARA DE SCRUM, EL PORQUE SE ELIGIO ESA METOLOGIA -- DOCUMENTO
 
-// INDICAR ESCUELA EN SOLICITUD DE PROYECTO  -- CUMPLIDO
 
-// LISTADO DE CARRERAS DESDE LA FACULTAD SELECCIONADA -- CUMPLIDO
 
-// COORDINADOR PUEDE CORREGIR LA SOLICITUD
 
-// NO ES NECSARIO NOTIFICAR CAMBIOS EN LA SOLICITUD
-
-// crear 4° cuarto estado, puede ser modificado mientras no este en revisado
-
-// solicitante puede modificar mientras no este en revision
-
-// seleccionar la carrera -- CUMPLIDO
-
-// APUS = capsulas no modificables -- CUMPLIDO
-
-// COTIZACION en la apu el recurso  puede ser x0
-
-// Vincuador con el medio por facultad
+// Vincuador con el medio por facultad 
 
 // VINCULADOR CON EL MEDIO PUEDE VER OTRAS SOLICITUDES DE OTRAS FACULTADES
 
-// ESTADO DE PROYECTO DEBEN SER MÁS DE 5
+// ESTADO DE PROYECTO DEBEN SER MÁS DE 5 
 
-// LISTADO CON FILTRO DE PROYECTO
+// LISTADO CON FILTRO DE PROYECTO -- CUMPLIDO
 
-// ADMINISTRADOR POR FACULTAD, ADMINISTRAR FACULTAD, ASIGNAR MIENMBROS, ETC.
+// ADMINISTRADOR POR FACULTAD, ADMINISTRAR FACULTAD, ASIGNAR MIENMBROS, ETC. 
 
 // COORDINADOR DE VINCULACION DE LA FACULTAD - INGRID LOPEZ, FILTRO 1, DESIGNA LA VINCULACION POR CARRERA, ASIGNA LA SOLICITUD A LAS CARRERAS
 
@@ -287,7 +274,7 @@ async function initTable() {
 
 // ALMACENAMIENTO DE ARCHIVOS, USAR SERVICIO EXTERNO
 
-// ENCARGAO DE LA CARRERA VINCULACION Y PASA A COTIZACION
+// ENCARGADO DE LA CARRERA VINCULACION Y PASA A COTIZACION
 
 // SOLICITUD, AÑADIR CAMPO DE CONTACTO
 
@@ -326,21 +313,17 @@ async function initTable() {
 
 // APU 1 UNIDAD QUITAR AMOUNT - CUMPLIDO
 
-// EN COTIZACION SE MODIFICA LA APU 
+// EN COTIZACION SE MODIFICA LA APU  - CUMPLIDO
 
-// CREAR TABLA COTIZACION 
+// CREAR TABLA COTIZACION -- CUMPLIDO 
 
-// SE PUEDE AÑADIR A LA CONTIZACION MAS DE UNA APU IGUAL
+// SE PUEDE AÑADIR A LA CONTIZACION MAS DE UNA APU IGUAL - CUMPLIDO
 
-// PRECIO UNITARIO X LA CANTIDAD, PRECIO TOTAL Y PRECIO CON IVA Y SIN IVA
+// PRECIO UNITARIO X LA CANTIDAD, PRECIO TOTAL Y PRECIO CON IVA Y SIN IVA -- CUMPLIDO
 
-// COTIZACION VER DETALLES
+// COTIZACION VER DETALLES - CUMPLIDO
 
-// MOSTRAR INFORMACION BASICA, APUS Y RESUMEN DE VALORRES (CON IVA Y SIN IVA)
+// MOSTRAR INFORMACION BASICA, APUS Y RESUMEN DE VALORRES (CON IVA Y SIN IVA) - CUMPLIDO
 
-// NUEVA COTIZACION
-// NOMBRE COTIZACION FECHA, ESTADO, AGREGAR APUS
-// AGREGAR APU (RECURSO, PRECIO UNITARIO, CANTIDAD, SUBTOTAL)
-// SUBTOTAL PRECIO X CANTIDAD
 // listado profesores sacar desde la pagina de ucm
 // Añadir animacion de transicion a los input cuando se va a editar un item

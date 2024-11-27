@@ -16,9 +16,9 @@ class QuotationController {
       const { id } = request.params;
       const quotation = await QuotationService.getById(id)
 
-      response.status(200).json(quotation);
+      return response.status(200).json({ ok: true, message: quotation});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -28,12 +28,12 @@ class QuotationController {
       const quotation = await QuotationService.getByProjectId(id);
       
       if (!quotation) {
-        response.status(200).json({ ok: true, message: null});
+        return response.status(200).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: quotation});
+      return response.status(200).json({ ok: true, message: quotation});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -44,7 +44,7 @@ class QuotationController {
       const quotationObject = {
         id_project: body.id_project.id,
         id_quotation_status: body.id_quotation_status.id,
-        duration_day: body.durationDay,
+        end_date: body.end_date,
         created_at: body.created_at
       }
 
@@ -63,15 +63,25 @@ class QuotationController {
     try {
       const { id } = request.params;
       const { body } = request;
-
-      const quotation = await QuotationService.update(id, body);
-      if (!quotation) {
-        return response.status(404).json({ message: 'Quotation not found' });
+      const quotationObject = {
+        id_project: body.id_project.id,
+        id_quotation_status: body.id_quotation_status.id,
+        end_date: body.end_date,
+        created_at: body.created_at
       }
 
-      response.status(200).json(quotation);
+      const quotation = await QuotationService.update(id, quotationObject);
+
+      if (!quotation) {
+        return response.status(404).json({ ok: false, message: 'Quotation not found'});
+      }
+
+      quotation.id_project = body.id_project;
+      quotation.id_quotation_status = body.id_quotation_status;
+
+      return response.status(200).json({ ok: true, message: quotation});
     } catch (error) {
-      response.status(500).json({ error: 'Error updating quotation' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 

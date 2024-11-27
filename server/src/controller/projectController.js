@@ -18,12 +18,12 @@ class ProjectController {
       const project = await ProjectService.getById(id)
 
       if (!project) {
-        response.status(200).json({ ok: true, message: null});
+        return response.status(200).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: project});
+      return response.status(200).json({ ok: true, message: project});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -96,33 +96,6 @@ class ProjectController {
     }
   }
 
-
-  //     const userObject = {
-  //       username: body.username,
-  //       password: password,
-  //       email: body.email,
-  //       first_name: body.first_name,
-  //       last_name: body.last_name,
-  //       address: body.address,
-  //       phone: body.phone,
-  //       image: 'http://localhost:8080/attachments/avatarDefault.png',
-  //       id_role: body.id_role.id,
-  //       id_user_status: body.id_user_status.id,
-  //       created_at: body.created_at
-  //     } 
-
-  //     const userUpdate = await userService.update(id, userObject);
-  //     if (!userUpdate) {
-  //       return response.status(404).json({ ok: false,  error: 'User not found' });
-  //     }
-
-  //     return response.status(200).json({ ok: true, message: userUpdate});
-  //   } catch (error) {
-  //     return response.status(500).json({ error: 'Error updating user' });
-  //   }
-  // }
-  
-
   async delete(request, response) {
     try {
       const { id } = request.params;
@@ -130,9 +103,9 @@ class ProjectController {
 
       await ProjectService.delete(id);
 
-      res.status(200).json(project);
+      return response.status(200).json({ ok: true, message: project});
     } catch (error) {
-      res.status(404).json({ error: error.message });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 }

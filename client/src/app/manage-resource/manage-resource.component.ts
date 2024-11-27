@@ -4,6 +4,8 @@ import { Resource } from '../architecture/model/resource';
 import { ResourceService } from '../architecture/service/resource.service';
 import { Utils } from '../utils';
 import { ToastrService } from 'ngx-toastr';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
 
 declare var bootstrap: any;
 
@@ -17,6 +19,7 @@ export class ManageResourceComponent implements OnInit{
   title: string = "Recursos";
   pages: string;
   isViewLoaded: boolean = false;
+  browserUser: User;
 
   @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
   modalCreateItemInstance: any;
@@ -51,11 +54,13 @@ export class ManageResourceComponent implements OnInit{
   constructor(
     private router: Router,
     private toastr: ToastrService,
+    private userService: UserService,
     private resourceService: ResourceService
   ) {}
 
   public ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.ngOnCreatePagination(1, 10);
   }
 
@@ -63,13 +68,21 @@ export class ManageResourceComponent implements OnInit{
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
   }
 
-  
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
+  }
 
   private async getAllResources(): Promise<Resource[]> {
     const response = await this.resourceService.getAll();
@@ -153,7 +166,7 @@ export class ManageResourceComponent implements OnInit{
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/resource', p1.id]);
+    this.router.navigate(['/panel/resource', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -265,7 +278,7 @@ export class ManageResourceComponent implements OnInit{
     let success = 0;
 
     if (name.trim() === '') {
-      this.nameError = 'Debe ingresar un nombre'
+      this.nameError = 'Debe ingresar un identificador'
     } else {
       this.nameError = '';
       success+= 1;
@@ -332,6 +345,10 @@ export class ManageResourceComponent implements OnInit{
 
   public nameIdentifier(): void {
     Utils.formatNameIdentifier(this.inputName.nativeElement);
+  }
+
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {

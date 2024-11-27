@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Project } from '../architecture/model/project';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from '../architecture/service/project.service';
@@ -21,6 +21,14 @@ import { QuotationService } from '../architecture/service/quotation.service';
 import { Quotation } from '../architecture/model/quotation';
 import { QuotationStatusService } from '../architecture/service/quotation-status.service';
 import { QuotationStatus } from '../architecture/model/quotation-status';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
+import { ProjectUserService } from '../architecture/service/project-user.service';
+import { ProjectUser } from '../architecture/model/project-user';
+import { ProjectVolunteerStudent } from '../architecture/model/project-volunteer-student';
+import { ProjectVolunteerStudentService } from '../architecture/service/project-volunteer-student.service';
+import { VolunteerStudent } from '../architecture/model/volunteer-student';
+import { VolunteerStudentService } from '../architecture/service/volunteer-student.service';
 
 declare var bootstrap: any;
 
@@ -35,10 +43,28 @@ export class ManageProjectDetailsComponent implements OnInit {
   id: number;
   pages: string;
   isViewLoaded: boolean = false;
-  enableEditItem: boolean;
+  enableEditItem: boolean = false;
+  existsQuotation: boolean = false;
+  browserUser: User;
 
-  @ViewChild('modalAddAPU') modalAddAPU: ElementRef;
-  modalAddAPUInstance: any;
+  //// GET PROFESSORS MODAL ////
+  @ViewChild('modalAddProfessor') modalAddProfessor: ElementRef;
+  modalAddProfessorInstance: any;
+  @ViewChild('modalListProfessors') modalListProfessors: ElementRef;
+
+  @ViewChild('modalAddVolunteerStudent') modalAddVolunteerStudent: ElementRef;
+  modalAddVolunteerStudentInstance: any;
+  @ViewChild('modalListVolunteerStudent') modalListVolunteerStudent: ElementRef;
+
+  professors: User[];
+  buttonProfessors: any[] = [];
+  projectUsers: ProjectUser[];
+  projectUsersAUX: ProjectUser[];
+
+  volunteerStudents: VolunteerStudent[];
+  buttonVolunteerStudents: any[] = [];
+  projectVolunterStudents: ProjectVolunteerStudent[];
+  projectVolunterStudentsAUX: ProjectVolunteerStudent[];
 
   @ViewChild('inputItemEditName') inputItemEditName: ElementRef;
   nameError: string = '';
@@ -62,22 +88,22 @@ export class ManageProjectDetailsComponent implements OnInit {
   quotation: Quotation;
   quotationStatus: QuotationStatus[];
   apuResources: {};
-  isProjectLoaded: boolean = false;
-  existsQuotation: boolean = false;
+
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
+    private userService: UserService,
     private projectService: ProjectService,
     private projectStatusService: ProjectStatusService,
     private cityService: CityService,
     private careerService: CareerService,
-    private apuService: APUService,
-    private projectAPUService: ProjectAPUService,
-    private apuResourceService: APUResourceService,
     private quotationService: QuotationService,
+    private projectUserService: ProjectUserService,
     private quotationStatusService: QuotationStatusService,
+    private volunteerStudentService: VolunteerStudentService,
+    private projectVolunteerStudentService: ProjectVolunteerStudentService
   ){
     this.activatedRoute.params.subscribe( params =>
       this.id = params['id']
@@ -86,14 +112,17 @@ export class ManageProjectDetailsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createBreadCrumb();
-    this.getProject();
-    this.getAllProjectStatus();
+    this.getUserByBrowser();
+    this.ngOnGetProject();
+    this.ngOnGetAllProjectStatus();
     this.getAllCities();
     this.getAllCareers()
     this.getAllQuotationStatus()
     this.getQuotationByProjectId();
-    //this.ngOnGetAllAPUs();
-    //this.ngOnGetAPUsByProjectId();
+    this.ngOnGetAllProfessors();
+    this.ngGetAllVolunteerStudents();
+    this.ngOnGetProfessorsByProjectId();
+    this.ngOnGetVolunteerStudentsByProjectId();
     this.apuResources = {}
   }
 
@@ -101,14 +130,24 @@ export class ManageProjectDetailsComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'Proyectos', url: '/panel/manage/project'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'Proyectos', url: '/panel/project'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
   }
 
-  private async getProject(): Promise<void> {
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
+  }
+
+  private async ngOnGetProject(): Promise<void> {
     const response = await this.projectService.getById(this.id);
 
     if (response.ok) {
@@ -119,7 +158,7 @@ export class ManageProjectDetailsComponent implements OnInit {
     }
   }
 
-  private async getAllProjectStatus(): Promise<void> {
+  private async ngOnGetAllProjectStatus(): Promise<void> {
     const response = await this.projectStatusService.getAll();
 
     if (response.ok) {
@@ -164,49 +203,57 @@ export class ManageProjectDetailsComponent implements OnInit {
 
     if (response.ok) {
       this.quotation = response.message;
-      this.existsQuotation = true;
+
+      if (this.quotation) {
+        this.existsQuotation = true;
+      }
     } else {
       console.log(response.error);
     }
   }
 
-  
-
-  public async ngOnGetResourcesByAPUId(projectAPUs: ProjectAPU[]): Promise<void> {
-
-    projectAPUs.forEach(async element => {
-      const response = await this.apuResourceService.getByAPUId(element.id_apu.id);
-
-      if (response.ok) {
-        this.apuResources[String(element.id_apu.id)] = response.message;
-      } else {
-        console.log(response.error)
-      }
-    });
-  }
-
-  private async ngOnGetAllAPUs(): Promise<void> {
-    const response = await this.apuService.getAll();
+  private async ngOnGetAllProfessors(): Promise<void> {
+    const response = await this.userService.getAll();
 
     if (response.ok) {
-      this.apus = response.message;
+      const users = response.message;
+      this.professors = users.filter(user => user.id_role.name === 'professor' || user.id_role.name === 'careerdirector');
+    } else {
+      console.log(response.error);
+    }
+  }
+
+  private async ngGetAllVolunteerStudents(): Promise<void> {
+    const response = await this.volunteerStudentService.getAll();
+
+    if (response.ok) {
+      this.volunteerStudents = response.message;
+    } else {
+      console.log(response.error);
+    }
+  }
+
+  private async ngOnGetProfessorsByProjectId(): Promise<void> {
+    const response = await this.projectUserService.getByProjectId(this.id);
+
+    if (response.ok) {
+      this.projectUsers = response.message;
+      this.projectUsersAUX = [...this.projectUsers] // LITTLE HACK
     } else {
       console.log(response.error)
     }
   }
 
-  private async ngOnGetAPUsByProjectId(): Promise<void> {
-    const response = await this.projectAPUService.getByProjectId(this.id);
+  private async ngOnGetVolunteerStudentsByProjectId(): Promise<void> {
+    const response = await this.projectVolunteerStudentService.getByProjectId(this.id);
 
     if (response.ok) {
-      this.projectAPUs = response.message;
-
-      this.ngOnGetResourcesByAPUId(this.projectAPUs);
+      this.projectVolunterStudents = response.message;
+      this.projectVolunterStudentsAUX = [...this.projectVolunterStudents]
     } else {
       console.log(response.error)
     }
   }
-
 
   public ngOnEditItem(): void {
     this.enableEditItem = true;
@@ -243,6 +290,24 @@ export class ManageProjectDetailsComponent implements OnInit {
         this.selectItemEditCity.nativeElement.value = this.project.id_city.name
       }
     });
+
+    if (this.buttonProfessors.length === 0) {
+      const HTMLElements = this.modalListProfessors.nativeElement as HTMLElement;
+
+      for (let i = 0; i < HTMLElements.childNodes.length - 1; i++) {
+        const element = HTMLElements.childNodes[i];
+        this.buttonProfessors.push(element.childNodes[0] as HTMLButtonElement);
+      }
+    }
+
+    if (this.buttonVolunteerStudents.length === 0) {
+      const HTMLElements = this.modalListVolunteerStudent.nativeElement as HTMLElement;
+
+      for (let i = 0; i < HTMLElements.childNodes.length - 1; i++) {
+        const element = HTMLElements.childNodes[i];
+        this.buttonVolunteerStudents.push(element.childNodes[0] as HTMLButtonElement);
+      }
+    }
   }
 
   public async ngOnEditItemSave(): Promise<void> {
@@ -253,7 +318,6 @@ export class ManageProjectDetailsComponent implements OnInit {
     const endDate = this.inputItemEditEndDate.nativeElement.value;
     const city = this.cities.find(city => city.name === this.selectItemEditCity.nativeElement.value);  
     const career = this.careers.find(career => career.name === this.selectItemEditCareer.nativeElement.value);  
-    const todayDate = new Date();
     let success = 0;
 
     if (name.trim() === '') {
@@ -270,12 +334,8 @@ export class ManageProjectDetailsComponent implements OnInit {
       success+= 1;
     }
 
-    todayDate.setHours(0, 0, 0, 0);
-
     if (startDate.trim() === '') {
       this.startDateError = 'Debe especificar una fecha de inicio';
-    } else if (new Date(startDate) < todayDate) {
-      this.startDateError = 'La fecha de inicio no puede ser una fecha anterior o igual a la de hoy';
     } else {
       this.startDateError = '';
       success+= 1;
@@ -294,21 +354,102 @@ export class ManageProjectDetailsComponent implements OnInit {
       this.project.name = name;
       this.project.description = description;
       this.project.id_projectStatus = projectStatus;
-      this.project.start_date = new Date(startDate + "T00:00:00");;
-      this.project.end_date = new Date(endDate + "T00:00:00");;
+      this.project.start_date = new Date(startDate + "T00:00:00");
+      this.project.end_date = new Date(endDate + "T00:00:00");
       this.project.id_city = city;
       this.project.id_career = career;
-
-      console.log(this.project.start_date)
 
       const response = await this.projectService.update(this.project.id, this.project);
 
       if (response.ok) {
+
+        if (!this.compareListsUsers(this.projectUsersAUX, this.projectUsers)) {
+          let removed = '';
+          let added = '';
+
+          for (let i = 0; i < this.projectUsers.length; i++) {
+            const element = this.projectUsers[i];
+            const response = await this.projectUserService.delete(element.id);
+
+            if (response.ok) {
+              if (i === this.projectUsers.length - 1) {
+                removed += element.id_user.first_name + ' ';
+              } else {
+                removed += element.id_user.first_name + ', ';
+              }
+            } else {
+              console.log(response.error)
+            }            
+          }
+          // this.toastr.success('Se han eliminado los siguientes recursos [' + removed + '] de la APU');
+          this.projectUsers = [];
+
+          for (let i = 0; i < this.projectUsersAUX.length; i++) {
+            const element = this.projectUsersAUX[i];
+            const response = await this.projectUserService.create(element);
+            
+            if (response.ok) {
+              if (i === this.projectUsersAUX.length - 1) {
+                added += element.id_user.first_name + ' ';
+              } else {
+                added += element.id_user.first_name + ', ';
+              }
+
+              this.projectUsers.push(response.message)
+            } else {
+              console.log(response.error)
+            }
+          }
+          // this.toastr.success('Se han agregado los siguientes recursos [' + removed + '] a la APU');
+          this.projectUsersAUX = [...this.projectUsers];
+        }
+
+        if (!this.compareListsVolunteerStudents(this.projectVolunterStudentsAUX, this.projectVolunterStudents)) {
+          let removed = '';
+          let added = '';
+
+          for (let i = 0; i < this.projectVolunterStudents.length; i++) {
+            const element = this.projectVolunterStudents[i];
+            const response = await this.projectVolunteerStudentService.delete(element.id);
+
+            if (response.ok) {
+              if (i === this.projectVolunterStudents.length - 1) {
+                removed += element.id_volunteer_student.first_name + ' ';
+              } else {
+                removed += element.id_volunteer_student.first_name + ', ';
+              }
+            } else {
+              console.log(response.error)
+            }            
+          }
+          // this.toastr.success('Se han eliminado los siguientes recursos [' + removed + '] de la APU');
+          this.projectVolunterStudents = [];
+
+          for (let i = 0; i < this.projectVolunterStudentsAUX.length; i++) {
+            const element = this.projectVolunterStudentsAUX[i];
+            const response = await this.projectVolunteerStudentService.create(element);
+            
+            if (response.ok) {
+              if (i === this.projectUsersAUX.length - 1) {
+                added += element.id_volunteer_student.first_name + ' ';
+              } else {
+                added += element.id_volunteer_student.first_name + ', ';
+              }
+
+              this.projectVolunterStudents.push(response.message)
+            } else {
+              console.log(response.error)
+            }
+          }
+          // this.toastr.success('Se han agregado los siguientes recursos [' + removed + '] a la APU');
+          this.projectVolunterStudentsAUX = [...this.projectVolunterStudents];
+        }
+
         this.toastr.success('Se han guardado los cambios con exito');
         this.enableEditItem = false;
       } else {
         if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
-          Swal.fire('La APU no puede ser eliminada debio a tablas relacionadas', '', 'warning');
+          Swal.fire('El proyecto no puede ser eliminado debio a tablas relacionadas', '', 'warning');
         }
       }
     }
@@ -320,6 +461,8 @@ export class ManageProjectDetailsComponent implements OnInit {
     this.descriptionError = '';
     this.startDateError = '';
     this.endDateError = '';
+    this.clearProjectUserAUX(true);
+    this.clearProjectVolunteerStudentAUX(true);
   }
 
   public ngOnDeleteItem(): void {
@@ -335,10 +478,10 @@ export class ManageProjectDetailsComponent implements OnInit {
         if (response.ok) {
           Swal.fire('Proyecto eliminado', '', 'success');
 
-          this.router.navigate(['/panel/manage/project']);
+          this.router.navigate(['/panel/project']);
         } else {
           if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
-            Swal.fire('La APU no puede ser eliminada debio a tablas relacionadas', '', 'warning');
+            Swal.fire('El proyecto no puede ser eliminada debio a tablas relacionadas', '', 'warning');
           }
         }
       }
@@ -353,15 +496,14 @@ export class ManageProjectDetailsComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const quotationStatus = this.quotationStatus.find(status => status.name === 'active'); 
-        const quotation = new Quotation(this.project, quotationStatus, 10, new Date());
-        console.log(quotation)
+        const quotationStatus = this.quotationStatus.find(status => status.name === 'waiting'); 
+        const quotation = new Quotation(this.project, quotationStatus, new Date(), new Date());
         const response = await this.quotationService.create(quotation)
 
         if (response.ok) {
           Swal.fire('Cotización Creada', '', 'success');
-
-          this.router.navigate(['/panel/manage/quotation']);
+          this.quotation = response.message;
+          this.router.navigate(['/panel/quotation/' + this.quotation.id]);
         } else {
           if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
             Swal.fire('El proyecto no puede ser eliminado debio a tablas relacionadas', '', 'warning');
@@ -372,52 +514,135 @@ export class ManageProjectDetailsComponent implements OnInit {
   }
 
   public ngOnGoQuotation(): void {
-    this.router.navigate(['/panel/manage/quotation']);
+    this.router.navigate(['/panel/quotation/' + this.quotation.id]);
   }
 
+  public ngOnCreateModalAddProfessor(): void {
+    this.modalAddProfessorInstance = new bootstrap.Modal(this.modalAddProfessor.nativeElement);
+    this.modalAddProfessorInstance.show();
+  }
 
+  public ngOnModalAddProfessor(user: User) : void {
+    const projectUser = new ProjectUser(this.project, user);
+    const buttonElement = this.buttonProfessors.find(button => Number(button.getAttribute('data-user-id')) === user.id);
 
+    buttonElement.disabled = true;
+    this.projectUsersAUX.push(projectUser);
+  }
 
+  public ngOnCreateModalAddVolunteerStudent(): void {
+    this.modalAddVolunteerStudentInstance = new bootstrap.Modal(this.modalAddVolunteerStudent.nativeElement);
+    this.modalAddVolunteerStudentInstance.show();
+  }
+
+  public ngOnRemoveProfessor(projectUser: ProjectUser): void {
+    const userId = projectUser.id_user.id;
+    const index = this.projectUsersAUX.findIndex(element => element.id_user.id === userId);
+
+    if (index !== -1) {
+      this.projectUsersAUX.splice(index, 1);
+    }
+
+    this.buttonProfessors.forEach(element => {
+      if (Number(element.getAttribute('data-user-id')) === userId) {
+        element.disabled = false;
+      }
+    });
+  }
+
+  public ngOnModalAddVolunteerStudent(volunteerStudent: VolunteerStudent) : void {
+    const projectVolunteerStudent = new ProjectVolunteerStudent(this.project, volunteerStudent);
+    const buttonElement = this.buttonVolunteerStudents.find(button => Number(button.getAttribute('data-volunteer-student-id')) === volunteerStudent.id);
+
+    buttonElement.disabled = true;
+    this.projectVolunterStudentsAUX.push(projectVolunteerStudent);
+  }
+
+  public ngOnRemoveVolunteerStudent(projectVolunteerStudent: ProjectVolunteerStudent): void {
+    const volunteerStudentId = projectVolunteerStudent.id_volunteer_student.id;
+    const index = this.projectVolunterStudentsAUX.findIndex(element => element.id_volunteer_student.id === volunteerStudentId);
+
+    if (index !== -1) {
+      this.projectVolunterStudentsAUX.splice(index, 1);
+    }
+
+    this.buttonVolunteerStudents.forEach(element => {
+      if (Number(element.getAttribute('data-volunteer-student-id')) === volunteerStudentId) {
+        element.disabled = false;
+      }
+    });
+  }
 
   public UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);
   }
 
+  private clearProjectUserAUX(p1: boolean): void {
+    const compare = this.buttonProfessors.filter(item1 => this.projectUsersAUX.some(item2 => Number(item1.getAttribute('data-user-id')) === item2.id_user.id));
 
+    compare.forEach(button => {
+      button.disabled = false;
+    });
 
-
-  public ngOnClickOpenModal(): void {
-  //   this.modalAddAPUInstance = new bootstrap.Modal(this.modalAddAPU.nativeElement);
-  //   this.modalAddAPUInstance.show();
-  // }
-
-  // public ngOnClickSelectAPU(apu: APU): void {
-  //   const projectAPU = new ProjectAPU(this.project, apu);
-
-  //   this.ngOnAddAPU(projectAPU);
+    if (p1) {
+      this.projectUsersAUX = [...this.projectUsers];
+    }
   }
 
+  private clearProjectVolunteerStudentAUX(p1: boolean): void {
+    const compare = this.buttonVolunteerStudents.filter(item1 => this.projectVolunterStudentsAUX.some(item2 => Number(item1.getAttribute('data-volunteer-student-id')) === item2.id_volunteer_student.id));
+
+    compare.forEach(button => {
+      button.disabled = false;
+    });
+
+    if (p1) {
+      this.projectVolunterStudentsAUX = [...this.projectVolunterStudents];
+    }
+  }
+
+  private compareListsUsers(p1: any[], p2: any[]): boolean {
+    if (p1.length !== p2.length) {
+      return false;
+    }
   
+    for (let i = 0; i < p1.length; i++) {
+      if (p1[i].id_user.id !== p2[i].id_user.id) {
+        return false;
+      }
+    }
 
-  // private async ngOnAddAPU(projectAPU: ProjectAPU): Promise<void> {
-  //   console.log(projectAPU)
-  //   const response = await this.projectAPUService.create(projectAPU)
+    return true
+  }
 
-  //   if (response.ok) {
-  //     this.modalAddAPUInstance.hide()
-  //     this.projectAPUs.push(response.message);
-  //   } else {
-  //     console.log(response.error);
-  //   }
-  // }
-
+  private compareListsVolunteerStudents(p1: any[], p2: any[]): boolean {
+    if (p1.length !== p2.length) {
+      return false;
+    }
   
+    for (let i = 0; i < p1.length; i++) {
+      if (p1[i].id_volunteer_student.id !== p2[i].id_volunteer_student.id) {
+        return false;
+      }
+    }
 
-  // ngOnDeleteProject(): void {
+    return true
+  }
 
-  // }
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
+  }
 
-  // ngOnEditProject(): void {
-  //   console.log("Edit project")
-  // }
+  @HostListener('document:show.bs.modal', ['$event']) onModalClick(event: Event) {
+    const compare = this.buttonVolunteerStudents.filter(item1 => this.projectVolunterStudentsAUX.some(item2 => Number(item1.getAttribute('data-volunteer-student-id')) === item2.id_volunteer_student.id));
+    const compare2 = this.buttonProfessors.filter(item1 => this.projectUsersAUX.some(item2 => Number(item1.getAttribute('data-user-id')) === item2.id_user.id));
+    
+    compare2.forEach(button => {
+      button.disabled = true;
+    });
+
+    compare.forEach(button => {
+      button.disabled = true;
+    });
+  }
 }

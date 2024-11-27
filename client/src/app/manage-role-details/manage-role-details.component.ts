@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Role } from '../architecture/model/role';
 import { RoleService } from '../architecture/service/role.service';
 import { ToastrService } from 'ngx-toastr';
+import { Utils } from '../utils';
+import { UserService } from '../architecture/service/user.service';
+import { User } from '../architecture/model/user';
 
 @Component({
   selector: 'app-manage-role-details',
@@ -14,26 +17,29 @@ export class ManageRoleDetailsComponent implements OnInit {
   title: string = "Detalles del rol";
   id: number;
   pages: string;
+  browserUser: User;
 
   @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
 
   role: Role;
   isViewLoaded: boolean = false;
-  enableEditItem: boolean;
+  enableEditItem: boolean = false;
 
   constructor(
     private router: Router,
-    private roleService: RoleService,
+    private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
-    private activatedRoute: ActivatedRoute
+    private roleService: RoleService,
+    private userService: UserService
   ){
     this.activatedRoute.params.subscribe( params =>
       this.id = params['id']
     );
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getRole();
   }
 
@@ -41,11 +47,21 @@ export class ManageRoleDetailsComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'Roles', url: '/panel/manage/role'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'Roles', url: '/panel/role'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   async getRole(): Promise<void> {
@@ -87,4 +103,7 @@ export class ManageRoleDetailsComponent implements OnInit {
     this.enableEditItem = false;
   }
 
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
+  }
 }

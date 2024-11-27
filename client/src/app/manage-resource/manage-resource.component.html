@@ -3,20 +3,37 @@
 	<h1 class="mb-3">{{title}}</h1>
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
-      <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-primary" (click)="ngOnCreateModalItem()">Crear nuevo recurso</button>
-        <div class="d-flex">
-          <div class="input-group">
-            <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar recurso" (keydown.enter)="ngOnSearchItem()">
-            <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
-              <i class="bi bi-x-circle"></i>
-            </button>
-            <button type="button" class="btn btn-search" (click)="ngOnSearchItem()">
-              <i class="bi bi-search"></i>Buscar
-            </button>
+      <ng-template [ngIf]="haveRole(['admin', 'dean', 'externalrelations', 'externalrelationscoordinator'])" [ngIfElse]="elseBlockNotCreateItem">
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-primary" (click)="ngOnCreateModalItem()">Crear nuevo recurso</button>
+          <div class="d-flex">
+            <div class="input-group">
+              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar recurso" (keydown.enter)="ngOnSearchItem()">
+              <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
+                <i class="bi bi-x-circle"></i>
+              </button>
+              <button type="button" class="btn btn-search" (click)="ngOnSearchItem()">
+                <i class="bi bi-search"></i>Buscar
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </ng-template>
+      <ng-template #elseBlockNotCreateItem>
+        <div class="d-flex justify-content-end">
+          <div class="d-flex">
+            <div class="input-group">
+              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar recurso" (keydown.enter)="ngOnSearchItem()">
+              <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
+                <i class="bi bi-x-circle"></i>
+              </button>
+              <button type="button" class="btn btn-search" (click)="ngOnSearchItem()">
+                <i class="bi bi-search"></i>Buscar
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </div>
     <div class="card mt-3 mb-3 dataTable-height">
       <div class="card-header">{{title}}</div>
@@ -98,38 +115,6 @@
         </div>
       </ul>
     </nav>
-  
-    <div class="card mt-3 mb-3">
-      <div class="card-header">Estadisticas</div>
-      <div class="card-body">
-        <div class="row mb-2">
-          <div class="col-6 pe-2">
-            <div class="charts-height">
-              <!-- <ng-template [ngIf]="isChartUsersLoaded" [ngIfElse]="elseChartsUsersBlock">
-                <div echarts [options]="chartUsers"></div>
-              </ng-template>
-              <ng-template #elseChartsUsersBlock>
-                <svg viewBox="0 0 50 50" class="spinner">
-                  <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-                </svg>
-              </ng-template> -->
-            </div>
-          </div>
-          <div class="col-6 ps-2">
-            <div class="charts-height">
-              <!-- <ng-template [ngIf]="isChartProjectsLoaded" [ngIfElse]="elseChartsProjectsBlock">
-                <div echarts [options]="chartOptionProjects"></div>
-              </ng-template>
-              <ng-template #elseChartsProjectsBlock>
-                <svg viewBox="0 0 50 50" class="spinner">
-                  <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-                </svg>
-              </ng-template> -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </ng-template>
   <ng-template #elseBlockViewLoaded>
     <div class="loading">

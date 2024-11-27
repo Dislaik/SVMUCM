@@ -78,6 +78,10 @@ class CityService {
   async delete(id) {
     return await CityRepository.delete(id);
   }
+
+  async existsByName(name) {
+    return await CityRepository.existsByName(name);
+  }
 }
 
 module.exports = new CityService();

@@ -5,9 +5,9 @@ class CityController {
     try {
       const cities = await CityService.getAll();
       
-      response.status(200).json({ ok: true, message: cities});
+      return response.status(200).json({ ok: true, message: cities});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -16,9 +16,9 @@ class CityController {
       const { id } = request.params;
       const city = await CityService.getById(id)
 
-      response.status(200).json(city);
+      return response.status(200).json({ ok: true, message: city});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -28,12 +28,12 @@ class CityController {
       const city = await CityService.getByName(name);
       
       if (!city) {
-        response.status(200).json({ ok: true, message: null});
+        response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: city});
+      return response.status(200).json({ ok: true, message: city});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -43,12 +43,12 @@ class CityController {
       const city = await CityService.getByLabel(label);
 
       if (!city) {
-        response.status(200).json({ ok: true, message: null});
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: city});
+      return response.status(200).json({ ok: true, message: city});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -58,12 +58,12 @@ class CityController {
       const cities = await CityService.getByRegionId(id);
 
       if (!cities) {
-        response.status(200).json({ ok: true, message: null});
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: cities});
+      return response.status(200).json({ ok: true, message: cities});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
@@ -73,25 +73,44 @@ class CityController {
       const cities = await CityService.getByRegionName(name);
 
       if (!cities) {
-        response.status(200).json({ ok: true, message: null});
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: cities});
+      return response.status(200).json({ ok: true, message: cities});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
   async create(request, response) {
-    try {
-      const { body } = request
-      const city = await CityService.create(body);
+    //try {
+      const { body } = request;
+      let error = {};
+      
+      if (await CityService.existsByName(body.name)) {
+        error.name = 'Este identificador ya esta registrado';
+      }
 
-      response.status(200).json(city);
-    } catch (error) {
-      response.status(500).json({ error: 'Error creating city' });
-    }
+      if (Object.keys(error).length === 0) {
+        const cityObject = {
+          name: body.name,
+          label: body.label,
+          id_region: body.id_region.id
+        }
+        let city = await CityService.create(cityObject);
+
+        city.id_region = body.id_region
+
+        return response.status(200).json({ ok: true, message: city});
+      }
+
+      return response.status(200).json({ ok: false, error: error});
+    // } catch (error) {
+    //   return response.status(500).json({ ok: false, error: error});
+    // }
   }
+
+  
 
   async update(request, response) {
     try {

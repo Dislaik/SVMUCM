@@ -12,7 +12,7 @@ class QuotationRepository {
   }
 
   async findById(id) {
-    return await Quotation.findByPk(id);
+    return await Quotation.findByPk(id, { include: [{ model: Project, include: [ { model: User }, { model: City }, { model: Career }, { model: projectStatus } ]}, { model: QuotationStatus }] });
   }
 
   async findByProjectId(id) {

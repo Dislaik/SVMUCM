@@ -97,38 +97,6 @@
         </div>
       </ul>
     </nav>
-  
-    <div class="card mt-3 mb-3">
-      <div class="card-header">Estadisticas</div>
-      <div class="card-body">
-        <div class="row mb-2">
-          <div class="col-6 pe-2">
-            <div class="charts-height">
-              <!-- <ng-template [ngIf]="isChartUsersLoaded" [ngIfElse]="elseChartsUsersBlock">
-                <div echarts [options]="chartUsers"></div>
-              </ng-template>
-              <ng-template #elseChartsUsersBlock>
-                <svg viewBox="0 0 50 50" class="spinner">
-                  <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-                </svg>
-              </ng-template> -->
-            </div>
-          </div>
-          <div class="col-6 ps-2">
-            <div class="charts-height">
-              <!-- <ng-template [ngIf]="isChartProjectsLoaded" [ngIfElse]="elseChartsProjectsBlock">
-                <div echarts [options]="chartOptionProjects"></div>
-              </ng-template>
-              <ng-template #elseChartsProjectsBlock>
-                <svg viewBox="0 0 50 50" class="spinner">
-                  <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-                </svg>
-              </ng-template> -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </ng-template>
   <ng-template #elseBlockViewLoaded>
     <div class="loading">
@@ -137,55 +105,4 @@
       </svg>
     </div>
   </ng-template>
-</div>
-
-<div #modalCreateItem class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Crear nuevo proyecto</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- <div class="row mb-2">
-          <div class="label-form col-6">
-            <p class="mt-1">Nombre:</p>
-          </div>
-          <div class="col-6">
-            <input #inputName type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa un identificador" (input)="nameIdentifier()">
-            <div *ngIf="nameError !== ''">
-              <div class="message-error-container d-flex align-items-center">
-                <p>{{nameError}}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div class="label-form col-6">
-            <p class="mt-1">Etiqueta:</p>
-          </div>
-          <div class="col-6">
-            <input #inputLabel type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa una etiqueta">
-            <div *ngIf="labelError !== ''">
-              <div class="message-error-container d-flex align-items-center">
-                <p>{{labelError}}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div class="label-form col-6">
-            <p class="mt-1">Descripción:</p>
-          </div>
-          <div class="col-6">
-            <input #inputDescription type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa una descripción">
-          </div>
-        </div> -->
-      </div>
-      <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)="ngOnModelCreateItem()">Crear proyecto</button>
-      </div>
-    </div>
-  </div>
 </div>

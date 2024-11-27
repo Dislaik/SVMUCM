@@ -22,6 +22,7 @@ export class ManageUserComponent implements OnInit{
   title: string = "Usuarios";
   pages: string;
   isViewLoaded: boolean = false;
+  browserUser: User;
 
   @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
   modalCreateItemInstance: any;
@@ -42,6 +43,7 @@ export class ManageUserComponent implements OnInit{
   @ViewChild('selectModalCreateItemRole') selectModalCreateItemRole: ElementRef;
   roleError: string = '';
 
+  
   roles: Role[];
   userStatus: UserStatus[]
   users: User[];
@@ -73,6 +75,7 @@ export class ManageUserComponent implements OnInit{
 
   public async ngOnInit(): Promise<void> {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getAllRoles();
     this.getAllUserStatus();
     this.ngOnCreatePagination(1, 10);
@@ -82,10 +85,20 @@ export class ManageUserComponent implements OnInit{
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getAllUsers(): Promise<User[]> {
@@ -193,7 +206,7 @@ export class ManageUserComponent implements OnInit{
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/user', p1.id]);
+    this.router.navigate(['/panel/user', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -295,6 +308,14 @@ export class ManageUserComponent implements OnInit{
     this.modalCreateItemInstance = new bootstrap.Modal(this.modalCreateItem.nativeElement);
 
     this.modalCreateItemInstance.show();
+
+    if (this.browserUser.id_role.name === 'dean') {
+      const toRemove = ['admin', 'externalrelationscoordinator', 'externalrelations', 'dean'];
+      this.roles = this.roles.filter(role => !toRemove.includes(<string>role.name));
+    } else if (this.browserUser.id_role.name === "externalrelationscoordinator") {
+      const toRemove = ['admin', 'externalrelationscoordinator'];
+      this.roles = this.roles.filter(role => !toRemove.includes(<string>role.name));
+    }
   } 
 
   public ngOnModelCreateItem(): void {
@@ -394,6 +415,10 @@ export class ManageUserComponent implements OnInit{
 
   public ngOnInputValidatePhone(): void {
     Utils.validatePhoneNumber(this.inputModalCreateItemPhone.nativeElement)
+  }
+
+  public haveRole(p1: any[]) {
+    return Utils.haveRole(this.browserUser, p1)
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {
