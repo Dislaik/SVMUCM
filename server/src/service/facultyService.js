@@ -1,38 +1,39 @@
-const FacultyRepository = require('../repository/facultyRepository');
+const FacultyRepository = require('../repository/facultyRepository');  // El Repositorio Faculty es llamado
 
+// Servicio de la clase Faculty, funciona como capa intermedia y transforma el resultado al deseado
 class FacultyService {
   async getAll() {
     return await FacultyRepository.findAll();
   }
 
   async getById(id) {
-    const faculty = await FacultyRepository.findById(id);
+    const p1 = await FacultyRepository.findById(id);
 
-    if (!faculty) {
-      throw new Error('Faculty not found');
+    if (!p1) {
+      return null;
     }
 
-    return faculty;
+    return p1;
   }
 
   async getByName(name) {
-    const faculty = await FacultyRepository.findByName(name);
+    const p1 = await FacultyRepository.findByName(name);
     
-    if (!faculty) {
-      throw new Error('Faculty not found');
+    if (!p1) {
+      return null;
     }
 
-    return faculty;
+    return p1;
   }
 
   async getByLabel(label) {
-    const faculty = await FacultyRepository.findByLabel(label);
+    const p1 = await FacultyRepository.findByLabel(label);
     
-    if (!faculty) {
-      throw new Error('Faculty not found');
+    if (!p1) {
+      return null;
     }
 
-    return faculty;
+    return p1;
   }
 
   async create(data) {
@@ -45,6 +46,10 @@ class FacultyService {
 
   async delete(id) {
     return await FacultyRepository.delete(id);
+  }
+
+  async existsByName(name) {
+    return await FacultyRepository.existsByName(name);
   }
 }
 

@@ -24,6 +24,7 @@ export class UserProfileComponent implements OnInit {
   passwordError: string = '';
   @ViewChild('inputRepeatPassword', { static: false}) inputRepeatPassword: ElementRef;
   repeatPasswordError: string = '';
+
   @ViewChild('inputUserEditFirstName', { static: false }) inputUserEditFirstName: ElementRef;
   firstNameError: string = '';
   @ViewChild('inputUserEditLastName', { static: false }) inputUserEditLastName: ElementRef;
@@ -138,9 +139,7 @@ export class UserProfileComponent implements OnInit {
           Swal.fire('Los cambios no se han guardado', '', 'info');
         }
       }); 
-
     }
-
   }
 
   public async ngOnEditUserProfileSave(): Promise<void> {
@@ -230,6 +229,14 @@ export class UserProfileComponent implements OnInit {
     return Utils.convertToChileTime(p1, p2);
   }
 
+  public checkField(p1: string): string {
+
+    if (p1.trim() === '') {
+      return "No proporcionado";
+    }
+
+    return p1;
+  }
 
   public ngOnInputValidatePhone(): void {
     Utils.validatePhoneNumber(this.inputUserEditPhone.nativeElement)

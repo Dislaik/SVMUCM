@@ -91,7 +91,7 @@ export class ManageCareerComponent implements OnInit{
     if (response.ok) {
       this.browserUser = response.message;
     } else {
-      console.log(response.error)
+      console.log(response.error);
     }
   }
 
@@ -152,7 +152,6 @@ export class ManageCareerComponent implements OnInit{
     this.ngOnShowPage(p1, this.pagination)
     this.paginationMax = this.getTotalPages(p1, this.paginationRow)
     this.paginationList = this.createRange(this.paginationMax);
-    console.log(this.paginationList)
     this.paginationListShow = this.paginationList.slice(0, 3);
   }
 
@@ -350,7 +349,7 @@ export class ManageCareerComponent implements OnInit{
         this.ngOnShowPage(this.paginationItems, this.pagination);
         this.toastr.success('Se ha creado la carrera con exito');
       } else {
-        this.nameError = response.error.name;
+        this.nameError = response.error.error.name;
       }
     }
   }
@@ -364,7 +363,14 @@ export class ManageCareerComponent implements OnInit{
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {

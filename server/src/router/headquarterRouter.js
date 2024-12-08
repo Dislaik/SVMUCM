@@ -3,6 +3,7 @@ const router = express.Router();
 const headquarterController = require('../controller/headquarterController');
 const auth = require('../security/authentication');
 
+// endpoints del modelo VolunteerStudent
 router.get('/headquarter', auth.authenticateToken, headquarterController.getAll);
 router.get('/headquarter/by-id/:id', auth.authenticateToken, headquarterController.getById);
 router.get('/headquarter/by-name/:name', auth.authenticateToken, headquarterController.getByName);

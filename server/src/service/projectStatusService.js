@@ -1,50 +1,39 @@
-const ProjectStatusRepository = require('../repository/projectStatusRepository');
+const ProjectStatusRepository = require('../repository/projectStatusRepository'); // El Repositorio ProjectStatus es llamado
 
+// Servicio de la clase ProjectStatus, funciona como capa intermedia y transforma el resultado al deseado
 class ProjectStatusService {
   async getAll() {
     return await ProjectStatusRepository.findAll();
   }
 
   async getById(id) {
-    const projectStatus = await ProjectStatusRepository.findById(id);
+    const p1 = await ProjectStatusRepository.findById(id);
 
-    if (!projectStatus) {
-      throw new Error('ProjectStatus not found');
+    if (!p1) {
+      return null;
     }
 
-    return projectStatus;
+    return p1;
   }
 
   async getByName(name) {
-    const projectStatus = await ProjectStatusRepository.findByName(name);
+    const p1 = await ProjectStatusRepository.findByName(name);
     
-    if (!projectStatus) {
-      throw new Error('ProjectStatus not found');
+    if (!p1) {
+      return null;
     }
 
-    return projectStatus;
+    return p1;
   }
 
   async getByLabel(label) {
-    const projectStatus = await ProjectStatusRepository.findByLabel(label);
+    const p1 = await ProjectStatusRepository.findByLabel(label);
     
-    if (!projectStatus) {
-      throw new Error('ProjectStatus not found');
+    if (!p1) {
+      return null;
     }
 
-    return projectStatus;
-  }
-
-  async create(data) {
-    return await ProjectStatusRepository.create(data);
-  }
-
-  async update(id, data) {
-    return await ProjectStatusRepository.update(id, data);
-  }
-
-  async delete(id) {
-    return await ProjectStatusRepository.delete(id);
+    return p1;
   }
 }
 

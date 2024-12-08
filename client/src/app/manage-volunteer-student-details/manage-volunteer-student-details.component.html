@@ -27,14 +27,6 @@
             </div>
             <div class="row mb-2">
               <div class="col-4">
-                ID:
-              </div>
-              <div class="col-8">
-                {{volunteerStudent.id}}
-              </div>
-            </div>
-            <div class="row mb-2">
-              <div class="col-4">
                 RUN:
               </div>
               <div class="col-8">
@@ -48,14 +40,6 @@
             <div class="card profile-general-info ms-2 shadow">
             <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
             <div class="card-body">
-              <div class="row align-items-center mb-2">
-                <div class="col-6 pe-2">
-                  ID:
-                </div>
-                <div class="col-6 ps-2">
-                  {{volunteerStudent.id}}
-                </div>
-              </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   RUN:
@@ -111,6 +95,62 @@
                     {{volunteerStudent.last_name}}
                   </ng-template>
                 </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Sede:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemHeadquarter" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditHeadquarter class="form-select shadow-none">
+                      <option *ngFor="let item of headquarters;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemHeadquarter>
+                  <div class="col-6 ps-2">
+                    {{volunteerStudent.id_career.id_headquarter.label}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Facultad:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemFaculty" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditFaculty class="form-select shadow-none">
+                      <option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemFaculty>
+                  <div class="col-6 ps-2">
+                    {{volunteerStudent.id_career.id_faculty.label}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Carrera:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemCareer" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditCareer class="form-control form-select shadow-none">
+                      <option *ngFor="let item of careersAUX;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                  </div>
+                  <div *ngIf="careerError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{careerError}}</p>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemCareer>
+                  <div class="col-6 ps-2">
+                    {{volunteerStudent.id_career.label}}
+                  </div>
+                </ng-template>
               </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">

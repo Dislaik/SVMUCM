@@ -161,7 +161,7 @@
                 </div>
                 <ng-template #elseBlockOnUserEnableEditAddress>
                   <div class="col-6 ps-2">
-                    {{user.address}}
+                    {{checkField(user.address)}}
                   </div>
                 </ng-template>
               </div>
@@ -184,7 +184,7 @@
                 </div>
                 <ng-template #elseBlockOnUserEnableEditPhone>
                   <div class="col-6 ps-2">
-                    {{user.phone}}
+                    {{checkField(user.phone)}}
                   </div>
                 </ng-template>
               </div>

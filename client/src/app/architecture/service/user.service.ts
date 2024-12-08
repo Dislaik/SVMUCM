@@ -100,4 +100,17 @@ export class UserService {
       );
     })
   }
+
+  public getCountByRole(id: number): Promise<any> {
+    return new Promise((resolve) => {
+      this.httpClient.get<any>(this.URL + '/count/' + id).subscribe(
+        data => {
+          resolve(data)
+        },
+        error => {
+          resolve(error)
+        }
+      )
+    })
+  }
 }

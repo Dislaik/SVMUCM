@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { VolunteerStudent } from '../architecture/model/volunteer-student';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +9,12 @@ import { UserStatus } from '../architecture/model/user-status';
 import { UserStatusService } from '../architecture/service/user-status.service';
 import { User } from '../architecture/model/user';
 import { UserService } from '../architecture/service/user.service';
+import { FacultyService } from '../architecture/service/faculty.service';
+import { HeadquarterService } from '../architecture/service/headquarter.service';
+import { CareerService } from '../architecture/service/career.service';
+import { Headquarter } from '../architecture/model/headquarter';
+import { Faculty } from '../architecture/model/faculty';
+import { Career } from '../architecture/model/career';
 
 @Component({
   selector: 'app-manage-volunteer-student-details',
@@ -32,10 +38,20 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
   lastNameError: string = '';
   @ViewChild('selectUserStatus') selectUserStatus: ElementRef;
   userStatusError: string = '';
+  @ViewChild('selectItemEditHeadquarter') selectItemEditHeadquarter: ElementRef;
+  @ViewChild('selectItemEditFaculty') selectItemEditFaculty: ElementRef;
+  @ViewChild('selectItemEditCareer') selectItemEditCareer: ElementRef;
+  careerError: string = '';
 
 
   volunteerStudent: VolunteerStudent;
   userStatus: UserStatus[];
+  headquarters: Headquarter[];
+  faculties: Faculty[];
+  careers: Career[];
+
+
+  careersAUX: Career[];
 
   constructor(
     private router: Router,
@@ -43,6 +59,9 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
     private toastr: ToastrService,
     private userService: UserService,
     private userStatusService: UserStatusService,
+    private headquarterService: HeadquarterService,
+    private facultyService: FacultyService,
+    private careerService: CareerService,
     private volunteerStudentService: VolunteerStudentService
   ){
     this.activatedRoute.params.subscribe( params =>
@@ -53,8 +72,11 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
   public ngOnInit(): void {
     this.createBreadCrumb();
     this.getUserByBrowser();
-    this.ngOnGetUserStatus();
-    this.getVolunteerStudent();
+    this.ngOnGetAllUserStatus();
+    this.ngOnGetAllHeadquarters();
+    this.ngOnGetAllFaculties();
+    this.ngOnGetAllCareers();
+    this.ngOnGetVolunteerStudent();
   }
 
   private createBreadCrumb(): void {
@@ -78,7 +100,7 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
     }
   }
 
-  private async ngOnGetUserStatus(): Promise<void> {
+  private async ngOnGetAllUserStatus(): Promise<void> {
     const response = await this.userStatusService.getAll();
 
     if (response.ok) {
@@ -88,7 +110,37 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
     }
   }
 
-  private async getVolunteerStudent(): Promise<void> {
+  private async ngOnGetAllHeadquarters(): Promise<void> {
+    const response = await this.headquarterService.getAll();
+
+    if (response.ok) {
+      this.headquarters = response.message;
+    } else {
+      console.log(response.error);
+    }
+  }
+
+  private async ngOnGetAllFaculties(): Promise<void> {
+    const response = await this.facultyService.getAll();
+
+    if (response.ok) {
+      this.faculties = response.message;
+    } else {
+      console.log(response.error);
+    }
+  }
+
+  private async ngOnGetAllCareers(): Promise<void> {
+    const response = await this.careerService.getAll();
+
+    if (response.ok) {
+      this.careers = response.message;
+    } else {
+      console.log(response.error);
+    }
+  }
+
+  private async ngOnGetVolunteerStudent(): Promise<void> {
     const response = await this.volunteerStudentService.getById(this.id);
 
     if (response.ok) {
@@ -118,6 +170,22 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
       if (this.selectUserStatus) {
         this.selectUserStatus.nativeElement.value = this.volunteerStudent.id_user_status.name;
       }
+
+      if (this.selectItemEditHeadquarter) {
+        this.selectItemEditHeadquarter.nativeElement.value = this.volunteerStudent.id_career.id_headquarter.name;
+      }
+
+      if (this.selectItemEditFaculty) {
+        this.selectItemEditFaculty.nativeElement.value = this.volunteerStudent.id_career.id_faculty.name;
+      }
+
+      if (this.selectItemEditCareer) {
+        this.careersAUX = this.careers.filter(career => career.id_headquarter.name === this.selectItemEditHeadquarter.nativeElement.value && career.id_faculty.name === this.selectItemEditFaculty.nativeElement.value);
+
+        setTimeout(() => {
+          this.selectItemEditCareer.nativeElement.value = this.volunteerStudent.id_career.name;
+        });
+      }
     });
   }
 
@@ -126,6 +194,7 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
     const firstName = this.inputFirstName.nativeElement.value;
     const lastName = this.inputLastName.nativeElement.value;
     const status = this.userStatus.find(status => status.name === this.selectUserStatus.nativeElement.value);
+    const career = this.careers.find(career => career.name === this.selectItemEditCareer.nativeElement.value);
     let success = 0;
 
     if (email.trim() === '') { 
@@ -150,22 +219,26 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
       this.lastNameError = '';
       success+= 1;
     }
+
+    if (career === undefined) {
+      this.careerError = 'No hay carreras disponibles, elige otra sede o facultad'
+    } else {
+      this.careerError = '';
+      success+= 1;
+    }
     
 
-    if (success === 3) {
-      this.volunteerStudent.email = email;
-      this.volunteerStudent.first_name = firstName;
-      this.volunteerStudent.last_name = lastName;
-      this.volunteerStudent.id_user_status = status;
-
-      const response = await this.volunteerStudentService.update(this.volunteerStudent.id, this.volunteerStudent);
+    if (success === 4) {
+      const volunteerStudent = new VolunteerStudent(this.volunteerStudent.run, email, firstName, lastName, status, career)
+      const response = await this.volunteerStudentService.update(this.volunteerStudent.id, volunteerStudent);
 
       if (response.ok) {
         this.toastr.success('Se han guardado los cambios con exito');
+        this.volunteerStudent = response.message;
         this.enableEditItem = false;
       } else {
-        if (Object.keys(response.error).length > 0) {
-          this.emailError = response.error.email;
+        if (Object.keys(response.error.error).length > 0) {
+          this.emailError = response.error.error.email;
         }
       }
     }
@@ -194,7 +267,7 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
           this.router.navigate(['/panel/volunteer-student']);
         } else {
           if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
-            Swal.fire('El alumno no puede ser eliminado debio a tablas relacionadas', '', 'warning');
+            Swal.fire('El alumno no puede ser eliminado debido a tablas relacionadas', '', 'warning');
           }
         }
       }
@@ -206,6 +279,29 @@ export class ManageVolunteerStudentDetailsComponent implements OnInit {
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  @HostListener('change', ['$event']) onChange(event: Event) {
+
+    if (event.target === this.selectItemEditHeadquarter.nativeElement || event.target === this.selectItemEditFaculty.nativeElement) {
+      const careersFilter = this.careers.filter(career => career.id_headquarter.name === this.selectItemEditHeadquarter.nativeElement.value && career.id_faculty.name === this.selectItemEditFaculty.nativeElement.value);
+      
+      if (careersFilter.length === 0) {
+        this.selectItemEditCareer.nativeElement.value = '';
+        this.selectItemEditCareer.nativeElement.disabled = true
+      } else {
+        this.careersAUX = careersFilter;
+        this.selectItemEditCareer.nativeElement.value = this.careersAUX[0].name
+        this.selectItemEditCareer.nativeElement.disabled = false
+      }
+    }
   }
 }

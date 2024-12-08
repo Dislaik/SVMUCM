@@ -1,20 +1,23 @@
+import { Career } from "./career";
 import { UserStatus } from "./user-status";
 
 export class VolunteerStudent {
   id: number;
-  run: String;
-  email: String;
-  first_name: String;
-  last_name: String;
+  run: string;
+  email: string;
+  first_name: string;
+  last_name: string;
   id_user_status: UserStatus;
+  id_career: Career;
   created_at: Date;
 
   constructor(
-    run: String = '', 
-    email: String = '',
-    first_name: String = '',
-    last_name: String = '',
+    run: string = '',
+    email: string = '',
+    first_name: string = '',
+    last_name: string = '',
     id_user_status: UserStatus = new UserStatus(),
+    id_career: Career = new Career(),
     created_at: Date = new Date()
   ) {
     this.run = run;
@@ -22,6 +25,7 @@ export class VolunteerStudent {
     this.first_name = first_name;
     this.last_name = last_name;
     this.id_user_status = id_user_status;
+    this.id_career = id_career;
     this.created_at = created_at;
-  } 
+  }
 }

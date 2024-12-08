@@ -1,5 +1,6 @@
-const Role = require('../model/role');
+const Role = require('../model/role'); // Modelo Role es llamado
 
+// Repositorio de la clase Role, se encarga de realizar las consultas a la base de datos
 class RoleRepository {
   async findAll() {
     return await Role.findAll();
@@ -22,23 +23,23 @@ class RoleRepository {
   }
 
   async update(id, data) {
-    const role = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!role) {
-      throw new Error('Role not found');
+    if (!p1) {
+      return null;
     }
     
-    return await role.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const role = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!role) {
-      throw new Error('Role not found');
+    if (!p1) {
+      return null;
     }
 
-    return await role.destroy();
+    return await p1.destroy();
   }
 }
 

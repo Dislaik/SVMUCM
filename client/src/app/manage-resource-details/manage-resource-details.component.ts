@@ -125,19 +125,16 @@ export class ManageResourceDetailsComponent implements OnInit {
     }
 
     if (success === 2) {
-      this.resource.name = name;
-      this.resource.label = label;
-      this.resource.description = description;
-      this.resource.price = this.priceToNumber(price);
-
-      const response = await this.resourceService.update(this.resource.id, this.resource);
+      const resource = new Resource(name, label, description, this.priceToNumber(price));
+      const response = await this.resourceService.update(this.resource.id, resource);
 
       if (response.ok) {
         this.toastr.success('Se han guardado los cambios con exito');
+        this.resource = response.message;
         this.enableEditItem = false;
       } else {
-        if (Object.keys(response.error).length > 0) {
-          this.nameError = response.error.name;
+        if (Object.keys(response.error.error).length > 0) {
+          this.nameError = response.error.error.name;
         }
       }
     }
@@ -165,7 +162,7 @@ export class ManageResourceDetailsComponent implements OnInit {
           this.router.navigate(['/panel/resource']);
         } else {
           if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
-            Swal.fire('El recurso no puede ser eliminado debio a tablas relacionadas', '', 'warning');
+            Swal.fire('El recurso no puede ser eliminado debido a tablas relacionadas', '', 'warning');
           }
         }
       }
@@ -206,6 +203,13 @@ export class ManageResourceDetailsComponent implements OnInit {
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 }

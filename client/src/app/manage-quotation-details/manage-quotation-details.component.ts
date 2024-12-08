@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Quotation } from '../architecture/model/quotation';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -37,6 +37,8 @@ export class ManageQuotationDetailsComponent implements OnInit {
   @ViewChild('modalAddAPU') modalAddAPU: ElementRef;
   modalAddAPUInstance: any;
 
+  @ViewChild('inputItemEditStartDate') inputItemEditStartDate: ElementRef;
+  startDateError: string = '';
   @ViewChild('inputItemEditEndDate') inputItemEditEndDate: ElementRef;
   endDateError: string = '';
   @ViewChild('selectItemEditQuotationStatus') selectItemEditQuotationStatus: ElementRef;
@@ -45,6 +47,7 @@ export class ManageQuotationDetailsComponent implements OnInit {
   quotationPriceWithoutIVA: number = 0;
   quotationPriceWithIVA: number = 0;
   quotationStatus: QuotationStatus[];
+  quotationDays: number = 0;
 
   apus: APU[];
   buttonAPU: any[];
@@ -72,8 +75,8 @@ export class ManageQuotationDetailsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createBreadCrumb();
-    this.getUserByBrowser();
-    this.getQuotation();
+    this.ngOnGetUserByBrowser();
+    this.ngOnGetQuotation();
     this.ngOnGetAllAPUs();
     this.ngOnGetAllQuotationStatus();
     this.ngOnGetAPUByQuotationId();
@@ -89,7 +92,7 @@ export class ManageQuotationDetailsComponent implements OnInit {
     this.pages = JSON.stringify(arrayPages);
   }
 
-  private async getUserByBrowser(): Promise<void> {
+  private async ngOnGetUserByBrowser(): Promise<void> {
     const browserUser = Utils.getUsernameByBrowser();
     const response = await this.userService.getByUsername(browserUser);
 
@@ -100,12 +103,19 @@ export class ManageQuotationDetailsComponent implements OnInit {
     }
   }
 
-  private async getQuotation(): Promise<void> {
+  private async ngOnGetQuotation(): Promise<void> {
     const response = await this.quotationService.getById(this.id);
 
     if (response.ok) {
       this.quotation = response.message;
       this.isViewLoaded = true;
+
+      const startDate = new Date(this.quotation.start_date)
+      const endDate = new Date(this.quotation.end_date)
+      const diferenciaEnMilisegundos = endDate.getTime() - startDate.getTime();
+      const diferenciaEnDias = diferenciaEnMilisegundos / (1000 * 60 * 60 * 24);
+
+      this.quotationDays = Math.round(diferenciaEnDias);
     } else {
       console.log(response.error);
     }
@@ -152,6 +162,14 @@ export class ManageQuotationDetailsComponent implements OnInit {
         this.selectItemEditQuotationStatus.nativeElement.value = this.quotation.id_quotation_status.name
       }
 
+      if (this.inputItemEditStartDate) {
+        const date = this.UTCToChileTime(this.quotation.start_date, true);
+        const [day, month, year] = date.split("-");
+        const dateInverted = `${year}-${month}-${day}`;
+
+        this.inputItemEditStartDate.nativeElement.value = dateInverted;
+      }
+
       if (this.inputItemEditEndDate) {
         const date = this.UTCToChileTime(this.quotation.end_date, true);
         const [day, month, year] = date.split("-");
@@ -163,23 +181,39 @@ export class ManageQuotationDetailsComponent implements OnInit {
   }
 
   public async ngOnEditItemSave(): Promise<void> {
-    const endDate = this.inputItemEditEndDate.nativeElement.value;
-    const status = this.quotationStatus.find(status => status.name === this.selectItemEditQuotationStatus.nativeElement.value);  
+    const startDate = new Date(`${this.inputItemEditStartDate.nativeElement.value}T00:00:00`);
+    const endDate = new Date(`${this.inputItemEditEndDate.nativeElement.value}T00:00:00`);
+    const status = this.quotationStatus.find(status => status.name === this.selectItemEditQuotationStatus.nativeElement.value); 
+    const todayDate = new Date();
     let success = 0
 
-    if (endDate.trim() === '') {
+
+    todayDate.setHours(0, 0, 0, 0);
+
+    if (startDate.toString() === 'Invalid Date') {
+      this.startDateError = 'Debe especificar una fecha de inicio';
+    } else if (startDate < todayDate) {
+      this.startDateError = 'La fecha de emisión no puede ser una fecha anterior a la de hoy';
+    } else {
+      this.startDateError = '';
+      success+= 1;
+    }
+
+    if (endDate.toString() === 'Invalid Date') {
       this.endDateError = 'Debe especificar una fecha de termino';
     } else if (new Date(this.quotation.created_at) > new Date(endDate) ) {
-      this.endDateError = 'La fecha de termino no puede ser una fecha anterior a la fecha de inicio';
+      this.endDateError = 'La fecha de vencimiento no puede ser una fecha igual o anterior a la fecha de emisión';
     } else {
       this.endDateError = '';
       success+= 1;
     }
 
 
-    if (success === 1) {
+    if (success === 2) {
+      this.quotation.start_date = startDate;
+      this.quotation.end_date = endDate;
       this.quotation.id_quotation_status = status;
-      this.quotation.end_date = new Date(endDate + "T00:00:00");
+      this.quotation.price = this.quotationPriceWithoutIVA;
 
       const response = await this.quotationService.update(this.quotation.id, this.quotation);
 
@@ -243,7 +277,7 @@ export class ManageQuotationDetailsComponent implements OnInit {
         //   this.router.navigate(['/panel/project']);
         // } else {
         //   if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
-        //     Swal.fire('La APU no puede ser eliminada debio a tablas relacionadas', '', 'warning');
+        //     Swal.fire('La APU no puede ser eliminada debido a tablas relacionadas', '', 'warning');
         //   }
         // }
       }
@@ -386,7 +420,7 @@ export class ManageQuotationDetailsComponent implements OnInit {
     const username = this.quotation.id_project.id_user.username;
     const firstName = this.quotation.id_project.id_user.first_name;
     const lastName = this.quotation.id_project.id_user.last_name;
-    const status = this.quotation.id_quotation_status.label;
+    const projectName = this.quotation.id_project.name;
     const startDate = this.UTCToChileTime(this.quotation.created_at, true);
     const endDate = this.UTCToChileTime(this.quotation.end_date, true);
     const doc = new jsPDF();
@@ -413,14 +447,14 @@ export class ManageQuotationDetailsComponent implements OnInit {
     doc.text('Nombre del solicitante:', 10, 50);
     doc.text(firstName + ' ' + lastName, pageWidth - 10, 50, { align: "right" });
     
-    // doc.text('Estado:', 10, 56);
-    // doc.text(<string>status, pageWidth - 10, 56, { align: "right" });
+    doc.text('Nombre del proyecto:', 10, 56);
+     doc.text(<string>projectName, pageWidth - 10, 56, { align: "right" });
     
-    doc.text('Fecha de emisión:', 10, 56);
-    doc.text(startDate, pageWidth - 10, 56, { align: "right" });
+    doc.text('Fecha de emisión:', 10, 62);
+    doc.text(startDate, pageWidth - 10, 62, { align: "right" });
     
-    doc.text('Fecha de vencimiento:', 10, 62);
-    doc.text(endDate, pageWidth - 10, 62, { align: "right" });
+    doc.text('Fecha de vencimiento:', 10, 68);
+    doc.text(endDate, pageWidth - 10, 68, { align: "right" });
   
     let dataTablePositionY = 80;
     for (let i = 0; i < this.quotationAPU.length; i++) {
@@ -429,8 +463,8 @@ export class ManageQuotationDetailsComponent implements OnInit {
       const data = [];
   
       doc.text(apuLabel, 15, dataTablePositionY + 5);
-      doc.setFillColor(0, 0, 0); // Establece el color de relleno (negro)
-      doc.circle(11, dataTablePositionY + 3.5, 1, 'F'); // Dibuja un círculo (punto) en la posición (50, 50) con un radio de 2
+      doc.setFillColor(0, 0, 0);
+      doc.circle(11, dataTablePositionY + 3.5, 1, 'F'); 
   
       dataTablePositionY += 8;
   
@@ -508,7 +542,14 @@ export class ManageQuotationDetailsComponent implements OnInit {
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   private truncateString(str: string, maxLength: number = 30): string {
@@ -516,5 +557,17 @@ export class ManageQuotationDetailsComponent implements OnInit {
       return str.substring(0, maxLength) + '...';
     }
     return str;
+  }
+
+  @HostListener('change', ['$event']) onChange(event: Event) {
+
+    if (event.target === this.inputItemEditStartDate.nativeElement || event.target === this.inputItemEditEndDate.nativeElement) {
+      const startDate = new Date(this.inputItemEditStartDate.nativeElement.value)
+      const endDate = new Date(this.inputItemEditEndDate.nativeElement.value)
+      const diferenciaEnMilisegundos = endDate.getTime() - startDate.getTime();
+      const diferenciaEnDias = diferenciaEnMilisegundos / (1000 * 60 * 60 * 24);
+
+      this.quotationDays = Math.round(diferenciaEnDias);
+    }
   }
 }

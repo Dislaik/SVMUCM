@@ -7,6 +7,7 @@ const City = sequelize.define('city', {
   name: { type: DataTypes.STRING, allowNull: false, unique: true },
   label: { type: DataTypes.STRING, allowNull: false },
   id_region: { type: DataTypes.INTEGER, allowNull: false, references: { model: Region, key: 'id' } },
+  created_at: { type: DataTypes.DATE,  allowNull: false }
 });
 
 City.belongsTo(Region, { foreignKey: 'id_region'});

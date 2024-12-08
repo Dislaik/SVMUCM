@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Faculty } from '../architecture/model/faculty';
 import { Router } from '@angular/router';
 import { FacultyService } from '../architecture/service/faculty.service';
@@ -6,6 +6,8 @@ import { Utils } from '../utils';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../architecture/service/user.service';
 import { User } from '../architecture/model/user';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-manage-faculty',
@@ -20,7 +22,14 @@ export class ManageFacultyComponent implements OnInit {
   isViewLoaded: boolean = false;
   browserUser: User;
 
+  @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
+  modalCreateItemInstance: any;
   @ViewChild('inputSearchItem') inputSearchItem: ElementRef;
+
+  @ViewChild('inputName') inputName: ElementRef;
+  nameError: string = '';
+  @ViewChild('inputLabel') inputLabel: ElementRef;
+  labelError: string = '';
 
   //// PAGINATION VARIABLES ////
   pagination: number;
@@ -245,11 +254,76 @@ export class ManageFacultyComponent implements OnInit {
 
   ///// PAGINATION END ////
 
+  public ngOnCreateModalItem(): void {
+    this.modalCreateItemInstance = new bootstrap.Modal(this.modalCreateItem.nativeElement);
+
+    this.modalCreateItemInstance.show();
+  }
+
+  public ngOnModelCreateItem(): void {
+    const name = this.inputName.nativeElement.value.toLowerCase();
+    const label = this.inputLabel.nativeElement.value
+    let success = 0;
+
+    if (name.trim() === '') {
+      this.nameError = 'Debe ingresar un identificador'
+    } else {
+      this.nameError = '';
+      success+= 1;
+    }
+
+    if (label.trim() === '') {
+      this.labelError = 'Debe ingresar una etiqueta'
+    } else {
+      this.labelError = '';
+      success+= 1;
+    }
+
+    if (success === 2) {
+      const faculty = new Faculty(name, label);
+
+      this.ngOnCreateItem(faculty);
+    }
+  }
+
+  private async ngOnCreateItem(p1: Faculty): Promise<void> {
+    const response = await this.facultyService.create(p1);
+
+    if (response.ok) {
+      this.modalCreateItemInstance.hide();
+      this.faculties.push(response.message);
+      this.ngOnShowPage(this.paginationItems, this.pagination);
+      this.toastr.success('Se ha creado la facultad con exito');
+    } else {
+      if (Object.keys(response.error.error).length > 0) {
+        this.nameError = response.error.error.name;
+      }
+    }
+  }
+
   private UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);
   }
   
+  public nameIdentifier(): void {
+    Utils.formatNameIdentifier(this.inputName.nativeElement);
+  }
+  
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {
+    this.inputName.nativeElement.value = '';
+    this.inputLabel.nativeElement.value = '';
+    this.nameError = '';
+    this.labelError = '';
   }
 }

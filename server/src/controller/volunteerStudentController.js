@@ -1,135 +1,159 @@
-const VolunteerStudentService = require('../service/volunteerStudentService');
-const auth = require('../security/authentication');
-const utils = require('../utils/utils');
+const VolunteerStudentService = require('../service/volunteerStudentService'); // El servicio VolunteerStudent es llamado
 
+// Controlador de la clase VolunteerStudent, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo VolunteerStudent
 class VolunteerStudentController {
+
+  // Metodo que obtiene todos los datos de VolunteerStudent
   async getAll(request, response) {
     try {
-      const volunteersStudents = await VolunteerStudentService.getAll();
+      const p1 = await VolunteerStudentService.getAll();
       
-      response.status(200).json({ ok: true, message: volunteersStudents});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que obtiene un VolunteerStudent por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const volunteerStudent = await VolunteerStudentService.getById(id)
+      const p1 = await VolunteerStudentService.getById(id);
 
-      if (volunteerStudent) {
-        return response.status(200).json({ ok: true, message: volunteerStudent}); 
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(404).json({ ok: false, error: 'User not found'});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que obtiene un VolunteerStudent por su run
   async getByRun(request, response) {
     try {
-      const { run } = request.params;
-      const volunteerStudent = await VolunteerStudentService.getByRun(run)
-
-      if (volunteerStudent) {
-        return response.status(200).json({ ok: true, message: volunteerStudent});
+      const { username } = request.params;
+      const p1 = await VolunteerStudentService.getByRun(username);
+      
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(404).json({ ok: false, error: 'Volunteer Student not found'});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que obtiene un VolunteerStudent por su correo electronico
   async getByEmail(request, response) {
     try {
       const { email } = request.params;
-      const volunteerStudent = await userService.getByEmail(email)
-
-      if (volunteerStudent) {
-        return response.status(200).json({ ok: true, message: volunteerStudent});
+      const p1 = await VolunteerStudentService.getByEmail(email);
+      
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(404).json({ ok: false, error: 'Volunteer Student not found'});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+
+  // Metodo que crea un VolunteerStudent a partir de las entradas recibidas
   async create(request, response) {
     try {
       const { body } = request;
       let error = {};
       
       if (await VolunteerStudentService.existsByRun(body.run)) {
-        error.run = 'Este RUN ya esta registrado';
+        error.run = 'El RUN ya esta registrado';
       }
 
       if (await VolunteerStudentService.existsByEmail(body.email)) {
-        error.email = 'El correo electronico ya esta registrado';
+        error.email = 'El correo electrónico ya esta registrado';
       }
 
       if (Object.keys(error).length === 0) {
-        const volunteerStudentObject = {
+        const object = {
           run: body.run,
           email: body.email,
           first_name: body.first_name,
           last_name: body.last_name,
           id_user_status: body.id_user_status.id,
+          id_career: body.id_career.id,
           created_at: body.created_at
         }
 
-        let volunteerStudent = await VolunteerStudentService.create(volunteerStudentObject);
-        volunteerStudent.id_user_status = body.id_user_status;
+        let p1 = await VolunteerStudentService.create(object);
+        p1.id_user_status = body.id_user_status;
+        p1.id_career = body.id_career;
 
-        return response.status(200).json({ ok: true, message: volunteerStudent});
+        return response.status(200).json({ ok: true, message: p1 });
       }
 
-      response.status(200).json({ ok: false, error: error});
+      return response.status(400).json({ ok: false, error: error });
     } catch (error) {
-      response.status(500).json({ ok: false,  error: error });
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que actualiza un VolunteerStudent a partir de las entradas recibidas
   async update(request, response) {
     try {
       const { id } = request.params;
       const { body } = request;
-      const volunteerStudentObject = {
-        run: body.run,
-        email: body.email,
-        first_name: body.first_name,
-        last_name: body.last_name,
-        id_user_status: body.id_user_status.id,
-        created_at: body.created_at
-      } 
+      const targetUser = await VolunteerStudentService.getByEmail(body.email);
+      let error = {};
 
-      const VolunteerStudentUpdated = await VolunteerStudentService.update(id, volunteerStudentObject);
-      if (!VolunteerStudentUpdated) {
-        return response.status(404).json({ ok: false,  error: 'Volunteer Student not found' });
+      if (targetUser && body.email === targetUser.email && Number(id) !== targetUser.id) {
+        error.email = 'El correo electrónico ya esta registrado';
       }
 
-      VolunteerStudentUpdated.id_role = body.id_role;
-      VolunteerStudentUpdated.id_user_status = body.id_user_status;
+      if (Object.keys(error).length === 0) {
+        const object = {
+          run: body.run,
+          email: body.email,
+          first_name: body.first_name,
+          last_name: body.last_name,
+          id_user_status: body.id_user_status.id,
+          id_career: body.id_career.id,
+          created_at: body.created_at
+        } 
 
-      return response.status(200).json({ ok: true, message: VolunteerStudentUpdated});
+        let p1 = await VolunteerStudentService.update(id, object);
+
+        if (!p1) {
+          return response.status(404).json({ ok: true, message: null });
+        }
+
+        p1.id_role = body.id_role;
+        p1.id_user_status = body.id_user_status;
+        p1.id_career = body.id_career;
+
+        return response.status(200).json({ ok: true, message: p1 });
+      }
+
+      return response.status(400).json({ ok: false, error: error });
     } catch (error) {
-      return response.status(500).json({ error: 'Error updating Volunteer Student' });
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que elimina una VolunteerStudent por su ID
   async delete(request, response) {
     try {
       const { id } = request.params;
-      const volunteerStudent = await VolunteerStudentService.getById(id)
+      const p1 = await VolunteerStudentService.getById(id);
 
       await VolunteerStudentService.delete(id);
 
-      return response.status(200).json({ ok: true, message: volunteerStudent});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      return response.status(500).json({ ok: false,  error: error });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 }

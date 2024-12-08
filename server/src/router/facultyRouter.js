@@ -3,6 +3,7 @@ const router = express.Router();
 const FacultyController = require('../controller/facultyController');
 const auth = require('../security/authentication');
 
+// endpoints del modelo Faculty
 router.get('/faculty', auth.authenticateToken, FacultyController.getAll);
 router.get('/faculty/by-id/:id', auth.authenticateToken, FacultyController.getById);
 router.get('/faculty/by-name/:name', auth.authenticateToken, FacultyController.getByName);

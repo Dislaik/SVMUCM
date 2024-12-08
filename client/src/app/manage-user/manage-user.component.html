@@ -7,7 +7,7 @@
         <button type="button" class="btn btn-primary" (click)="ngOnCreateModalItem()">Crear nuevo usuario</button>
         <div class="d-flex">
           <div class="input-group">
-            <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar {{title.toLowerCase()}}" (keydown.enter)="ngOnSearchItem()">
+            <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar usuario" (keydown.enter)="ngOnSearchItem()">
             <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
               <i class="bi bi-x-circle"></i>
             </button>
@@ -21,7 +21,7 @@
         <div class="d-flex justify-content-end">
           <div class="d-flex">
             <div class="input-group">
-              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar {{title.toLowerCase()}}" (keydown.enter)="ngOnSearchItem()">
+              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar usuario" (keydown.enter)="ngOnSearchItem()">
               <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
                 <i class="bi bi-x-circle"></i>
               </button>
@@ -38,10 +38,9 @@
       <div class="card-body p-0">
         <ul class="list-group rounded-0">
           <div class="m-2 mb-0 row">
-            <div class="col-1 text-center">ID</div>
             <div class="col-2 text-center">Nombre de usuario</div>
             <div class="col-2 text-center">Nombre</div>
-            <div class="col-2 text-center">Correo electronico</div>
+            <div class="col-3 text-center">Correo electronico</div>
             <div class="col-1 text-center">Rol</div>
             <div class="col-1 text-center">Estado</div>
             <div class="col-2 text-center">Fecha de creación</div>
@@ -50,10 +49,9 @@
           <hr class="mb-2 mt-2">
   
           <div *ngFor="let item of paginationShowItems" class="m-2 row">
-            <div class="col-1 text-center">{{item.id}}</div>
             <div class="col-2 text-center">{{item.username}}</div>
             <div class="col-2 text-center wrap-text">{{item.first_name}} {{item.last_name}}</div>
-            <div class="col-2 text-center wrap-text">{{item.email}}</div>
+            <div class="col-3 text-center wrap-text">{{item.email}}</div>
             <div class="col-1 text-center wrap-text">{{item.id_role.label}}</div>
             <div class="col-1 text-center wrap-text">{{item.id_user_status.label}}</div>
             <div class="col-2 text-center">{{UTCToChileTime(item.created_at, false)}}</div>
@@ -228,6 +226,22 @@
             <div *ngIf="roleError !== ''">
               <div class="message-error-container d-flex align-items-center">
                 <p>{{roleError}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isOnProfessor === true" class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Facultad:</p>
+          </div>
+          <div class="col-6">
+            <select #selectModalCreateItemFaculty class="form-control form-select" aria-label="Default select example">
+              <option selected hidden value="">Elige una facultad</option>
+              <option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
+            </select>
+            <div *ngIf="facultyError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{facultyError}}</p>
               </div>
             </div>
           </div>

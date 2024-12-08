@@ -1,47 +1,39 @@
-const Project = require('../model/project');
-const ProjectUser = require('../model/projectUser');
-const Role = require('../model/role');
-const User = require('../model/user');
+const ProjectUser = require('../model/projectUser'); // Modelo ProjectUser es llamado
+const Faculty = require('../model/faculty'); // Modelo Faculty es llamado
+const Project = require('../model/project'); // Modelo Project es llamado
+const Role = require('../model/role'); // Modelo Role es llamado
+const User = require('../model/user'); // Modelo User es llamado
 
+// Repositorio de la clase ProjectUser, se encarga de realizar las consultas a la base de datos
 class ProjectUserRepository {
   async findAll() {
     return await ProjectUser.findAll();
   }
 
   async findById(id) {
-    return await ProjectUser.findByPk(id, { include: [Project, User]});
+    return await ProjectUser.findByPk(id, { include: [Project, {model: User, include: [Role]}, Faculty]});
   }
 
   async findByProjectId(id) {
-    return await ProjectUser.findAll({ where: { id_project: id}, include: [Project, {model: User, include: [Role]}]})
+    return await ProjectUser.findAll({where: { id_project: id}, include: [Project, {model: User, include: [Role]}, Faculty]})
   }
 
   async findByUserId(id) {
-    return await ProjectUser.findAll({ where: { id_user: id }, include: [Project, User]});
+    return await ProjectUser.findAll({where: { id_user: id }, include: [Project, {model: User, include: [Role]}, Faculty]});
   }
 
   async create(data) {
     return await ProjectUser.create(data);
   }
 
-  async update(id, data) {
-    const projectUser = await this.findById(id);
-
-    if (!projectUser) {
-      throw new Error('Project User not found');
-    }
-    
-    return await projectUser.update(data);
-  }
-
   async delete(id) {
-    const projectUser = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!projectUser) {
-      throw new Error('Project User not found');
+    if (!p1) {
+      return null;
     }
 
-    return await projectUser.destroy();
+    return await p1.destroy();
   }
 }
 

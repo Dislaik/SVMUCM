@@ -3,7 +3,7 @@
 	<h1 class="mb-3">{{title}}</h1>
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
-      <ng-template [ngIf]="haveRole(['admin', 'dean', 'externalrelations', 'externalrelationscoordinator'])">
+      <ng-template [ngIf]="haveRole(['admin', 'externalrelations', 'externalrelationscoordinator'])">
         <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
           <div class="d-flex flex-row-reverse gap-2">
             <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
@@ -27,14 +27,6 @@
             </div>
             <div class="row mb-2">
               <div class="col-4">
-                ID:
-              </div>
-              <div class="col-8">
-                {{region.id}}
-              </div>
-            </div>
-            <div class="row mb-2">
-              <div class="col-4">
                 Nombre:
               </div>
               <div class="col-8">
@@ -50,18 +42,18 @@
             <div class="card-body">
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
-                  ID:
-                </div>
-                <div class="col-6 ps-2">
-                  {{region.id}}
-                </div>
-              </div>
-              <div class="row align-items-center mb-2">
-                <div class="col-6 pe-2">
                   Nombre:
                 </div>
                 <div class="col-6 ps-2">
-                  {{region.name}}
+                  <input *ngIf="enableEditItem; else elseBlockEditItemName" #inputItemEditName type="text" class="form-control shadow-none" required autocomplete="off" (input)="nameIdentifier()">
+                  <div *ngIf="nameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{nameError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemName>
+                    {{region.name}}
+                  </ng-template>
                 </div>
               </div>
               <div class="row align-items-center mb-2">

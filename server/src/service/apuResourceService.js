@@ -1,64 +1,85 @@
-const APUResourceRepository = require('../repository/apuResourceRepository');
+const APUResourceRepository = require('../repository/apuResourceRepository'); // El Repositorio APUResource es llamado
 
+// Servicio de la clase APUResource, funciona como capa intermedia y transforma el resultado al deseado
 class APUResourceService {
   async getAll() {
-    const apuResources = await APUResourceRepository.findAll();
+    const p1 = await APUResourceRepository.findAll();
 
-    const restructuredAPUResources = apuResources.map(apuResource => {
-      const apuResourceJSON = apuResource.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      apuResourceJSON.id_apu = apuResourceJSON.apu;
-      apuResourceJSON.id_resource = apuResourceJSON.resource;
+      p3.id_apu = p3.apu;
+      p3.id_resource = p3.resource;
 
-      delete apuResourceJSON.apu;
-      delete apuResourceJSON.resource;
+      delete p3.apu;
+      delete p3.resource;
 
-      return apuResourceJSON;
+      return p3;
     })
 
-    return restructuredAPUResources;
+    return p2;
   }
 
   async getById(id) {
-    const apuResource = await APUResourceRepository.findById(id);
+    const p1 = await APUResourceRepository.findById(id);
 
-    if (!apuResource) {
-      throw new Error('apuResource not found');
+    if (!p1) {
+      return null;
     }
 
-    return apuResource;
+    const p2 = p1.toJSON();
+
+    p2.id_apu = p2.apu;
+    p2.id_resource = p2.resource;
+
+    delete p2.apu;
+    delete p2.resource;
+
+    return p2;
   }
 
   async getByAPUId(id) {
-    const apuResources = await APUResourceRepository.findByAPUId(id);
+    const p1 = await APUResourceRepository.findByAPUId(id);
 
-    const restructuredAPUResources = apuResources.map(apuResource => {
-      const apuResourceJSON = apuResource.toJSON();
-
-      apuResourceJSON.id_apu = apuResourceJSON.apu;
-      apuResourceJSON.id_resource = apuResourceJSON.resource;
-
-      delete apuResourceJSON.apu;
-      delete apuResourceJSON.resource;
-
-      return apuResourceJSON;
-    })
-
-    if (!restructuredAPUResources) {
-      throw new Error('apuResources not found');
+    if (!p1) {
+      return null;
     }
 
-    return restructuredAPUResources;
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
+
+      p3.id_apu = p3.apu;
+      p3.id_resource = p3.resource;
+
+      delete p3.apu;
+      delete p3.resource;
+
+      return p3;
+    })
+
+    return p2;
   }
 
 	async getByResourceId(id) {
     const apuResources = await APUResourceRepository.findByResourceId(id);
 
-    if (!apuResources) {
-      throw new Error('apuResources not found');
+    if (!p1) {
+      return null;
     }
 
-    return apuResources;
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
+
+      p3.id_apu = p3.apu;
+      p3.id_resource = p3.resource;
+
+      delete p3.apu;
+      delete p3.resource;
+
+      return p3;
+    })
+
+    return p2;
   }
 
   async create(data) {

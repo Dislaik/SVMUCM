@@ -1,21 +1,25 @@
-const UserStatus = require('../model/userStatus');
-const VolunteerStudent = require('../model/volunteerStudent');
+const Career = require('../model/career'); // Modelo Career es llamado
+const Faculty = require('../model/faculty'); // Modelo Faculty es llamado
+const Headquarter = require('../model/headquarter'); // Modelo Headquarter es llamado
+const UserStatus = require('../model/userStatus'); // Modelo UserStatus es llamado
+const VolunteerStudent = require('../model/volunteerStudent'); // Modelo VolunteerStudent es llamado
 
+// Repositorio de la clase VolunteerStudent, se encarga de realizar las consultas a la base de datos
 class VolunteerStudentRepository {
   async findAll() {
-    return await VolunteerStudent.findAll({ include: [UserStatus] });
+    return await VolunteerStudent.findAll({ include: [ UserStatus, { model: Career, include: [ Headquarter, Faculty ] } ] });
   }
 
   async findById(id) {
-    return await VolunteerStudent.findByPk(id, { include: [UserStatus] });
+    return await VolunteerStudent.findByPk(id, { include: [ UserStatus, { model: Career, include: [ Headquarter, Faculty ] }] });
   }
 
   async findByRun(run) {
-    return await VolunteerStudent.findOne({ where: { run: run }, include: [UserStatus] });
+    return await VolunteerStudent.findOne({ where: { run: run }, include: [ UserStatus, { model: Career, include: [ Headquarter, Faculty ] }] });
   }
 
   async findByEmail(email) {
-    return await VolunteerStudent.findOne({ where: { email: email }, include: [UserStatus] });
+    return await VolunteerStudent.findOne({ where: { email: email }, include: [ UserStatus, { model: Career, include: [ Headquarter, Faculty ] }] });
   }
 
   async create(data) {
@@ -23,29 +27,29 @@ class VolunteerStudentRepository {
   }
 
   async update(id, data) {
-    const volunteerStudent = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!volunteerStudent) {
-      throw new Error('Volunteer student not found');
+    if (!p1) {
+      return null;
     }
     
-    return await volunteerStudent.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const volunteerStudent = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!volunteerStudent) {
-      throw new Error('Volunteer student not found');
+    if (!p1) {
+      return null;
     }
 
-    return await volunteerStudent.destroy();
+    return await p1.destroy();
   }
 
   async existsByRun(run) {
-    const volunteerStudent = await this.findByRun(run);
+    const p1 = await this.findByRun(run);
 
-    if (!volunteerStudent) {
+    if (!p1) {
       return false;
     }
 
@@ -53,9 +57,9 @@ class VolunteerStudentRepository {
   }
 
   async existsByEmail(email) {
-    const volunteerStudent = await this.findByEmail(email);
+    const p1 = await this.findByEmail(email);
 
-    if (!volunteerStudent) {
+    if (!p1) {
       return false;
     }
 

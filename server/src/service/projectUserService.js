@@ -1,90 +1,109 @@
-const ProjectUserRepository = require('../repository/projectUserRepository');
+const ProjectUserRepository = require('../repository/projectUserRepository'); // El Repositorio ProjectUser es llamado
 
+// Servicio de la clase ProjectUser, funciona como capa intermedia y transforma el resultado al deseado
 class ProjectUserService {
   async getAll() {
-    const projectUser = await ProjectUserRepository.findAll();
+    const p1 = await ProjectUserRepository.findAll();
 
-    const restructuredProjectUser = projectUser.map(projectUser => {
-      const projectUserJSON = projectUser.toJSON();
+    if (!p1) {
+      return null;
+    }
 
-      projectUserJSON.id_project = projectUserJSON.project;
-      projectUserJSON.id_user = projectUserJSON.user;
-      projectUserJSON.id_user.id_role = projectUserJSON.user.role;
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      delete projectUserJSON.user.role;
-      delete projectUserJSON.user;
-      delete projectUserJSON.project;
+      p3.id_project = p3.project;
+      p3.id_user = p3.user;
+      p3.id_user.id_role = p3.user.role;
+      p3.id_faculty = p3.faculty;
 
-      return projectUserJSON;
+      delete p3.user.role;
+      delete p3.user;
+      delete p3.project;
+      delete p3.faculty;
+
+      return p3;
     })
 
-    return restructuredProjectUser;
+    return p2;
   }
 
   async getById(id) {
-    const projectUser = await ProjectUserRepository.findById(id);
+    const p1 = await ProjectUserRepository.findById(id);
 
-    if (!projectUser) {
-      throw new Error('projectUser not found');
+    if (!p1) {
+      return null;
     }
 
-    return projectUser;
+    const p2 = p1.toJSON();
+
+    p2.id_project = p2.project;
+    p2.id_user = p2.user;
+    p2.id_user.id_role = p2.user.role;
+    p2.id_faculty = p2.faculty;
+
+    delete p2.user.role;
+    delete p2.user;
+    delete p2.project;
+    delete p2.faculty;
+
+    return p2;
   }
 
   async getByUserId(id) {
-    const projectUser = await ProjectUserRepository.findByUserId(id);
+    const p1 = await ProjectUserRepository.findByUserId(id);
 
-    if (!projectUser) {
-      throw new Error('projectUser not found');
+    if (!p1) {
+      return null;
     }
 
-    const restructuredProjectUser = projectUser.map(projectUser => {
-        const projectUserJSON = projectUser.toJSON();
-  
-        projectUserJSON.id_project = projectUserJSON.project;
-        projectUserJSON.id_user = projectUserJSON.user;
-        projectUserJSON.id_user.id_role = projectUserJSON.user.role;
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-        delete projectUserJSON.user.role;
-        delete projectUserJSON.user;
-        delete projectUserJSON.project;
-  
-        return projectUserJSON;
-      })
+      p3.id_project = p3.project;
+      p3.id_user = p3.user;
+      p3.id_user.id_role = p3.user.role;
+      p3.id_faculty = p3.faculty;
 
-    return restructuredProjectUser;
+      delete p3.user.role;
+      delete p3.user;
+      delete p3.project;
+      delete p3.faculty;
+
+      return p3;
+    })
+
+    return p2;
   }
 
 	async getByProjectId(id) {
-    const projectUser = await ProjectUserRepository.findByProjectId(id);
+    const p1 = await ProjectUserRepository.findByProjectId(id);
 
-    if (!projectUser) {
-      throw new Error('projectUser not found');
+    if (!p1) {
+      return null;
     }
 
-		const restructuredProjectUser = projectUser.map(projectUser => {
-      const projectUserJSON = projectUser.toJSON();
+		const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      projectUserJSON.id_project = projectUserJSON.project;
-      projectUserJSON.id_user = projectUserJSON.user;
-      projectUserJSON.id_user.id_role = projectUserJSON.user.role;
+      p3.id_project = p3.project;
+      p3.id_user = p3.user;
+      p3.id_user.id_role = p3.user.role;
+      p3.id_faculty = p3.faculty;
 
-      delete projectUserJSON.user.role;
-      delete projectUserJSON.user;
-      delete projectUserJSON.project;
+      delete p3.user.role;
+      delete p3.user;
+      delete p3.project;
+      delete p3.faculty;
 
-      return projectUserJSON;
+      return p3;
     })
 
-    return restructuredProjectUser;
+    return p2;
   }
 
   async create(data) {
     return await ProjectUserRepository.create(data);
-  }
-
-  async update(id, data) {
-    return await ProjectUserRepository.update(id, data);
   }
 
   async delete(id) {

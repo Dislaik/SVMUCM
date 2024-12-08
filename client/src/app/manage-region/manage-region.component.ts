@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { User } from '../architecture/model/user';
 import { Utils } from '../utils';
 import { Region } from '../architecture/model/region';
@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../architecture/service/user.service';
 import { RegionService } from '../architecture/service/region.service';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-manage-region',
@@ -19,7 +21,14 @@ export class ManageRegionComponent implements OnInit {
   isViewLoaded: boolean = false;
   browserUser: User;
 
+  @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
+  modalCreateItemInstance: any;
   @ViewChild('inputSearchItem') inputSearchItem: ElementRef;
+
+  @ViewChild('inputName') inputName: ElementRef;
+  nameError: string = '';
+  @ViewChild('inputLabel') inputLabel: ElementRef;
+  labelError: string = '';
 
 
   regions: Region[];
@@ -247,11 +256,76 @@ export class ManageRegionComponent implements OnInit {
 
   ///// PAGINATION END ////
 
+  public ngOnCreateModalItem(): void {
+    this.modalCreateItemInstance = new bootstrap.Modal(this.modalCreateItem.nativeElement);
+
+    this.modalCreateItemInstance.show();
+  }
+
+  public ngOnModelCreateItem(): void {
+    const name = this.inputName.nativeElement.value.toLowerCase();
+    const label = this.inputLabel.nativeElement.value
+    let success = 0;
+
+    if (name.trim() === '') {
+      this.nameError = 'Debe ingresar un identificador'
+    } else {
+      this.nameError = '';
+      success+= 1;
+    }
+
+    if (label.trim() === '') {
+      this.labelError = 'Debe ingresar una etiqueta'
+    } else {
+      this.labelError = '';
+      success+= 1;
+    }
+
+    if (success === 2) {
+      const region = new Region(name, label);
+
+      this.ngOnCreateItem(region);
+    }
+  }
+
+  private async ngOnCreateItem(p1: Region): Promise<void> {
+    const response = await this.regionService.create(p1);
+
+    if (response.ok) {
+      this.modalCreateItemInstance.hide();
+      this.regions.push(response.message);
+      this.ngOnShowPage(this.paginationItems, this.pagination);
+      this.toastr.success('Se ha creado la región con exito');
+    } else {
+      if (Object.keys(response.error.error).length > 0) {
+        this.nameError = response.error.error.name;
+      }
+    }
+  }
+
+  public nameIdentifier(): void {
+    Utils.formatNameIdentifier(this.inputName.nativeElement);
+  }
+
   private UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);
   }
   
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {
+    this.inputName.nativeElement.value = '';
+    this.inputLabel.nativeElement.value = '';
+    this.nameError = '';
+    this.labelError = '';
   }
 }

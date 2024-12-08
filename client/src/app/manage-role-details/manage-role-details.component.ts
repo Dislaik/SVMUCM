@@ -20,6 +20,7 @@ export class ManageRoleDetailsComponent implements OnInit {
   browserUser: User;
 
   @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
+  labelError: string = '';
 
   role: Role;
   isViewLoaded: boolean = false;
@@ -77,16 +78,26 @@ export class ManageRoleDetailsComponent implements OnInit {
 
   public async ngOnEditItemSave(): Promise<void> {
     const label = this.inputItemEditLabel.nativeElement.value;
+    let success = 0;
 
-    this.role.label = label;
-
-    const response = await this.roleService.update(this.role.id, this.role);
-
-    if (response.ok) {
-      this.toastr.success('Se han guardado los cambios con exito');
-      this.enableEditItem = false;
+    if (label.trim() === '') {
+      this.labelError = 'Debe ingresar una etiqueta';
     } else {
-      console.log(response.error)
+      this.labelError = '';
+      success+= 1;
+    }
+
+    if (success === 1) {
+      const role = new Role(this.role.name, label)
+      const response = await this.roleService.update(this.role.id, role);
+
+      if (response.ok) {
+        this.toastr.success('Se han guardado los cambios con exito');
+        this.role = response.message;
+        this.enableEditItem = false;
+      } else {
+        console.log(response.error)
+      }
     }
   }
 
@@ -100,10 +111,18 @@ export class ManageRoleDetailsComponent implements OnInit {
   }
 
   public ngOnEditItemCancel(): void {
+    this.labelError = '';
     this.enableEditItem = false;
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 }

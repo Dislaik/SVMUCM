@@ -1,7 +1,9 @@
-const QuotationAPUResourceService = require('../service/quotationAPUResourceService');
+const QuotationAPUResourceService = require('../service/quotationAPUResourceService'); // El servicio QuotationAPUResource es llamado
 
-class ProjectVolunteerStudentController {
+// Controlador de la clase QuotationAPUResource, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo QuotationAPUResource
+class QuotationAPUResourceController {
 
+  // Metodo que obtiene todos los datos de QuotationAPUResource
   async getAll(request, response) {
     try {
       const p1 = await QuotationAPUResourceService.getAll();
@@ -12,24 +14,30 @@ class ProjectVolunteerStudentController {
     }
   }
 
+  // Metodo que obtiene un QuotationAPUResource por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
       const p1 = await QuotationAPUResourceService.getById(id)
 
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+
       return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene todos los QuotationAPUResource por la ID de una Quotation
   async getByQuotationId(request, response) {
     try {
       const { id } = request.params;
-      const p1 = await QuotationAPUResourceService.getByQuotationId(id);
+      const p1 = await QuotationAPUResourceService.getByQuotationId(id)
 
       if (!p1) {
-        return response.status(200).json({ ok: true, message: null});
+        return response.status(404).json({ ok: true, message: null});
       }
 
       return response.status(200).json({ ok: true, message: p1});
@@ -38,13 +46,14 @@ class ProjectVolunteerStudentController {
     }
   }
 
+  // Metodo que obtiene todos los QuotationAPUResource por la ID de una APU
   async getByAPUId(request, response) {
     try {
       const { id } = request.params;
-      const p1 = await QuotationAPUResourceService.getByAPUId(id);
+      const p1 = await QuotationAPUResourceService.getByAPUId(id)
 
       if (!p1) {
-        return response.status(200).json({ ok: true, message: null});
+        return response.status(404).json({ ok: true, message: null});
       }
 
       return response.status(200).json({ ok: true, message: p1});
@@ -53,13 +62,14 @@ class ProjectVolunteerStudentController {
     }
   }
 
+  // Metodo que obtiene todos los QuotationAPUResource por la ID de un Resource
   async getByResourceId(request, response) {
     try {
       const { id } = request.params;
-      const p1 = await QuotationAPUResourceService.getByResourceId(id);
+      const p1 = await QuotationAPUResourceService.getByResourceId(id)
 
       if (!p1) {
-        return response.status(200).json({ ok: true, message: null});
+        return response.status(404).json({ ok: true, message: null});
       }
 
       return response.status(200).json({ ok: true, message: p1});
@@ -68,6 +78,7 @@ class ProjectVolunteerStudentController {
     }
   }
 
+  // Metodo que crea un QuotationAPUResource a partir de las entradas recibidas
   async create(request, response) {
     try {
       const { body } = request
@@ -93,26 +104,15 @@ class ProjectVolunteerStudentController {
     }
   }
 
-  async update(request, response) {
-    try {
-      const { id } = request.params;
-      const { body } = request;
-
-      const p1 = await QuotationAPUResourceService.update(id, body);
-      if (!p1) {
-        return response.status(404).json({ message: 'Project Volunteer Student not found' });
-      }
-
-      return response.status(200).json({ ok: true, message: p1});
-    } catch (error) {
-      return response.status(500).json({ ok: false, error: error});
-    }
-  }
-
+  // Metodo que elimina un QuotationAPUResource por su ID
   async delete(request, response) {
     try {
       const { id } = request.params;
-      const p1 = await QuotationAPUResourceService.getById(id)
+      const p1 = await QuotationAPUResourceService.getById(id);
+
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null });
+      }
 
       await QuotationAPUResourceService.delete(id);
 
@@ -123,4 +123,4 @@ class ProjectVolunteerStudentController {
   }
 }
 
-module.exports = new ProjectVolunteerStudentController();
+module.exports = new QuotationAPUResourceController();

@@ -374,3 +374,9 @@ body.swal2-shown {
 .card .user-fullname {
   font-size: 24px;
 }
+
+
+.form-control:disabled {
+ background-color: #A6ACAF !important;
+ opacity: 0.4 !important;
+}

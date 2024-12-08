@@ -1,57 +1,68 @@
-const ProjectVolunteerStudentService = require('../service/projectVolunteerStudentService');
+const ProjectVolunteerStudentService = require('../service/projectVolunteerStudentService'); // El servicio ProjectVolunteerStudent es llamado
 
+// Controlador de la clase ProjectVolunteerStudent, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo ProjectVolunteerStudent
 class ProjectVolunteerStudentController {
+
+  // Metodo que obtiene todos los datos de ProjectVolunteerStudent
   async getAll(request, response) {
     try {
-      const projectVolunteerStudents = await ProjectVolunteerStudentService.getAll();
+      const p1 = await ProjectVolunteerStudentService.getAll();
       
-      return response.status(200).json({ ok: true, message: projectVolunteerStudents});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene un ProjectVolunteerStudent por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const projectVolunteerStudent = await ProjectVolunteerStudentService.getById(id)
+      const p1 = await ProjectVolunteerStudentService.getById(id)
 
-      return response.status(200).json({ ok: true, message: projectVolunteerStudent});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene todos los ProjectVolunteerStudent por la ID de un Project
   async getByProjectId(request, response) {
     try {
       const { id } = request.params;
-      const projectVolunteerStudents = await ProjectVolunteerStudentService.getByProjectId(id);
+      const p1 = await ProjectVolunteerStudentService.getByProjectId(id)
 
-      if (!projectVolunteerStudents) {
-        return response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      return response.status(200).json({ ok: true, message: projectVolunteerStudents});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene todos los ProjectVolunteerStudent por la ID de un User
   async getByVolunteerStudentId(request, response) {
     try {
       const { id } = request.params;
-      const projectVolunteerStudents = await ProjectVolunteerStudentService.getByVolunteerStudentId(id);
+      const p1 = await ProjectVolunteerStudentService.getByVolunteerStudentId(id)
 
-      if (!projectVolunteerStudents) {
-        return response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      return response.status(200).json({ ok: true, message: projectVolunteerStudents});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que crea un ProjectVolunteerStudent a partir de las entradas recibidas
   async create(request, response) {
     try {
       const { body } = request
@@ -61,40 +72,32 @@ class ProjectVolunteerStudentController {
         created_at: body.created_at
       }
       
-      let projectVolunteerStudent = await ProjectVolunteerStudentService.create(object);
-      projectVolunteerStudent.id_project = body.id_project;
-      projectVolunteerStudent.id_volunteer_student = body.id_volunteer_student;
+      let p1 = await ProjectVolunteerStudentService.create(object);
+      p1.id_project = body.id_project;
+      p1.id_volunteer_student = body.id_volunteer_student;
 
-      return response.status(200).json({ ok: true, message: projectVolunteerStudent});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
-  async update(request, response) {
+  // Metodo que elimina un ProjectVolunteerStudent por su ID
+  async delete(request, response) {
     try {
       const { id } = request.params;
-      const { body } = request;
+      const p1 = await ProjectVolunteerStudentService.getById(id);
 
-      const projectVolunteerStudent = await ProjectVolunteerStudentService.update(id, body);
-      if (!projectVolunteerStudent) {
-        return response.status(404).json({ message: 'Project Volunteer Student not found' });
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null });
       }
-
-      return response.status(200).json({ ok: true, message: projectVolunteerStudent});
-    } catch (error) {
-      return response.status(500).json({ ok: false, error: error});
-    }
-  }
-
-  async delete(request, response) {
-
-      const { id } = request.params;
-      const p1 = await ProjectVolunteerStudentService.getById(id)
 
       await ProjectVolunteerStudentService.delete(id);
 
       return response.status(200).json({ ok: true, message: p1});
+    } catch (error) {
+      return response.status(500).json({ ok: false, error: error});
+    }
   }
 }
 

@@ -67,8 +67,6 @@ export class ProjectComponent implements OnInit{
 
       if (responseProject.ok) {
         return responseProject.message
-
-
       } else {
         console.log(responseProject.error)
       }

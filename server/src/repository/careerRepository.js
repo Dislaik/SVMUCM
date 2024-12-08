@@ -1,24 +1,26 @@
-const Career = require('../model/career');
-const Faculty = require('../model/faculty');
-const Headquarter = require('../model/headquarter');
+const Career = require('../model/career'); // Modelo Career es llamado
+const Faculty = require('../model/faculty'); // Modelo Faculty es llamado
+const Headquarter = require('../model/headquarter'); // Modelo Headquarter es llamado
 
+// Repositorio de la clase Career, se encarga de realizar las consultas a la base de datos
 class CareerRepository {
   async findAll() {
-    return await Career.findAll();
+    return await Career.findAll({ include: [ Headquarter, Faculty ] });
   }
 
   async findById(id) {
-    return await Career.findByPk(id, { include: [Headquarter, Faculty] });
+    return await Career.findByPk(id, { include: [ Headquarter, Faculty ] });
   }
 
   async findByName(name) {
-    return await Career.findOne({ where: { name: name } });
+    return await Career.findOne({ where: { name: name }, include: [ Headquarter, Faculty ] });
   }
 
   async findByLabel(label) {
-    return await Career.findOne({ where: { label: label } });
+    return await Career.findOne({ where: { label: label }, include: [ Headquarter, Faculty ] });
   }
 
+  // Just a experiment, not really worth
   async findByHeadquarterAndFacultyName(headquarterName, facultyName) {
     const headquarter = await Headquarter.findOne({ where: {name: headquarterName} });
     const faculty = await Faculty.findOne({ where: {name: facultyName} });
@@ -31,29 +33,29 @@ class CareerRepository {
   }
 
   async update(id, data) {
-    const career = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!career) {
-      throw new Error('Career not found');
+    if (!p1) {
+      return null;
     }
     
-    return await career.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const career = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!career) {
-      throw new Error('Career not found');
+    if (!p1) {
+      return null;
     }
 
-    return await career.destroy();
+    return await p1.destroy();
   }
 
   async existsByName(name) {
-    const user = await this.findByName(name);
+    const p1 = await this.findByName(name);
 
-    if (!user) {
+    if (!p1) {
       return false;
     }
 

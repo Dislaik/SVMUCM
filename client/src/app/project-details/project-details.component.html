@@ -11,12 +11,10 @@
       </ng-template>
       <ng-template #elseBlockEditItem>
         <div class="d-flex flex-row-reverse gap-2">
-          
           <button *ngIf="project.id_projectStatus.name === 'created'" type="button" class="btn btn-edit-item tooltip-info" (click)="ngOnEditItem()">
             <i class="bi bi-pencil-square"></i>Editar
             <span class="tooltiptext">Puedes editar tu solicitud siempre y cuando este en estado [Creado]</span>
           </button>
-        <button *ngIf="existsQuotation" type="button" class="btn btn-primary" (click)="ngOnGoQuotation()"><i class="bi bi-file-earmark-bar-graph-fill"></i>Ir a cotización</button>
         </div>
       </ng-template>
     </div>
@@ -26,14 +24,6 @@
             <div class="text-center mt-2 mb-3">
               <!-- <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo"> -->
               <h2 class="user-fullname">{{project.name}}</h2>
-            </div>
-            <div class="row mb-2">
-              <div class="col-4">
-                Nombre:
-              </div>
-              <div class="col-8">
-                {{project.name}}
-              </div>
             </div>
             <div class="row mb-2">
               <div class="col-4">
@@ -168,12 +158,32 @@
               </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
+                  Región:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemRegion" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditRegion class="form-select shadow-none">
+                      <option *ngFor="let item of regions;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">La región donde se realizará el proyecto</span>
+                    </i>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemRegion>
+                  <div class="col-6 ps-2">
+                    {{project.id_city.id_region.label}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
                   Ciudad:
                 </div>
                 <div *ngIf="enableEditItem; else elseBlockEditItemCity" class="col-6 ps-2">
                   <div class="d-flex gap-2 align-items-center">
                     <select #selectItemEditCity class="form-select shadow-none">
-                      <option *ngFor="let item of cities;" value="{{item['name']}}">{{item['label']}}</option>
+                      <option *ngFor="let item of citiesAUX;" value="{{item['name']}}">{{item['label']}}</option>
                     </select>
                     <i class="bi bi-question-circle tooltip-info">
                       <span class="tooltiptext">La ciudad donde se realizará el proyecto</span>
@@ -188,16 +198,61 @@
               </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
+                  Sede:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemHeadquarter" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditHeadquarter class="form-select shadow-none">
+                      <option *ngFor="let item of headquarters;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">La sede a la que esta dirigida la solicitud</span>
+                    </i>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemHeadquarter>
+                  <div class="col-6 ps-2">
+                    {{project.id_career.id_headquarter.label}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Facultad:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemFaculty" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditFaculty class="form-select shadow-none">
+                      <option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">La facultad a la que esta dirigida la solicitud</span>
+                    </i>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemFaculty>
+                  <div class="col-6 ps-2">
+                    {{project.id_career.id_faculty.label}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
                   Carrera:
                 </div>
                 <div *ngIf="enableEditItem; else elseBlockEditItemCareer" class="col-6 ps-2">
                   <div class="d-flex gap-2 align-items-center">
-                    <select #selectItemEditCareer class="form-select shadow-none">
-                      <option *ngFor="let item of careers;" value="{{item['name']}}">{{item['label']}}</option>
+                    <select #selectItemEditCareer class="form-control form-select shadow-none">
+                      <option *ngFor="let item of careersAUX;" value="{{item['name']}}">{{item['label']}}</option>
                     </select>
                     <i class="bi bi-question-circle tooltip-info">
                       <span class="tooltiptext">La carrera a la que esta dirigida la solicitud</span>
                     </i>
+                  </div>
+                  <div *ngIf="careerError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{careerError}}</p>
+                    </div>
                   </div>
                 </div>
                 <ng-template #elseBlockEditItemCareer>
@@ -216,35 +271,7 @@
               </div>
             </div>
           </div>
-        </div>
-        <!-- <div class="row mb-2">
-          <div class="card profile-general-info ms-2 shadow">
-            <div class="card-header"><i class="bi bi-people-fill"></i>Asignacion de docentes</div>
-            <div class="card-body">
-              <div *ngFor="let item of projectUsersAUX;" class="mb-2">
-                <div class="apu-container d-flex justify-content-between align-items-center">
-                  <div class="d-flex gap-2">
-                    <i class="bi bi-person-fill"></i>{{item.id_user.first_name}} {{item.id_user.last_name}}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div class="card profile-general-info ms-2 shadow">
-            <div class="card-header"><i class="bi bi-people-fill"></i>Asignacion de alumnos voluntarios</div>
-            <div class="card-body">
-              <div *ngFor="let item of projectVolunterStudentsAUX;" class="mb-2">
-                <div class="apu-container d-flex justify-content-between align-items-center">
-                  <div class="d-flex gap-2">
-                    <i class="bi bi-person-fill"></i>{{item.id_volunteer_student.first_name}} {{item.id_volunteer_student.last_name}}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
+        </div>-
       </div>
     </div>
   </ng-template>

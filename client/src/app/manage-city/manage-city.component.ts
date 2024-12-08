@@ -171,7 +171,8 @@ export class ManageCityComponent {
     return this.cities.filter(city =>
       String(city.id).toLowerCase().includes(p1.toLowerCase()) ||
       city.name.toLowerCase().includes(p1.toLowerCase()) ||
-      city.label.toLowerCase().includes(p1.toLowerCase())
+      city.label.toLowerCase().includes(p1.toLowerCase()) ||
+      city.id_region.label.toLowerCase().includes(p1.toLowerCase())
     );
   }
 
@@ -282,29 +283,23 @@ export class ManageCityComponent {
     const name = this.inputModalName.nativeElement.value.toLowerCase();
     const label = this.inputModalLabel.nativeElement.value
     const region = this.regions.find(headquarter => headquarter.name === this.selectModalRegion.nativeElement.value);
-    const city = new City(name, label, region);
-
-    this.ngOnCreateItem(city);
-  }
-
-  private async ngOnCreateItem(city: City): Promise<void> {
     let success = 0;
 
-    if (city.name.trim() === '') {
+    if (name.trim() === '') {
       this.nameError = 'Debe ingresar un identificador'
     } else {
       this.nameError = '';
       success+= 1;
     }
 
-    if (city.label === '') {
+    if (label.trim() === '') {
       this.labelError = 'Debe ingresar una etiqueta';
     } else {
       this.labelError = '';
       success+= 1;
     }
 
-    if (city.id_region.name === '') {
+    if (!region) {
       this.regionError = 'Debe seleccionar una región';
     } else {
       this.regionError = '';
@@ -312,16 +307,24 @@ export class ManageCityComponent {
     }
     
     if (success === 3) {
-      const response = await this.cityService.create(city);
+      const city = new City(name, label, region);
 
-      if (response.ok) {
-        this.modalCreateItemInstance.hide();
-        this.cities.push(response.message);
-        this.paginationItems = this.cities;
-        this.ngOnShowPage(this.paginationItems, this.pagination);
-        this.toastr.success('Se ha creado la carrera con exito');
-      } else {
-        this.nameError = response.error.name;
+      this.ngOnCreateItem(city);
+    }
+  }
+
+
+  private async ngOnCreateItem(p1: City): Promise<void> {
+    const response = await this.cityService.create(p1);
+
+    if (response.ok) {
+      this.modalCreateItemInstance.hide();
+      this.cities.push(response.message);
+      this.ngOnShowPage(this.paginationItems, this.pagination);
+      this.toastr.success('Se ha creado la ciudad con exito');
+    } else {
+      if (Object.keys(response.error.error).length > 0) {
+        this.nameError = response.error.error.name;
       }
     }
   }
@@ -332,7 +335,14 @@ export class ManageCityComponent {
   }
   
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   public nameIdentifier(): void {

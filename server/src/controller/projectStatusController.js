@@ -1,96 +1,66 @@
-const ProjectStatusService = require('../service/projectStatusService');
+const ProjectStatusService = require('../service/projectStatusService'); // El servicio ProjectStatus es llamado
 
-class RoleController {
+// Controlador de la clase ProjectStatus, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo ProjectStatus
+class ProjectStatusController {
+
+  // Metodo que obtiene todos los datos de ProjectStatus 
   async getAll(request, response) {
     try {
-      const projectStatues = await ProjectStatusService.getAll();
+      const p1 = await ProjectStatusService.getAll();
       
-      response.status(200).json({ ok: true, message: projectStatues});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una ProjectStatus por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const projectStatus = await ProjectStatusService.getById(id)
+      const p1 = await ProjectStatusService.getById(id)
 
-      response.status(200).json(projectStatus);
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una ProjectStatus por su nombre de identificador
   async getByName(request, response) {
     try {
       const { name } = request.params;
-      const projectStatus = await ProjectStatusService.getByName(name);
+      const p1 = await ProjectStatusService.getByName(name);
       
-      if (!projectStatus) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: projectStatus});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una ProjectStatus por su etiqueta
   async getByLabel(request, response) {
     try {
       const { label } = request.params;
-      const projectStatus = await ProjectStatusService.getByLabel(label);
+      const p1 = await ProjectStatusService.getByLabel(label);
 
-      if (!projectStatus) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: projectStatus});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
-    }
-  }
-
-  async create(request, response) {
-    try {
-      const { body } = request
-      const projectStatus = await ProjectStatusService.create(body);
-
-      response.status(200).json(projectStatus);
-    } catch (error) {
-      response.status(500).json({ error: 'Error creating projectStatus' });
-    }
-  }
-
-  async update(request, response) {
-    try {
-      const { id } = request.params;
-      const { body } = request;
-
-      const projectStatus = await ProjectStatusService.update(id, body);
-      if (!projectStatus) {
-        return response.status(404).json({ message: 'Role not found' });
-      }
-
-      response.status(200).json(projectStatus);
-    } catch (error) {
-      response.status(500).json({ error: 'Error updating projectStatus' });
-    }
-  }
-
-  async delete(request, response) {
-    try {
-      const { id } = request.params;
-      const projectStatus = await ProjectStatusService.getById(id)
-
-      await ProjectStatusService.delete(id);
-
-      res.status(200).json(projectStatus);
-    } catch (error) {
-      res.status(404).json({ error: error.message });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 }
 
-module.exports = new RoleController();
+module.exports = new ProjectStatusController();

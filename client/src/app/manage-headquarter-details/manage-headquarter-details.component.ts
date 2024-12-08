@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Utils } from '../utils';
 import { User } from '../architecture/model/user';
 import { UserService } from '../architecture/service/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-manage-headquarter-details',
@@ -21,7 +22,10 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
   enableEditItem: boolean = false;
   browserUser: User;
 
+  @ViewChild('inputItemEditName') inputItemEditName: ElementRef;
+  nameError: string = '';
   @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
+  labelError: string = '';
 
   headquarter: Headquarter;
 
@@ -76,23 +80,47 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
   }
 
   public async ngOnEditItemSave(): Promise<void> {
+    const name = this.inputItemEditName.nativeElement.value;
     const label = this.inputItemEditLabel.nativeElement.value;
+    let success = 0;
 
-    this.headquarter.label = label;
-
-    const response = await this.headquarterService.update(this.headquarter.id, this.headquarter);
-
-    if (response.ok) {
-      this.toastr.success('Se han guardado los cambios con exito');
-      this.enableEditItem = false;
+    if (name.trim() === '') {
+      this.nameError = 'Debe ingresar un identificador';
     } else {
-      console.log(response.error)
+      this.nameError = '';
+      success+= 1;
+    }
+
+    if (label.trim() === '') {
+      this.labelError = 'Debe ingresar una etiqueta';
+    } else {
+      this.labelError = '';
+      success+= 1;
+    }
+
+    if (success === 2) {
+      const headquarter = new Headquarter(name, label)
+      const response = await this.headquarterService.update(this.headquarter.id, headquarter);
+
+      if (response.ok) {
+        this.toastr.success('Se han guardado los cambios con exito');
+        this.headquarter = response.message;
+        this.enableEditItem = false;
+      } else {
+        if (Object.keys(response.error.error).length > 0) {
+          this.nameError = response.error.error.name;
+        }
+      }
     }
   }
 
   public ngOnEditItem(): void {
     this.enableEditItem = true;
     setTimeout(() => {
+      if (this.inputItemEditName) {
+        this.inputItemEditName.nativeElement.value = this.headquarter.name;
+      }
+
       if (this.inputItemEditLabel) {
         this.inputItemEditLabel.nativeElement.value = this.headquarter.label;
       }
@@ -101,9 +129,45 @@ export class ManageHeadquarterDetailsComponent implements OnInit {
 
   public ngOnEditItemCancel(): void {
     this.enableEditItem = false;
+    this.nameError = '';
+    this.labelError = '';
+  }
+
+  public ngOnDeleteItem(): void {
+    Swal.fire({
+      title: '¿Estas seguro que quieres eliminar esta sede?',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await this.headquarterService.delete(this.headquarter.id)
+
+        if (response.ok) {
+          Swal.fire('Sede eliminada', '', 'success');
+
+          this.router.navigate(['/panel/headquarter']);
+        } else {
+          if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
+            Swal.fire('La sede no puede ser eliminada debido a tablas relacionadas', '', 'warning');
+          }
+        }
+      }
+    }); 
+  }
+
+  public nameIdentifier(): void {
+    Utils.formatNameIdentifier(this.inputItemEditName.nativeElement);
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 }

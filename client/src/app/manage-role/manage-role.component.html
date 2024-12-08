@@ -6,7 +6,7 @@
         <div class="d-flex justify-content-end">
           <div class="d-flex">
             <div class="input-group">
-              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar {{title.toLowerCase()}}" (keydown.enter)="ngOnSearchItem()">
+              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar rol" (keydown.enter)="ngOnSearchItem()">
               <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
                 <i class="bi bi-x-circle"></i>
               </button>
@@ -22,17 +22,15 @@
       <div class="card-body p-0">
         <ul class="list-group rounded-0">
           <div class="m-2 mb-0 row">
-            <div class="col-1 text-center">ID</div>
             <div class="col-5 text-center">Nombre</div>
-            <div class="col-5 text-center">Etiqueta</div>
+            <div class="col-6 text-center">Etiqueta</div>
             <div class="col-1 text-center">Opciones</div>
           </div>
           <hr class="mb-2 mt-2">
   
           <div *ngFor="let item of paginationShowItems" class="m-2 row">
-            <div class="col-1 text-center">{{item.id}}</div>
             <div class="col-5 text-center wrap-text">{{item.name}}</div>
-            <div class="col-5 text-center wrap-text">{{item.label}}</div>
+            <div class="col-6 text-center wrap-text">{{item.label}}</div>
             <div class="col-1 d-flex justify-content-center">
               <button type="button" class="btn btn-primary btn-sm" (click)="ngOnItemDetails(item)">
                 Ver detalles

@@ -13,6 +13,7 @@
         <ng-template #elseBlockEditItem>
           <div class="d-flex flex-row-reverse gap-2">
             <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+            <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button>
           </div>
         </ng-template>
       </ng-template>
@@ -23,14 +24,6 @@
             <div class="text-center mt-2 mb-3">
               <!-- <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo"> -->
               <h2 class="user-fullname">{{headquarter.label}}</h2>
-            </div>
-            <div class="row mb-2">
-              <div class="col-4">
-                ID:
-              </div>
-              <div class="col-8">
-                {{headquarter.id}}
-              </div>
             </div>
             <div class="row mb-2">
               <div class="col-4">
@@ -49,18 +42,18 @@
             <div class="card-body">
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
-                  ID:
-                </div>
-                <div class="col-6 ps-2">
-                  {{headquarter.id}}
-                </div>
-              </div>
-              <div class="row align-items-center mb-2">
-                <div class="col-6 pe-2">
                   Nombre:
                 </div>
                 <div class="col-6 ps-2">
-                  {{headquarter.name}}
+                  <input *ngIf="enableEditItem; else elseBlockEditItemName" #inputItemEditName type="text" class="form-control shadow-none" required autocomplete="off" (input)="nameIdentifier()">
+                  <div *ngIf="nameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{nameError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemName>
+                    {{headquarter.name}}
+                  </ng-template>
                 </div>
               </div>
               <div class="row align-items-center mb-2">
@@ -69,6 +62,11 @@
                 </div>
                 <div class="col-6 ps-2">
                   <input *ngIf="enableEditItem; else elseBlockEditItemLabel" #inputItemEditLabel type="text" class="form-control shadow-none" required autocomplete="off">
+                  <div *ngIf="labelError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{labelError}}</p>
+                    </div>
+                  </div>
                   <ng-template #elseBlockEditItemLabel>
                     {{headquarter.label}}
                   </ng-template>

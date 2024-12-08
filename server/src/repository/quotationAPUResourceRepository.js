@@ -1,8 +1,9 @@
-const QuotationAPUResource = require('../model/quotationAPUResource');
-const Quotation = require('../model/quotation');
-const APU = require('../model/apu');
-const Resource = require('../model/resource');
+const QuotationAPUResource = require('../model/quotationAPUResource'); // Modelo QuotationAPUResource es llamado
+const Quotation = require('../model/quotation'); // Modelo Quotation es llamado
+const APU = require('../model/apu'); // Modelo APU es llamado
+const Resource = require('../model/resource'); // Modelo Resource es llamado
 
+// Repositorio de la clase QuotationAPUResource, se encarga de realizar las consultas a la base de datos
 class QuotationAPUResourceRepository {
   async findAll() {
     return await QuotationAPUResource.findAll();
@@ -28,21 +29,11 @@ class QuotationAPUResourceRepository {
     return await QuotationAPUResource.create(data);
   }
 
-  async update(id, data) {
-    const p1 = await this.findById(id);
-
-    if (!p1) {
-      throw new Error('Project Volunteer Student not found');
-    }
-    
-    return await p1.update(data);
-  }
-
   async delete(id) {
     const p1 = await this.findById(id);
 
     if (!p1) {
-      throw new Error('Project Volunteer Student not found');
+      return null;
     }
 
     return await p1.destroy();

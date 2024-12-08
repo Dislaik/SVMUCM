@@ -241,4 +241,12 @@ export class ManageQuotationComponent implements OnInit {
     return Utils.convertToChileTime(p1, p2);
   }
 
+  public numberToPrice(p1: number): string {
+    if (p1 === 0) {
+      return "Sin costos"
+    }
+
+    return '$' + Utils.stringToPrice(String(p1));
+  }
+
 }

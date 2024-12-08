@@ -299,7 +299,7 @@ export class ManageResourceComponent implements OnInit{
 
     if (success === 2) {
       const resource = new Resource(name, label, description, Number(priceAlt.replace(/\./g, '')));
-
+      console.log(resource)
       this.ngOnCreateItem(resource);
     }
   }
@@ -313,8 +313,8 @@ export class ManageResourceComponent implements OnInit{
       this.ngOnShowPage(this.paginationItems, this.pagination);
       this.toastr.success('Se ha creado el recurso con exito');
     } else {
-      if (Object.keys(response.error).length > 0) {
-        this.nameError = response.error.name;
+      if (Object.keys(response.error.error).length > 0) {
+        this.nameError = response.error.error.name;
       }
     }
   }
@@ -348,7 +348,14 @@ export class ManageResourceComponent implements OnInit{
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {

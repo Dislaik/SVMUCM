@@ -4,10 +4,10 @@
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
       <div *ngIf="haveRole(['admin', 'careerdirector', 'dean', 'externalrelationscoordinator']); else elseBlockNotCreateUser"  class="d-flex justify-content-between">
-        <button type="button" class="btn btn-primary" (click)="ngOnCreateModalItem()">Crear nuevo alumno</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnCreateModalItem()">Crear nuevo alumno voluntario</button>
         <div class="d-flex">
           <div class="input-group">
-            <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar {{title.toLowerCase()}}" (keydown.enter)="ngOnSearchItem()">
+            <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar alumno voluntario" (keydown.enter)="ngOnSearchItem()">
             <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
               <i class="bi bi-x-circle"></i>
             </button>
@@ -21,7 +21,7 @@
         <div class="d-flex justify-content-end">
           <div class="d-flex">
             <div class="input-group">
-              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar {{title.toLowerCase()}}" (keydown.enter)="ngOnSearchItem()">
+              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar alumno voluntario" (keydown.enter)="ngOnSearchItem()">
               <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
                 <i class="bi bi-x-circle"></i>
               </button>
@@ -38,21 +38,21 @@
       <div class="card-body p-0">
         <ul class="list-group rounded-0">
           <div class="m-2 mb-0 row">
-            <div class="col-1 text-center">ID</div>
             <div class="col-2 text-center">RUN</div>
             <div class="col-3 text-center">Nombre</div>
-            <div class="col-3 text-center">Correo electronico</div>
-            <div class="col-2 text-center">Estado</div>
+            <div class="col-2 text-center">Correo electronico</div>
+            <div class="col-3 text-center">Carrera</div>
+            <div class="col-1 text-center">Estado</div>
             <div class="col-1 text-center">Opciones</div>
           </div>
           <hr class="mb-2 mt-2">
   
           <div *ngFor="let item of paginationShowItems" class="m-2 row">
-            <div class="col-1 text-center">{{item.id}}</div>
             <div class="col-2 text-center wrap-text">{{item.run}}</div>
             <div class="col-3 text-center wrap-text">{{item.first_name}} {{item.last_name}}</div>
-            <div class="col-3 text-center wrap-text">{{item.email}}</div>
-            <div class="col-2 text-center wrap-text">{{item.id_user_status.label}}</div>
+            <div class="col-2 text-center wrap-text">{{item.email}}</div>
+            <div class="col-3 text-center wrap-text">{{item.id_career.label}}</div>
+            <div class="col-1 text-center wrap-text">{{item.id_user_status.label}}</div>
             <div class="col-1 d-flex justify-content-center">
               <button type="button" class="btn btn-primary btn-sm" (click)="ngOnItemDetails(item)">
                 Ver detalles
@@ -127,7 +127,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Crear nuevo alumno</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Crear nuevo alumno voluntario</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -179,6 +179,42 @@
             <div *ngIf="lastNameError !== ''">
               <div class="message-error-container d-flex align-items-center">
                 <p>{{lastNameError}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Sede:</p>
+          </div>
+          <div class="col-6">
+            <select #selectItemEditHeadquarter class="form-select shadow-none">
+              <option *ngFor="let item of headquarters;" value="{{item['name']}}">{{item['label']}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Facultad:</p>
+          </div>
+          <div class="col-6">
+            <select #selectItemEditFaculty class="form-select shadow-none">
+              <option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Carrera:</p>
+          </div>
+          <div class="col-6">
+            <select #selectItemEditCareer class="form-control form-select shadow-none">
+              <!-- <option selected hidden value="">Elige una carrera</option> -->
+              <option *ngFor="let item of careersAUX;" value="{{item['name']}}">{{item['label']}}</option>
+            </select>
+            <div *ngIf="careerError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{careerError}}</p>
               </div>
             </div>
           </div>

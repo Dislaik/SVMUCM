@@ -300,8 +300,8 @@ export class ManageAPUComponent implements OnInit {
       this.ngOnShowPage(this.paginationItems, this.pagination);
       this.toastr.success('Se ha creado la APU con exito');
     } else {
-      if (Object.keys(response.error).length > 0) {
-        this.nameError = response.error.name;
+      if (Object.keys(response.error.error).length > 0) {
+        this.nameError = response.error.error.name;
       }
     }
   }
@@ -328,7 +328,14 @@ export class ManageAPUComponent implements OnInit {
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {

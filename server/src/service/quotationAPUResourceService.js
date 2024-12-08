@@ -4,18 +4,18 @@ class QuotationAPUResourceService {
   async getAll() { 
     const p1 = await QuotationAPUResourceRepository.findAll();
 
-    const p2 = p1.map(p1 => {
-      const object = p1.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      object.id_quotation = object.quotation;
-      object.id_apu = object.apu;
-      object.id_resource = object.resource;
+      p3.id_quotation = p3.quotation;
+      p3.id_apu = p3.apu;
+      p3.id_resource = p3.resource;
 
-      delete object.quotation;
-      delete object.apu;
-      delete object.resource;
+      delete p3.quotation;
+      delete p3.apu;
+      delete p3.resource;
 
-      return object;
+      return p3;
     })
 
     return p2;
@@ -28,18 +28,18 @@ class QuotationAPUResourceService {
       return null
     }
 
-    const object = p1.toJSON();
+    const p2 = p1.toJSON();
 
-    object.id_quotation = object.quotation;
-    object.id_apu = object.apu;
-    object.id_resource = object.resource;
+    p2.id_quotation = p2.quotation;
+    p2.id_apu = p2.apu;
+    p2.id_resource = p2.resource;
 
-    delete object.quotation;
-    delete object.apu;
-    delete object.resource;
+    delete p2.quotation;
+    delete p2.apu;
+    delete p2.resource;
 
 
-    return object;
+    return p2;
   }
 
   async getByQuotationId(id) {
@@ -49,18 +49,18 @@ class QuotationAPUResourceService {
       return null
     }
 
-	    const p2 = p1.map(p1 => {
-      const object = p1.toJSON();
+	  const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      object.id_quotation = object.quotation;
-      object.id_apu = object.apu;
-      object.id_resource = object.resource;
+      p3.id_quotation = p3.quotation;
+      p3.id_apu = p3.apu;
+      p3.id_resource = p3.resource;
 
-      delete object.quotation;
-      delete object.apu;
-      delete object.resource;
+      delete p3.quotation;
+      delete p3.apu;
+      delete p3.resource;
 
-      return object;
+      return p3;
     })
 
     return p2;
@@ -73,18 +73,18 @@ class QuotationAPUResourceService {
       return null
     }
 
-	    const p2 = p1.map(p1 => {
-      const object = p1.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      object.id_quotation = object.quotation;
-      object.id_apu = object.apu;
-      object.id_resource = object.resource;
+      p3.id_quotation = p3.quotation;
+      p3.id_apu = p3.apu;
+      p3.id_resource = p3.resource;
 
-      delete object.quotation;
-      delete object.apu;
-      delete object.resource;
+      delete p3.quotation;
+      delete p3.apu;
+      delete p3.resource;
 
-      return object;
+      return p3;
     })
 
     return p2;
@@ -97,18 +97,18 @@ class QuotationAPUResourceService {
       return null
     }
 
-	    const p2 = p1.map(p1 => {
-      const object = p1.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      object.id_quotation = object.quotation;
-      object.id_apu = object.apu;
-      object.id_resource = object.resource;
+      p3.id_quotation = p3.quotation;
+      p3.id_apu = p3.apu;
+      p3.id_resource = p3.resource;
 
-      delete object.quotation;
-      delete object.apu;
-      delete object.resource;
+      delete p3.quotation;
+      delete p3.apu;
+      delete p3.resource;
 
-      return object;
+      return p3;
     })
 
     return p2;
@@ -117,10 +117,6 @@ class QuotationAPUResourceService {
 
   async create(data) {
     return await QuotationAPUResourceRepository.create(data);
-  }
-
-  async update(id, data) {
-    return await QuotationAPUResourceRepository.update(id, data);
   }
 
   async delete(id) {

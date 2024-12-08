@@ -1,19 +1,24 @@
-const ProjectVolunteerStudentRepository = require('../repository/projectVolunteerStudentRepository');
+const ProjectVolunteerStudentRepository = require('../repository/projectVolunteerStudentRepository'); // El Repositorio ProjectVolunteerStudent es llamado
 
+// Servicio de la clase ProjectVolunteerStudent, funciona como capa intermedia y transforma el resultado al deseado
 class ProjectVolunteerStudentService {
   async getAll() { 
     const p1 = await ProjectVolunteerStudentRepository.findAll();
 
-    const p2 = p1.map(item => {
-      const object = item.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      object.id_project = object.project;
-      object.id_volunteer_student = object.volunteer_student;
+      p3.id_project = p3.project;
+      p3.id_volunteer_student = p3.volunteer_student;
+      p3.id_volunteer_student.id_user_status = p3.volunteer_student.user_status;
+      p3.id_volunteer_student.id_career = p3.volunteer_student.career;
 
-      delete object.project;
-      delete object.volunteer_student;
+      delete p3.project;
+      delete p3.volunteer_student.user_status;
+      delete p3.volunteer_student.career;
+      delete p3.volunteer_student;
 
-      return object;
+      return p3;
     })
 
     return p2;
@@ -26,16 +31,20 @@ class ProjectVolunteerStudentService {
       return null
     }
 
-    const object = p1.toJSON();
+    const p2 = p1.toJSON();
 
-    object.id_project = object.project;
-    object.id_volunteer_student = object.volunteer_student;
+    p2.id_project = p2.project;
+    p2.id_volunteer_student = p2.volunteer_student;
+    p2.id_volunteer_student.id_user_status = p2.volunteer_student.user_status;
+    p2.id_volunteer_student.id_career = p2.volunteer_student.career;
 
-    delete object.project;
-    delete object.volunteer_student;
+    delete p2.project;
+    delete p2.volunteer_student.user_status;
+    delete p2.volunteer_student.career;
+    delete p2.volunteer_student;
 
 
-    return object;
+    return p2;
   }
 
   async getByProjectId(id) {
@@ -45,16 +54,20 @@ class ProjectVolunteerStudentService {
       return null;
     }
 
-		const p2 = p1.map(item => {
-      const object = item.toJSON();
+		const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      object.id_project = object.project;
-      object.id_volunteer_student = object.volunteer_student;
+      p3.id_project = p3.project;
+      p3.id_volunteer_student = p3.volunteer_student;
+      p3.id_volunteer_student.id_user_status = p3.volunteer_student.user_status;
+      p3.id_volunteer_student.id_career = p3.volunteer_student.career;
 
-      delete object.project;
-      delete object.volunteer_student;
+      delete p3.project;
+      delete p3.volunteer_student.user_status;
+      delete p3.volunteer_student.career;
+      delete p3.volunteer_student;
 
-      return object;
+      return p3;
     })
 
     return p2;
@@ -67,16 +80,20 @@ class ProjectVolunteerStudentService {
       return null;
     }
 
-    const p2 = p1.map(item => {
-      const object = item.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      object.id_project = object.project;
-      object.id_volunteer_student = object.volunteer_student;
+      p3.id_project = p3.project;
+      p3.id_volunteer_student = p3.volunteer_student;
+      p3.id_volunteer_student.id_user_status = p3.volunteer_student.user_status;
+      p3.id_volunteer_student.id_career = p3.volunteer_student.career;
 
-      delete object.project;
-      delete object.volunteer_student;
+      delete p3.project;
+      delete p3.volunteer_student.user_status;
+      delete p3.volunteer_student.career;
+      delete p3.volunteer_student;
 
-      return object;
+      return p3;
     })
 
     return p2;

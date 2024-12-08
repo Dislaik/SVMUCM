@@ -1,7 +1,8 @@
-const Role = require('../model/role');
-const User = require('../model/user');
-const UserStatus = require('../model/userStatus');
+const User = require('../model/user'); // Modelo User es llamado
+const Role = require('../model/role'); // Modelo Role es llamado
+const UserStatus = require('../model/userStatus'); // Modelo UserStatus es llamado
 
+// Repositorio de la clase User, se encarga de realizar las consultas a la base de datos
 class UserRepository {
   async findAll() {
     return await User.findAll({ include: [Role, UserStatus] });
@@ -16,7 +17,7 @@ class UserRepository {
   }
 
   async findByEmail(email) {
-    return await User.findOne({ where: { email: email }, include: [Role,UserStatus] });
+    return await User.findOne({ where: { email: email }, include: [Role, UserStatus] });
   }
 
   async create(data) {
@@ -24,29 +25,19 @@ class UserRepository {
   }
 
   async update(id, data) {
-    const user = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!user) {
-      throw new Error('User not found');
+    if (!p1) {
+      return null;
     }
     
-    return await user.update(data);
-  }
-
-  async delete(id) {
-    const user = await this.findById(id);
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    return await user.destroy();
+    return await p1.update(data);
   }
 
   async existsByUsername(username) {
-    const user = await this.findByUsername(username);
+    const p1 = await this.findByUsername(username);
 
-    if (!user) {
+    if (!p1) {
       return false;
     }
 
@@ -54,13 +45,17 @@ class UserRepository {
   }
 
   async existsByEmail(email) {
-    const user = await this.findByEmail(email);
+    const p1 = await this.findByEmail(email);
 
-    if (!user) {
+    if (!p1) {
       return false;
     }
 
     return true;
+  }
+
+  async countByRoleId(id) {
+    return await User.count({ where: {id_role : id }})
   }
 }
 

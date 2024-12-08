@@ -8,6 +8,12 @@ import { UserStatusService } from '../architecture/service/user-status.service';
 import { UserStatus } from '../architecture/model/user-status';
 import { User } from '../architecture/model/user';
 import { UserService } from '../architecture/service/user.service';
+import { Headquarter } from '../architecture/model/headquarter';
+import { Faculty } from '../architecture/model/faculty';
+import { Career } from '../architecture/model/career';
+import { HeadquarterService } from '../architecture/service/headquarter.service';
+import { FacultyService } from '../architecture/service/faculty.service';
+import { CareerService } from '../architecture/service/career.service';
 
 declare var bootstrap: any;
 
@@ -36,11 +42,22 @@ export class ManageVolunteerStudentComponent implements OnInit {
   firstNameError: string = '';
   @ViewChild('inputLastName') inputLastName: ElementRef;
   lastNameError: string = '';
+  @ViewChild('selectItemEditHeadquarter') selectItemEditHeadquarter: ElementRef;
+  @ViewChild('selectItemEditFaculty') selectItemEditFaculty: ElementRef;
+  @ViewChild('selectItemEditCareer') selectItemEditCareer: ElementRef;
+  careerError: string = '';
 
 
 
   volunteerStudents: VolunteerStudent[];
   userStatus: UserStatus[];
+
+  headquarters: Headquarter[];
+  faculties: Faculty[];
+  careers: Career[];
+
+  careersAUX: Career[];
+
 
   //// PAGINATION VARIABLES ////
   pagination: number;
@@ -61,6 +78,9 @@ export class ManageVolunteerStudentComponent implements OnInit {
     private toastr: ToastrService,
     private userService: UserService,
     private userStatusService: UserStatusService,
+    private headquarterService: HeadquarterService,
+    private facultyService: FacultyService,
+    private careerService: CareerService,
     private volunteerStudentService: VolunteerStudentService
   ){}
 
@@ -68,6 +88,9 @@ export class ManageVolunteerStudentComponent implements OnInit {
     this.createBreadCrumb();
     this.getUserByBrowser();
     this.getAllUserStatus();
+    this.ngOnGetAllHeadquarters();
+    this.ngOnGetAllFaculties();
+    this.ngOnGetAllCareers();
     this.ngOnCreatePagination(1, 10);
   }
 
@@ -96,6 +119,37 @@ export class ManageVolunteerStudentComponent implements OnInit {
 
     if (response.ok) {
       this.userStatus = response.message;
+    } else {
+      console.log(response.error)
+    }
+  }
+
+  private async ngOnGetAllHeadquarters(): Promise<void> {
+    const response = await this.headquarterService.getAll();
+
+    if (response.ok) {
+      this.headquarters = response.message;
+    } else {
+      console.log(response.error)
+    }
+  }
+  
+
+  private async ngOnGetAllFaculties(): Promise<void> {
+    const response = await this.facultyService.getAll();
+
+    if (response.ok) {
+      this.faculties = response.message;
+    } else {
+      console.log(response.error)
+    }
+  }
+
+  private async ngOnGetAllCareers(): Promise<void> {
+    const response = await this.careerService.getAll();
+
+    if (response.ok) {
+      this.careers = response.message;
     } else {
       console.log(response.error)
     }
@@ -179,7 +233,8 @@ export class ManageVolunteerStudentComponent implements OnInit {
       student.first_name.toLowerCase().includes(p1.toLowerCase()) ||
       student.last_name.toLowerCase().includes(p1.toLowerCase()) ||
       student.email.toLowerCase().includes(p1.toLowerCase()) ||
-      student.id_user_status.label.toLowerCase().includes(p1.toLowerCase())
+      student.id_user_status.label.toLowerCase().includes(p1.toLowerCase()) ||
+      student.id_career.label.toLowerCase().includes(p1.toLowerCase())
     );
   }
 
@@ -292,6 +347,7 @@ export class ManageVolunteerStudentComponent implements OnInit {
     const firstName = this.inputFirstName.nativeElement.value;
     const lastName = this.inputLastName.nativeElement.value;
     const status = this.userStatus.find(status => status.name === 'active');
+    const career = this.careers.find(career => career.name === this.selectItemEditCareer.nativeElement.value);
     let success = 0;
 
     if (run.trim() === '') {
@@ -330,8 +386,15 @@ export class ManageVolunteerStudentComponent implements OnInit {
       success+= 1;
     }
 
-    if (success === 4) {
-      const volunteerStudent = new VolunteerStudent(run, email, firstName, lastName, status, new Date());
+    if (career === undefined) {
+      this.careerError = 'No hay carreras disponibles, elige otra sede o facultad'
+    } else {
+      this.careerError = '';
+      success+= 1;
+    }
+
+    if (success === 5) {
+      const volunteerStudent = new VolunteerStudent(run, email, firstName, lastName, status, career, new Date());
 
       this.ngOnCreateItem(volunteerStudent);
     }
@@ -346,9 +409,9 @@ export class ManageVolunteerStudentComponent implements OnInit {
       this.ngOnShowPage(this.paginationItems, this.pagination);
       this.toastr.success('Se ha creado al alumno con exito');
     } else {
-      if (Object.keys(response.error).length > 0) {
-        this.runError = response.error.name;
-        this.emailError = response.error.email;
+      if (Object.keys(response.error.error).length > 0) {
+        this.runError = response.error.error.run;
+        this.emailError = response.error.error.email;
       }
     }
   }
@@ -358,14 +421,47 @@ export class ManageVolunteerStudentComponent implements OnInit {
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
-  @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {
+  @HostListener('change', ['$event']) onChange(event: Event) {
+
+
+    if (event.target === this.selectItemEditHeadquarter.nativeElement || event.target === this.selectItemEditFaculty.nativeElement) {
+      const careersFilter = this.careers.filter(career => career.id_headquarter.name === this.selectItemEditHeadquarter.nativeElement.value && career.id_faculty.name === this.selectItemEditFaculty.nativeElement.value);
+      
+      if (careersFilter.length === 0) {
+        this.selectItemEditCareer.nativeElement.value = '';
+        this.selectItemEditCareer.nativeElement.disabled = true
+      } else {
+        this.careersAUX = careersFilter;
+        this.selectItemEditCareer.nativeElement.value = this.careersAUX[0].name
+        this.selectItemEditCareer.nativeElement.disabled = false
+      }
+    }
+  }
+
+  @HostListener('document:show.bs.modal', ['$event']) onModalClickShow(event: Event) {
+    
+    this.careersAUX = this.careers.filter(career => career.id_headquarter.name === this.selectItemEditHeadquarter.nativeElement.value && career.id_faculty.name === this.selectItemEditFaculty.nativeElement.value);
+    this.selectItemEditCareer.nativeElement.value = this.careersAUX[0].name;
+    this.selectItemEditCareer.nativeElement.disabled = false;
+  }
+
+  @HostListener('document:hidden.bs.modal', ['$event']) onModalClickHidden(event: Event) {
     this.inputRUN.nativeElement.value = '';
     this.inputEmail.nativeElement.value = '';
     this.inputFirstName.nativeElement.value = '';
     this.inputLastName.nativeElement.value = '';
+    this.selectItemEditHeadquarter.nativeElement.value = this.headquarters[0].name;
+    this.selectItemEditFaculty.nativeElement.value = this.faculties[0].name;
     this.runError = '';
     this.emailError = '';
     this.firstNameError = '';

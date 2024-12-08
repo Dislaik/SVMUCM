@@ -1,38 +1,39 @@
-const HeadquarterRepository = require('../repository/headquarterRepository');
+const HeadquarterRepository = require('../repository/headquarterRepository'); // El Repositorio Headquarter es llamado
 
+// Servicio de la clase Headquarter, funciona como capa intermedia y transforma el resultado al deseado
 class HeadquarterService {
   async getAll() {
     return await HeadquarterRepository.findAll();
   }
 
   async getById(id) {
-    const headquarter = await HeadquarterRepository.findById(id);
+    const p1 = await HeadquarterRepository.findById(id);
 
-    if (!headquarter) {
-      throw new Error('Headquarter not found');
+    if (!p1) {
+      return null;
     }
 
-    return headquarter;
+    return p1;
   }
 
   async getByName(name) {
-    const headquarter = await HeadquarterRepository.findByName(name);
+    const p1 = await HeadquarterRepository.findByName(name);
     
-    if (!headquarter) {
-      throw new Error('Headquarter not found');
+    if (!p1) {
+      return null;
     }
 
-    return headquarter;
+    return p1;
   }
 
   async getByLabel(label) {
-    const headquarter = await HeadquarterRepository.findByLabel(label);
+    const p1 = await HeadquarterRepository.findByLabel(label);
     
-    if (!headquarter) {
-      throw new Error('Headquarter not found');
+    if (!p1) {
+      return null;
     }
 
-    return headquarter;
+    return p1;
   }
 
   async create(data) {
@@ -45,6 +46,10 @@ class HeadquarterService {
 
   async delete(id) {
     return await HeadquarterRepository.delete(id);
+  }
+
+  async existsByName(name) {
+    return await HeadquarterRepository.existsByName(name);
   }
 }
 

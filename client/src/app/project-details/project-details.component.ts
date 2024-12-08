@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Project } from '../architecture/model/project';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -10,6 +10,12 @@ import { City } from '../architecture/model/city';
 import { Career } from '../architecture/model/career';
 import { ProjectStatus } from '../architecture/model/project-status';
 import Swal from 'sweetalert2';
+import { RegionService } from '../architecture/service/region.service';
+import { Region } from '../architecture/model/region';
+import { Headquarter } from '../architecture/model/headquarter';
+import { Faculty } from '../architecture/model/faculty';
+import { HeadquarterService } from '../architecture/service/headquarter.service';
+import { FacultyService } from '../architecture/service/faculty.service';
 
 @Component({
   selector: 'app-project-details',
@@ -31,18 +37,28 @@ export class ProjectDetailsComponent implements OnInit {
   @ViewChild('inputItemEditDescription') inputItemEditDescription: ElementRef;
   descriptionError: string = '';
   @ViewChild('selectItemEditProjectStatus') selectItemEditProjectStatus: ElementRef;
-  @ViewChild('selectItemEditCity') selectItemEditCity: ElementRef;
-  @ViewChild('selectItemEditCareer') selectItemEditCareer: ElementRef;
   @ViewChild('inputItemEditStartDate') inputItemEditStartDate: ElementRef;
   startDateError: string = '';
   @ViewChild('inputItemEditEndDate') inputItemEditEndDate: ElementRef;
   endDateError: string = '';
+  @ViewChild('selectItemEditRegion') selectItemEditRegion: ElementRef;
+  @ViewChild('selectItemEditCity') selectItemEditCity: ElementRef;
+  @ViewChild('selectItemEditHeadquarter') selectItemEditHeadquarter: ElementRef;
+  @ViewChild('selectItemEditFaculty') selectItemEditFaculty: ElementRef;
+  @ViewChild('selectItemEditCareer') selectItemEditCareer: ElementRef;
+  careerError: string = '';
+
 
 
   project: Project;
-  //projectStatus: ProjectStatus[];
+  regions: Region[];
   cities: City[];
+  headquarters: Headquarter[];
+  faculties: Faculty[];
   careers: Career[];
+
+  citiesAUX: City[];
+  careersAUX: Career[];
 
   constructor(
     private router: Router,
@@ -50,7 +66,10 @@ export class ProjectDetailsComponent implements OnInit {
     private toastr: ToastrService,
     private projectService: ProjectService,
     // private projectStatusService: ProjectStatusService,
+    private regionService: RegionService,
     private cityService: CityService,
+    private headquarterService: HeadquarterService,
+    private facultyService: FacultyService,
     private careerService: CareerService,
     // private quotationService: QuotationService,
     // private userService: UserService,
@@ -67,7 +86,10 @@ export class ProjectDetailsComponent implements OnInit {
   public ngOnInit(): void {
     this.createBreadCrumb();
     this.ngOnGetProject();
-    this.getAllCities();
+    this.ngOnGetAllRegions();
+    this.ngOnGetAllCities();
+    this.ngOnGetAllHeadquarters();
+    this.ngOnGetAllFaculties();
     this.getAllCareers();
   }
 
@@ -91,11 +113,41 @@ export class ProjectDetailsComponent implements OnInit {
     }
   }
 
-  private async getAllCities(): Promise<void> {
+  private async ngOnGetAllRegions(): Promise<void> {
+    const response = await this.regionService.getAll();
+
+    if (response.ok) {
+      this.regions = response.message;
+    } else {
+      console.log(response.error);
+    }
+  }
+
+  private async ngOnGetAllCities(): Promise<void> {
     const response = await this.cityService.getAll();
 
     if (response.ok) {
       this.cities = response.message;
+    } else {
+      console.log(response.error);
+    }
+  }
+
+  private async ngOnGetAllHeadquarters(): Promise<void> {
+    const response = await this.headquarterService.getAll();
+
+    if (response.ok) {
+      this.headquarters = response.message;
+    } else {
+      console.log(response.error);
+    }
+  }
+
+  private async ngOnGetAllFaculties(): Promise<void> {
+    const response = await this.facultyService.getAll();
+
+    if (response.ok) {
+      this.faculties = response.message;
     } else {
       console.log(response.error);
     }
@@ -109,10 +161,6 @@ export class ProjectDetailsComponent implements OnInit {
     } else {
       console.log(response.error);
     }
-  }
-
-  public ngOnGoQuotation(): void {
-
   }
 
   public ngOnEditItem(): void {
@@ -146,8 +194,32 @@ export class ProjectDetailsComponent implements OnInit {
         this.inputItemEditEndDate.nativeElement.value = dateInverted;
       }
 
+      if (this.selectItemEditRegion) {
+        this.selectItemEditRegion.nativeElement.value = this.project.id_city.id_region.name;
+      }
+
       if (this.selectItemEditCity) {
-        this.selectItemEditCity.nativeElement.value = this.project.id_city.name
+        this.citiesAUX = this.cities.filter(city => city.id_region.name === this.selectItemEditRegion.nativeElement.value);
+
+        setTimeout(() => {
+          this.selectItemEditCity.nativeElement.value = this.project.id_city.name;
+        });
+      }
+
+      if (this.selectItemEditHeadquarter) {
+        this.selectItemEditHeadquarter.nativeElement.value = this.project.id_career.id_headquarter.name;
+      }
+
+      if (this.selectItemEditFaculty) {
+        this.selectItemEditFaculty.nativeElement.value = this.project.id_career.id_faculty.name;
+      }
+
+      if (this.selectItemEditCareer) {
+        this.careersAUX = this.careers.filter(career => career.id_headquarter.name === this.selectItemEditHeadquarter.nativeElement.value && career.id_faculty.name === this.selectItemEditFaculty.nativeElement.value);
+
+        setTimeout(() => {
+          this.selectItemEditCareer.nativeElement.value = this.project.id_career.name;
+        });
       }
     });
   }
@@ -155,8 +227,8 @@ export class ProjectDetailsComponent implements OnInit {
   public async ngOnEditItemSave(): Promise<void> {
     const name = this.inputItemEditName.nativeElement.value;
     const description = this.inputItemEditDescription.nativeElement.value;
-    const startDate = this.inputItemEditStartDate.nativeElement.value;
-    const endDate = this.inputItemEditEndDate.nativeElement.value;
+    const startDate = new Date(`${this.inputItemEditStartDate.nativeElement.value}T00:00:00`);
+    const endDate = new Date(`${this.inputItemEditEndDate.nativeElement.value}T00:00:00`);
     const city = this.cities.find(city => city.name === this.selectItemEditCity.nativeElement.value);  
     const career = this.careers.find(career => career.name === this.selectItemEditCareer.nativeElement.value);  
     const todayDate = new Date();
@@ -178,29 +250,36 @@ export class ProjectDetailsComponent implements OnInit {
 
     todayDate.setHours(0, 0, 0, 0);
 
-    if (startDate.trim() === '') {
+    if (startDate.toString() === 'Invalid Date') {
       this.startDateError = 'Debe especificar una fecha de inicio';
-    } else if (new Date(startDate) < todayDate) {
+    } else if (startDate <= todayDate) {
       this.startDateError = 'La fecha de inicio no puede ser una fecha anterior o igual a la de hoy';
     } else {
       this.startDateError = '';
       success+= 1;
     }
 
-    if (endDate.trim() === '') {
+    if (endDate.toString() === 'Invalid Date') {
       this.endDateError = 'Debe especificar una fecha de termino';
-    } else if (new Date(startDate) > new Date(endDate) ) {
+    } else if (startDate > endDate) {
       this.endDateError = 'La fecha de termino no puede ser una fecha anterior a la fecha de inicio';
     } else {
       this.endDateError = '';
       success+= 1;
     }
 
-    if (success === 4) {
+    if (career === undefined) {
+      this.careerError = 'No hay carreras disponibles, elige otra sede o facultad'
+    } else {
+      this.careerError = '';
+      success+= 1;
+    }
+
+    if (success === 5) {
       this.project.name = name;
       this.project.description = description;
-      this.project.start_date = new Date(startDate + "T00:00:00");
-      this.project.end_date = new Date(endDate + "T00:00:00");
+      this.project.start_date = startDate
+      this.project.end_date = endDate
       this.project.id_city = city;
       this.project.id_career = career;
 
@@ -230,5 +309,25 @@ export class ProjectDetailsComponent implements OnInit {
     return Utils.convertToChileTime(p1, p2);
   }
 
-  
+  @HostListener('change', ['$event']) onChange(event: Event) {
+
+    if (event.target === this.selectItemEditRegion.nativeElement) {
+      const citiesFilter = this.cities.filter(city => city.id_region.name === this.selectItemEditRegion.nativeElement.value);
+
+      this.citiesAUX = citiesFilter;
+    }
+
+    if (event.target === this.selectItemEditHeadquarter.nativeElement || event.target === this.selectItemEditFaculty.nativeElement) {
+      const careersFilter = this.careers.filter(career => career.id_headquarter.name === this.selectItemEditHeadquarter.nativeElement.value && career.id_faculty.name === this.selectItemEditFaculty.nativeElement.value);
+      
+      if (careersFilter.length === 0) {
+        this.selectItemEditCareer.nativeElement.value = '';
+        this.selectItemEditCareer.nativeElement.disabled = true
+      } else {
+        this.careersAUX = careersFilter;
+        this.selectItemEditCareer.nativeElement.value = this.careersAUX[0].name
+        this.selectItemEditCareer.nativeElement.disabled = false
+      }
+    }
+  }
 }

@@ -18,7 +18,6 @@ import { ManageUserComponent } from './manage-user/manage-user.component';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { BreadcrumbComponent } from './component/breadcrumb/breadcrumb.component';
 import { ManageProjectComponent } from './manage-project/manage-project.component';
-import { ManageComponent } from './manage/manage.component';
 import { ManageRoleComponent } from './manage-role/manage-role.component';
 import { ManageResourceComponent } from './manage-resource/manage-resource.component';
 import { ProjectComponent } from './project/project.component';
@@ -63,7 +62,6 @@ import { ManageCityDetailsComponent } from './manage-city-details/manage-city-de
     RestrictedModelRequestCourseComponent,
     FooterComponent,
     PanelComponent,
-    ManageComponent,
     ManageUserComponent,
     ManageUserDetailsComponent,
     ManageRoleComponent,

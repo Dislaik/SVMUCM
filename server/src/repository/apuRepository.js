@@ -1,5 +1,6 @@
-const APU = require('../model/apu');
+const APU = require('../model/apu'); // Modelo APU es llamado
 
+// Repositorio de la clase APU, se encarga de realizar las consultas a la base de datos
 class APURepository {
   async findAll() {
     return await APU.findAll();
@@ -22,29 +23,29 @@ class APURepository {
   }
 
   async update(id, data) {
-    const apu = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!apu) {
-      throw new Error('APU not found');
+    if (!p1) {
+      return null;
     }
     
-    return await apu.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const apu = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!apu) {
-      throw new Error('APU not found');
+    if (!p1) {
+      return null;
     }
 
-    return await apu.destroy();
+    return await p1.destroy();
   }
 
   async existsByName(name) {
-    const apu = await this.findByName(name);
+    const p1 = await this.findByName(name);
 
-    if (!apu) {
+    if (!p1) {
       return false;
     }
 

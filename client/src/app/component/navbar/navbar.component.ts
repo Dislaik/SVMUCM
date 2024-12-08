@@ -69,7 +69,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnManagePages(p1: string): void {
-    const pages = ["user", "role", "student-volunteer", "headquarter", "faculty", "career", "project", "apu", "resource"];
+    const pages = ['user', 'role', 'student-volunteer', 'headquarter', 'faculty', 'career', 'project', 'apu', 'resource', 'quotation', 'region', 'city'];
     const currentPage = p1.split('/')[2];
 
     if (currentPage) {
@@ -92,7 +92,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnLoggout(): void {
-    console.log("asdad")
+
     Utils.clearStorage();
     if (this.router.url == '/') {
       location.reload();
@@ -103,7 +103,14 @@ export class NavbarComponent implements OnInit {
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.user, p1)
+    
+    if (this.user) {
+      if (Utils.haveRole(this.user, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   @HostListener('click', ['$event']) onClick(event: Event) {

@@ -3,6 +3,7 @@ const router = express.Router();
 const ResourceController = require('../controller/resourceController');
 const auth = require('../security/authentication');
 
+// endpoints del modelo Resource
 router.get('/resource', auth.authenticateToken, ResourceController.getAll);
 router.get('/resource/by-id/:id', auth.authenticateToken, ResourceController.getById);
 router.post('/resource', auth.authenticateToken, ResourceController.create);

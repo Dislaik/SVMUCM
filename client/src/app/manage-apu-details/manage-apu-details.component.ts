@@ -115,7 +115,8 @@ export class ManageAPUDetailsComponent implements OnInit{
 
     if (response.ok) {
       this.APUResources = response.message;
-      this.APUResourcesAUX = [...this.APUResources] // LITTLE HACK
+      this.APUResourcesAUX = structuredClone(this.APUResources); // LITTLE HACK
+      //this.APUResourcesAUX = [...this.APUResources] // LITTLE HACK
       console.log(this.APUResourcesAUX)
     } else {
       console.log(response.error)
@@ -170,32 +171,17 @@ export class ManageAPUDetailsComponent implements OnInit{
     }
 
     if (success === 2) {
-      this.apu.name = name;
-      this.apu.label = label;
-      this.apu.description = description;
-
-      const response = await this.apuService.update(this.apu.id, this.apu);
+      const apu = new APU(name, label, description);
+      const response = await this.apuService.update(this.apu.id, apu);
       
       if (response.ok) {
         if (!this.compareLists(this.APUResourcesAUX, this.APUResources)) {
-          let removed = '';
-          let added = '';
-
           for (let i = 0; i < this.APUResources.length; i++) {
             const element = this.APUResources[i];
-            const response = await this.apuResourceService.delete(element.id);
-
-            if (response.ok) {
-              if (i === this.APUResources.length - 1) {
-                removed += element.id_resource.name + ' ';
-              } else {
-                removed += element.id_resource.name + ', ';
-              }
-            } else {
-              console.log(response.error)
-            }            
+            
+            await this.apuResourceService.delete(element.id);         
           }
-          // this.toastr.success('Se han eliminado los siguientes recursos [' + removed + '] de la APU');
+
           this.APUResources = [];
 
           for (let i = 0; i < this.APUResourcesAUX.length; i++) {
@@ -203,29 +189,20 @@ export class ManageAPUDetailsComponent implements OnInit{
             const response = await this.apuResourceService.create(element);
             
             if (response.ok) {
-              if (i === this.APUResourcesAUX.length - 1) {
-                added += element.id_resource.name + ' ';
-              } else {
-                added += element.id_resource.name + ', ';
-              }
-
               this.APUResources.push(response.message)
-            } else {
-              console.log(response.error)
             }
           }
-          // this.toastr.success('Se han agregado los siguientes recursos [' + removed + '] a la APU');
-          this.APUResourcesAUX = [...this.APUResources];
+          this.APUResourcesAUX = structuredClone(this.APUResources);
+          //this.APUResourcesAUX = [...this.APUResources];
         }
-
-
         
         this.toastr.success('Se han guardado los cambios con exito');
+        this.apu = response.message;
         this.enableEditItem = false;
 
       } else {
-        if (Object.keys(response.error).length > 0) {
-          this.nameError = response.error.name;
+        if (Object.keys(response.error.error).length > 0) {
+          this.nameError = response.error.error.name;
         }
       }
     }
@@ -254,7 +231,7 @@ export class ManageAPUDetailsComponent implements OnInit{
           this.router.navigate(['/panel/apu']);
         } else {
           if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
-            Swal.fire('La APU no puede ser eliminada debio a tablas relacionadas', '', 'warning');
+            Swal.fire('La APU no puede ser eliminada debido a tablas relacionadas', '', 'warning');
           }
         }
       }
@@ -327,7 +304,8 @@ export class ManageAPUDetailsComponent implements OnInit{
     });
 
     if (p1) {
-      this.APUResourcesAUX = [...this.APUResources];
+      this.APUResourcesAUX = structuredClone(this.APUResources);
+      //this.APUResourcesAUX = [...this.APUResources];
     }
   }
 
@@ -350,7 +328,14 @@ export class ManageAPUDetailsComponent implements OnInit{
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   @HostListener('document:show.bs.modal', ['$event']) onModalClick(event: Event) {

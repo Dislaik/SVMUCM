@@ -3,6 +3,7 @@ const router = express.Router();
 const VolunteerStudentController = require('../controller/volunteerStudentController');
 const auth = require('../security/authentication');
 
+// endpoints del modelo VolunteerStudent
 router.get('/volunteer-student', auth.authenticateToken, VolunteerStudentController.getAll);
 router.get('/volunteer-student/by-id/:id', auth.authenticateToken, VolunteerStudentController.getById);
 router.get('/volunteer-student/by-run/:run', auth.authenticateToken, VolunteerStudentController.getByRun);

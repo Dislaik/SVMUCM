@@ -1,5 +1,6 @@
-const QuotationStatus = require('../model/quotationStatus');
+const QuotationStatus = require('../model/quotationStatus'); // Modelo QuotationStatus es llamado
 
+// Repositorio de la clase QuotationStatus, se encarga de realizar las consultas a la base de datos
 class QuotationStatusRepository {
   async findAll() {
     return await QuotationStatus.findAll();
@@ -15,30 +16,6 @@ class QuotationStatusRepository {
 
   async findByLabel(label) {
     return await QuotationStatus.findOne({ where: { label: label } });
-  }
-
-  async create(data) {
-    return await QuotationStatus.create(data);
-  }
-
-  async update(id, data) {
-    const quotationStatus = await this.findById(id);
-
-    if (!quotationStatus) {
-      throw new Error('Quotation Status not found');
-    }
-    
-    return await QuotationStatus.update(data);
-  }
-
-  async delete(id) {
-    const quotationStatus = await this.findById(id);
-
-    if (!quotationStatus) {
-      throw new Error('Quotation Status not found');
-    }
-
-    return await QuotationStatus.destroy();
   }
 }
 

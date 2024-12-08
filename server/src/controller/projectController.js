@@ -1,48 +1,56 @@
-const ProjectService = require('../service/projectService');
-const utils = require('../utils/utils');
+const ProjectService = require('../service/projectService'); // El servicio Project es llamado
 
+// Controlador de la clase Project, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo Project
 class ProjectController {
+
+  // Metodo que obtiene todos los datos de Project
   async getAll(request, response) {
     try {
-      const projects = await ProjectService.getAll();
+      const p1 = await ProjectService.getAll();
       
-      response.status(200).json({ ok: true, message: projects});
-    } catch (error) {
-      response.status(500).json({ ok: false, error: error});
-    }
-  }
-
-  async getById(request, response) {
-    try {
-      const { id } = request.params;
-      const project = await ProjectService.getById(id)
-
-      if (!project) {
-        return response.status(200).json({ ok: true, message: null});
-      }
-
-      return response.status(200).json({ ok: true, message: project});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
-  async getByUserId(request, response) {
+  // Metodo que obtiene un Project por su ID
+  async getById(request, response) {
     try {
       const { id } = request.params;
-      const projects = await ProjectService.getByUserId(id);
-      
-      
-      response.status(200).json({ ok: true, message: projects});
+      const p1 = await ProjectService.getById(id);
+
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene un Project por el ID de User
+  async getByUserId(request, response) {
+    try {
+      const { id } = request.params;
+      const p1 = await ProjectService.getByUserId(id);
+      
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+      
+      return response.status(200).json({ ok: true, message: p1});
+    } catch (error) {
+      return response.status(500).json({ ok: false, error: error});
+    }
+  }
+
+  // Metodo que crea un Project a partir de las entradas recibidas
   async create(request, response) {
     try {
       const { body } = request;
-      const projectObject = {
+      const object = {
         name: body.name,
         description: body.description,
         id_user: body.id_user.id,
@@ -54,20 +62,25 @@ class ProjectController {
         created_at: body.created_at
       }
 
-      const project = await ProjectService.create(projectObject);
+      const p1 = await ProjectService.create(object);
+      p1.id_user = body.id_user;
+      p1.id_career = body.id_career;
+      p1.id_city = body.id_city;
+      p1.id_projectStatus = body.id_projectStatus;
 
-      response.status(200).json({ ok: true, message: project});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que actualiza un Project a partir de las entradas recibidas
   async update(request, response) {
     try {
       const { id } = request.params;
       const { body } = request;
 
-      const projectObject = {
+      const object = {
         name: body.name,
         description: body.description,
         id_user: body.id_user.id,
@@ -78,34 +91,21 @@ class ProjectController {
         id_projectStatus: body.id_projectStatus.id,
         created_at: body.created_at
       }
-      console.log(projectObject)
-      let project = await ProjectService.update(id, projectObject);
 
-      if (!project) {
-        return response.status(404).json({ message: 'Project not found' });
+      let p1 = await ProjectService.update(id, object);
+
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null });
       }
 
-      project.id_user = body.id_user;
-      project.id_career = body.id_career;
-      project.id_city = body.id_city;
-      project.id_projectStatus = body.id_projectStatus;
+      p1.id_user = body.id_user;
+      p1.id_career = body.id_career;
+      p1.id_city = body.id_city;
+      p1.id_projectStatus = body.id_projectStatus;
 
-      response.status(200).json({ ok: true, message: project});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json({ error: 'Error updating project' });
-    }
-  }
-
-  async delete(request, response) {
-    try {
-      const { id } = request.params;
-      const project = await ProjectService.getById(id)
-
-      await ProjectService.delete(id);
-
-      return response.status(200).json({ ok: true, message: project});
-    } catch (error) {
-      return response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 }

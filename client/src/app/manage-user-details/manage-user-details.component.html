@@ -3,7 +3,7 @@
 	<h1 class="mb-3">{{title}}</h1>
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
-      <ng-template [ngIf]="haveRole(['admin', 'dean', 'externalrelationscoordinator']) && browserUser.id_role.id < user.id_role.id">
+      <ng-template [ngIf]="haveRole(['admin', 'dean', 'externalrelationscoordinator']) && browserUser.id_role.id <= user.id_role.id">
         <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
           <div class="d-flex flex-row-reverse gap-2">
             <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
@@ -59,17 +59,18 @@
                 <div class="col-6 pe-2">
                   Contraseña:
                 </div>
-                <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemPassword" #inputItemEditPassword type="password" class="form-control shadow-none" required autocomplete="off">
-                  <div *ngIf="passwordError !== ''">
-                    <div class="message-error-container d-flex align-items-center">
-                      <p>{{passwordError}}</p>
-                    </div>
+                <div *ngIf="enableEditItem; else elseBlockOnUserEnableEditPassword" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <button type="button" class="btn btn-primary w-100" (click)="ngOnCreateModalChangePassword()">
+                      <i class="bi bi-key-fill"></i>Cambiar contraseña
+                    </button>
                   </div>
-                  <ng-template #elseBlockEditItemPassword>
-                    ************
-                  </ng-template>
                 </div>
+                <ng-template #elseBlockOnUserEnableEditPassword>
+                  <div class="col-6 ps-2">
+                    ************
+                  </div>
+                </ng-template>
               </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
@@ -140,7 +141,7 @@
                   Teléfono:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemPhone" #inputItemEditPhone type="text" class="form-control shadow-none" required autocomplete="off">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemPhone" #inputItemEditPhone type="text" class="form-control shadow-none" required autocomplete="off" (input)="ngOnInputValidatePhone()">
                   <div *ngIf="phoneError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{phoneError}}</p>
@@ -166,6 +167,24 @@
                   </div>
                   <ng-template #elseBlockEditItemRole>
                     {{user.id_role.label}}
+                  </ng-template>
+                </div>
+              </div>
+              <div *ngIf="isOnProfessor === true" class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Facultad:
+                </div>
+                <div class="col-6 ps-2">
+                  <select *ngIf="enableEditItem && haveRole(['admin', 'dean']); else elseBlockEditItemFaculty" #selectItemEditFaculty class="form-select form-select">
+                    <option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <div *ngIf="facultyError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{facultyError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemFaculty>
+                    {{userFaculty ? userFaculty.id_faculty.label : ''}}
                   </ng-template>
                 </div>
               </div>
@@ -208,4 +227,35 @@
       </svg>
     </div>
   </ng-template>
+</div>
+
+
+<div #modalChangePassword class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar contraseña</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Nueva contraseña:</p>
+          </div>
+          <div class="col-6">
+            <input #inputPassword type="password" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresar contraseña">
+            <div *ngIf="passwordError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{passwordError}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnModelChangePassword()">Cambiar contraseña</button>
+      </div>
+    </div>
+  </div>
 </div>

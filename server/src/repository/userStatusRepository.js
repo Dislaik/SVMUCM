@@ -1,5 +1,6 @@
-const UserStatus = require('../model/userStatus');
+const UserStatus = require('../model/userStatus'); // Modelo UserStatus es llamado
 
+// Repositorio de la clase UserStatus, se encarga de realizar las consultas a la base de datos
 class UserStatusRepository {
   async findAll() {
     return await UserStatus.findAll();
@@ -15,30 +16,6 @@ class UserStatusRepository {
 
   async findByLabel(label) {
     return await UserStatus.findOne({ where: { label: label } });
-  }
-
-  async create(data) {
-    return await UserStatus.create(data);
-  }
-
-  async update(id, data) {
-    const userStatus = await this.findById(id);
-
-    if (!userStatus) {
-      throw new Error('UserStatus not found');
-    }
-    
-    return await userStatus.update(data);
-  }
-
-  async delete(id) {
-    const userStatus = await this.findById(id);
-
-    if (!userStatus) {
-      throw new Error('UserStatus not found');
-    }
-
-    return await userStatus.destroy();
   }
 }
 

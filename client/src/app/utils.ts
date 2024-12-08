@@ -125,10 +125,6 @@ export class Utils {
 
   public static onlyNumbers(p1: HTMLInputElement): void {
     p1.value = p1.value.replace(/\D/g, '');
-    
-    if (p1.value.startsWith('0')) {
-      p1.value = p1.value.replace(/^0+/, '');
-    }
   }
 
   public static cleanRUN = function(p1: any) {

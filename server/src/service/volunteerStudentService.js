@@ -1,52 +1,93 @@
-const VolunteerStudentRepository = require('../repository/volunteerStudentRepository');
+const VolunteerStudentRepository = require('../repository/volunteerStudentRepository'); // El Repositorio VolunteerStudent es llamado
 
+// Servicio de la clase VolunteerStudent, funciona como capa intermedia y transforma el resultado al deseado
 class VolunteerStudentService {
   async getAll() {
-    const volunteerStudent = await VolunteerStudentRepository.findAll();
+    const p1 = await VolunteerStudentRepository.findAll();
 
-    const restructuredVolunteerStudent = volunteerStudent.map(volunteerStudent => {
-      const volunteerStudentJSON = volunteerStudent.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      volunteerStudentJSON.id_user_status = volunteerStudentJSON.user_status;
+      p3.id_career = p3.career;
+      p3.id_career.id_headquarter = p3.career.headquarter;
+      p3.id_career.id_faculty = p3.career.faculty;
+      p3.id_user_status = p3.user_status;
 
-      delete volunteerStudentJSON.user_status;
+      delete p3.user_status;
+      delete p3.career.headquarter;
+      delete p3.career.faculty;
+      delete p3.career;
 
-      return volunteerStudentJSON;
+      return p3;
     });
 
-    return restructuredVolunteerStudent;
+    return p2;
   }
 
   async getById(id) {
-    const volunteerStudent = await VolunteerStudentRepository.findById(id);
+    const p1 = await VolunteerStudentRepository.findById(id);
 
-    if (volunteerStudent) {
-      const restructuredVolunteerStudent = volunteerStudent.toJSON();
-
-      restructuredVolunteerStudent.id_user_status = restructuredVolunteerStudent.user_status;
-
-      delete restructuredVolunteerStudent.user_status;
-
-      return restructuredVolunteerStudent;
+    if (!p1) {
+      return null
     }
 
-    throw new Error('User not found');
+    const p2 = p1.toJSON();
+
+    p2.id_career = p2.career;
+    p2.id_career.id_headquarter = p2.career.headquarter;
+    p2.id_career.id_faculty = p2.career.faculty;
+    p2.id_user_status = p2.user_status;
+
+    delete p2.user_status;
+    delete p2.career.headquarter;
+    delete p2.career.faculty;
+    delete p2.career;
+
+    return p2;
   }
 
   async getByRun(run) {
-    const volunteerStudent = await VolunteerStudentRepository.findByRun(run);
+    const p1 = await VolunteerStudentRepository.findByRun(run);
 
-    if (volunteerStudent) {
-      const restructuredVolunteerStudent = volunteerStudent.toJSON();
-
-      restructuredVolunteerStudent.id_user_status = restructuredVolunteerStudent.user_status;
-
-      delete restructuredVolunteerStudent.user_status;
-
-      return restructuredVolunteerStudent;
+    if (!p1) {
+      return null
     }
 
-    throw new Error('User not found');
+    const p2 = p1.toJSON();
+
+    p2.id_career = p2.career;
+    p2.id_career.id_headquarter = p2.career.headquarter;
+    p2.id_career.id_faculty = p2.career.faculty;
+    p2.id_user_status = p2.user_status;
+
+    delete p2.user_status;
+    delete p2.career.headquarter;
+    delete p2.career.faculty;
+    delete p2.career;
+
+    return p2;
+  }
+
+  async getByEmail(email) {
+    const p1 = await VolunteerStudentRepository.findByEmail(email);
+
+    if (!p1) {
+      return null
+    }
+
+    const p2 = p1.toJSON();
+
+    p2.id_career = p2.career;
+    p2.id_career.id_headquarter = p2.career.headquarter;
+    p2.id_career.id_faculty = p2.career.faculty;
+    p2.id_user_status = p2.user_status;
+
+    delete p2.user_status;
+    delete p2.career.headquarter;
+    delete p2.career.faculty;
+    delete p2.career;
+
+    return p2;
   }
 
   async create(data) {

@@ -26,6 +26,8 @@ export class ManageCareerDetailsComponent  implements OnInit {
   enableEditItem: boolean = false;
   browserUser: User;
 
+  @ViewChild('inputItemEditName') inputItemEditName: ElementRef;
+  nameError: string = '';
   @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
   labelError: string = '';
   @ViewChild('selectItemEditHeadquarter') selectItemEditHeadquarter: ElementRef;
@@ -113,6 +115,12 @@ export class ManageCareerDetailsComponent  implements OnInit {
   public ngOnEditItem(): void {
     this.enableEditItem = true;
     setTimeout(() => {
+
+      if (this.inputItemEditName) {
+        this.inputItemEditName.nativeElement.value = this.career.name;
+      }
+
+
       if (this.inputItemEditLabel) {
         this.inputItemEditLabel.nativeElement.value = this.career.label;
       }
@@ -128,10 +136,18 @@ export class ManageCareerDetailsComponent  implements OnInit {
   }
 
   public async ngOnEditItemSave(): Promise<void> {
+    const name = this.inputItemEditName.nativeElement.value;
     const label = this.inputItemEditLabel.nativeElement.value;
     const headquarter = this.headquarters.find(headquarter => headquarter.name === this.selectItemEditHeadquarter.nativeElement.value);
     const faculty = this.faculties.find(faculty => faculty.name === this.selectItemEditFaculty.nativeElement.value); 
     let success = 0;
+
+    if (name.trim() === '') {
+      this.nameError = 'Debe ingresar un identificador';
+    } else {
+      this.nameError = '';
+      success+= 1;
+    }
 
     if (label.trim() === '') {
       this.labelError = 'Debe ingresar una etiqueta';
@@ -140,24 +156,26 @@ export class ManageCareerDetailsComponent  implements OnInit {
       success+= 1;
     }
 
-    if (success === 1) {
-      this.career.label = label;
-      this.career.id_headquarter = headquarter;
-      this.career.id_faculty = faculty;
-
-      const response = await this.careerService.update(this.career.id, this.career);
+    if (success === 2) {
+      const career = new Career(name, label, headquarter, faculty);
+      const response = await this.careerService.update(this.career.id, career);
 
       if (response.ok) {
         this.toastr.success('Se han guardado los cambios con exito');
+        this.career = response.message;
         this.enableEditItem = false;
       } else {
-        console.log(response.error)
+        if (Object.keys(response.error.error).length > 0) {
+          this.nameError = response.error.error.name;
+        }
       }
     }
   }
 
   public ngOnEditItemCancel(): void {
     this.enableEditItem = false;
+    this.nameError = '';
+    this.labelError = '';
   }
 
   public ngOnDeleteItem(): void {
@@ -175,13 +193,26 @@ export class ManageCareerDetailsComponent  implements OnInit {
 
           this.router.navigate(['/panel/career']);
         } else {
-          Swal.fire(response.error, '', 'warning');
+          if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
+            Swal.fire('La carrera no puede ser eliminada debido a tablas relacionadas', '', 'warning');
+          }
         }
       }
     }); 
   }
 
   public haveRole(p1: any[]) {
-    return Utils.haveRole(this.browserUser, p1)
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  public nameIdentifier(): void {
+    Utils.formatNameIdentifier(this.inputItemEditName.nativeElement);
   }
 }
