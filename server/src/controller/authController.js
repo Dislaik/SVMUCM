@@ -1,74 +1,27 @@
-const auth = require('../security/authentication');
-const userService = require('../service/userService');
-const utils = require('../utils/utils');
+const auth = require('../security/authentication'); // La seguridad de autenticación es llamada
+const userService = require('../service/userService'); // El servicio User es llamado
+const utils = require('../utils/utils'); // La clase Utils es llamada
 
+// Controlador de la clase Auth, valida los datos recibidos y realiza actualizaciones y validaciones correspondientes en el modelo User
 class AuthController {
+
+  // Metodo para registrar nuevos User a traves de un conducto regular
   async register(request, response) {
     try {
       const { username, email, password, repeatPassword, firstName, lastName, address, phone } = request.body;
       const error = {};
-
-      if (username.trim() === '') {
-        error.username = 'Debe ingresar su RUN';
-      } else if (/[a-jl-zA-JL-Z]/.test(username)) {
-        error.username = 'El formato del RUT es inválido';
-      } else if (utils.cleanRUN(username).length < 8 || utils.cleanRUN(username).length > 12) {
-        error.username = 'El RUN debe tener entre 8 y 12 caracteres';
-      } else if (!utils.validateRUN(username)) {
-        error.username = 'El RUN ingresado no es válido';
-      } else if (await userService.existsByUsername(username)) {
+      
+      if (await userService.existsByUsername(username)) {
         error.username = 'Nombre de usuario ya esta registrado';
       }
 
-      if (firstName.trim() === '') {
-        error.firstName = 'Debe ingresar su nombre';
-      } else if (!/^[A-Za-z ]+$/.test(firstName)) {
-        error.firstName = 'Su nombre solo pueden contener letras';
-      }
-
-      if (lastName.trim() === '') {
-        error.lastName = 'Debe ingresar su apellido';
-      } else if (!/^[A-Za-z ]+$/.test(lastName)) {
-        error.lastName = 'Su apellido solo pueden contener letras';
-      }
-
-      if (address.trim() === '') {
-        error.address = 'Debe ingresar su dirección';
-      }
-
-      if (phone.trim() === '') {
-        error.phone = 'Debe ingresar su número';
-      }
-
-      if (email.trim() === '') { 
-        error.email = 'Debe ingresar su correo electronico';
-      } else if (!email.includes('@') || !email.includes('.')) {
-        error.email = 'El correo electronico debe ser uno valido';
-      } else if (await userService.existsByEmail(email)) {
+      if (await userService.existsByEmail(email)) {
         error.email = 'El correo electronico ya esta registrado';
-      }
-
-      if (password.trim() === '') {
-        error.password = 'Debe ingresar su contraseña';
-      } else if (password.lenght < 8 || password.lenght > 32) {
-        error.password = 'La contraseña debe tener una longitud de entre 8 a 32 caracteres';
-      } else if (!/[a-zA-Z]/.test(password)) {
-        error.password = 'La contraseña debe contener al menos una letra';
-      } else if (!/[0-9]/.test(password)) {
-        error.password = 'La contraseña debe contener al menos un número';
-      } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-        error.password = 'La contraseña debe contener al menos un símbolo';
-      } 
-      
-      if (repeatPassword.trim() === '') {
-        error.repeatPassword = 'Debe repetir su contraseña';
-      } else if (password != repeatPassword) {
-        error.repeatPassword = 'Las contraseñas no coinciden';
       }
 
       if (Object.keys(error).length === 0) {
         const passwordCrypted = await auth.cryptPassword(password)
-        const userObject = {
+        const object = {
           username: username,
           password: passwordCrypted,
           email: email,
@@ -77,72 +30,70 @@ class AuthController {
           address: address,
           phone: phone,
           image: 'http://localhost:8080/attachments/avatarDefault.png',
-          id_role: 8,
-          created_at: utils.getCurrentUTCTimeZone()
+          id_role: 7,
+          id_user_status: 1,
+          created_at: new Date()
         }
 
-        const user = await userService.create(userObject)
-
-        if (user) {
+        const p1 = await userService.create(object)
+        
+        if (p1) {
           const keyToken = auth.generateToken(username);
 
-          response.status(200).json({ ok: true, token: keyToken});
+          return response.status(200).json({ ok: true, message: keyToken});
         } else {
-          response.status(500).json({ fatalError: 'Hubo un error inesperado al crear el usuario' });
+          return response.status(400).json({ ok: false, error: 'Hubo un error inesperado al crear el usuario'});
         }
-      } else {
-        response.status(400).json(error);
       }
-      
+
+      return response.status(400).json({ ok: false, error: error});
     } catch (error) {
-      response.status(500).json('Hubo un error inesperado');
+      return response.status(500).json({ ok: false, error: error});
     };
   };
 
+  // Metodo para iniciar sesion de un User
   async login(request, response) {
     try {
       const { username, password } = request.body;
       const error = {};
       
-      if (username.trim() === '') {
-        error.username = 'Debe ingresar su RUN';
-      } else if (/[a-jl-zA-JL-Z]/.test(username)) {
-        error.username = 'El formato del RUT es inválido';
-      } else if (utils.cleanRUN(username).length < 8 || utils.cleanRUN(username).length > 12) {
-        error.username = 'El RUN debe tener entre 8 y 12 caracteres';
-      } else if (!utils.validateRUN(username)) {
-        error.username = 'El RUN ingresado no es válido';
-      } else if (!await userService.existsByUsername(username)) {
+    
+      if (!await userService.existsByUsername(username)) {
         error.username = 'Nombre de usuario incorrecto';
       }
 
-      if (password.trim() === '') {
-        error.password = 'Debe ingresar su contraseña';
-      }
-
       if (Object.keys(error).length === 0) {
-        const user = await userService.getByUsername(username);
+        const p1 = await userService.getByUsername(username);
 
-        if (await auth.comparePassword(password, user.password)) {
+        if (await auth.comparePassword(password, p1.password)) {
           const keyToken = auth.generateToken(username);
 
-          response.status(200).json({ ok: true, token: keyToken});
+          if (p1.id_user_status.name === 'inactive') {
+            error.username = "La cuenta del usuario no esta activa, contacta con un administrador.";
+
+            return response.status(400).json({ ok: false, error: error});
+          }
+
+          return response.status(200).json({ ok: true, message: keyToken});
         } else {
           error.password = "Contraseña incorrecta";
-          response.status(400).json(error);
+          
+          return response.status(400).json({ ok: false, error: error});
         }
       } else {
-        response.status(400).json(error);
+        return response.status(400).json({ ok: false, error: error});
       }
     } catch (error) {
-      response.status(500).json({ fatalError: 'Hubo un error inesperado' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo para verificar una sesion de User
   async verify(request, response) {
     const result = await auth.verify(request, response)
   
-    response.status(200).json(result);
+    return response.status(200).json(result);
   }
 }
 

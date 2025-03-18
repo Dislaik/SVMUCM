@@ -3,6 +3,7 @@ const router = express.Router();
 const APUResourceController = require('../controller/apuResourceController');
 const auth = require('../security/authentication');
 
+// endpoints del modelo APUResource
 router.get('/apu-resource', auth.authenticateToken, APUResourceController.getAll);
 router.get('/apu-resource/by-id/:id', auth.authenticateToken, APUResourceController.getById);
 router.get('/apu-resource/by-apu-id/:id', auth.authenticateToken, APUResourceController.getByAPUId);

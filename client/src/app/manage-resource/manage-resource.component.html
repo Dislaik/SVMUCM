@@ -3,41 +3,56 @@
 	<h1 class="mb-3">{{title}}</h1>
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
-      <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-primary" (click)="ngOnCreateModalItem()">Crear nuevo recurso</button>
-        <div class="d-flex">
-          <div class="input-group">
-            <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar recurso" (keydown.enter)="ngOnSearchItem()">
-            <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
-              <i class="bi bi-x-circle"></i>
-            </button>
-            <button type="button" class="btn btn-search" (click)="ngOnSearchItem()">
-              <i class="bi bi-search"></i>Buscar
-            </button>
+      <ng-template [ngIf]="haveRole(['admin', 'dean', 'externalrelations', 'externalrelationscoordinator'])" [ngIfElse]="elseBlockNotCreateItem">
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-primary" (click)="ngOnCreateModalItem()">Crear nuevo recurso</button>
+          <div class="d-flex">
+            <div class="input-group">
+              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar recurso" (keydown.enter)="ngOnSearchItem()">
+              <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
+                <i class="bi bi-x-circle"></i>
+              </button>
+              <button type="button" class="btn btn-search" (click)="ngOnSearchItem()">
+                <i class="bi bi-search"></i>Buscar
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </ng-template>
+      <ng-template #elseBlockNotCreateItem>
+        <div class="d-flex justify-content-end">
+          <div class="d-flex">
+            <div class="input-group">
+              <input #inputSearchItem type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar recurso" (keydown.enter)="ngOnSearchItem()">
+              <button type="button" class="btn btn-clear" (click)="ngOnClearSearchItem()" *ngIf="isOnFilter">
+                <i class="bi bi-x-circle"></i>
+              </button>
+              <button type="button" class="btn btn-search" (click)="ngOnSearchItem()">
+                <i class="bi bi-search"></i>Buscar
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </div>
     <div class="card mt-3 mb-3 dataTable-height">
       <div class="card-header">{{title}}</div>
       <div class="card-body p-0">
         <ul class="list-group rounded-0">
           <div class="m-2 mb-0 row">
-            <div class="col-1 text-center">ID</div>
             <div class="col-2 text-center">Nombre</div>
             <div class="col-3 text-center">Etiqueta</div>
             <div class="col-3 text-center">Descripción</div>
-            <div class="col-2 text-center">Precio</div>
+            <div class="col-3 text-center">Precio</div>
             <div class="col-1 text-center">Opciones</div>
           </div>
           <hr class="mb-2 mt-2">
   
           <div *ngFor="let item of paginationShowItems" class="m-2 row">
-            <div class="col-1 text-center">{{item.id}}</div>
             <div class="col-2 text-center wrap-text">{{item.name}}</div>
             <div class="col-3 text-center wrap-text">{{item.label}}</div>
             <div class="col-3 text-center wrap-text">{{checkDescription(item.description)}}</div>
-            <div class="col-2 text-center wrap-text">{{numberToPrice(item.price)}}</div>
+            <div class="col-3 text-center wrap-text">{{numberToPrice(item.price)}}</div>
             <div class="col-1 d-flex justify-content-center">
               <button type="button" class="btn btn-primary btn-sm" (click)="ngOnItemDetails(item)">
                 Ver detalles
@@ -98,38 +113,6 @@
         </div>
       </ul>
     </nav>
-  
-    <div class="card mt-3 mb-3">
-      <div class="card-header">Estadisticas</div>
-      <div class="card-body">
-        <div class="row mb-2">
-          <div class="col-6 pe-2">
-            <div class="charts-height">
-              <!-- <ng-template [ngIf]="isChartUsersLoaded" [ngIfElse]="elseChartsUsersBlock">
-                <div echarts [options]="chartUsers"></div>
-              </ng-template>
-              <ng-template #elseChartsUsersBlock>
-                <svg viewBox="0 0 50 50" class="spinner">
-                  <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-                </svg>
-              </ng-template> -->
-            </div>
-          </div>
-          <div class="col-6 ps-2">
-            <div class="charts-height">
-              <!-- <ng-template [ngIf]="isChartProjectsLoaded" [ngIfElse]="elseChartsProjectsBlock">
-                <div echarts [options]="chartOptionProjects"></div>
-              </ng-template>
-              <ng-template #elseChartsProjectsBlock>
-                <svg viewBox="0 0 50 50" class="spinner">
-                  <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
-                </svg>
-              </ng-template> -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </ng-template>
   <ng-template #elseBlockViewLoaded>
     <div class="loading">
@@ -144,7 +127,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Crear nuevo usuario</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Crear nuevo recurso</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

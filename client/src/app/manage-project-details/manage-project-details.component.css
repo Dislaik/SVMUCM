@@ -54,12 +54,6 @@
     }
   }
   
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
   .card .profile-image {
     width: 100px;
     height: 100px;
@@ -177,5 +171,21 @@
   
   .btn-project-price:hover, .btn-project-price:active {
     background-color: #0b5ed7 ;
+    color: #f5f5f5;
+  }
+
+  
+  .btn-resource {
+    background-color: #1E3F85;
+    color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    height: 90px;
+    width: 100%;
+    gap: 5px;
+  }
+  
+  .btn-resource:hover, .btn-resource:active {
+    background-color: #244da5 ;
     color: #f5f5f5;
   }

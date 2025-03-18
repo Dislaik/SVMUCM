@@ -3,6 +3,7 @@ const router = express.Router();
 const APUController = require('../controller/apuController');
 const auth = require('../security/authentication');
 
+// endpoints del modelo APU
 router.get('/apu', auth.authenticateToken, APUController.getAll);
 router.get('/apu/by-id/:id', auth.authenticateToken, APUController.getById);
 router.get('/apu/by-name/:name', auth.authenticateToken, APUController.getByName);

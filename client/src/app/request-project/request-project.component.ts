@@ -260,7 +260,7 @@ export class RequestProjectComponent implements OnInit{
             const city = this.cities.find(city => city.name === cityValue);
             const status = this.projectStatus.find(status => status.name === 'created');
 
-            const project = new Project(nameValue, descriptionValue, user, startDateValue, endDateValue, career, city, status);
+            const project = new Project(nameValue, descriptionValue, user, new Date(startDateValue + "T00:00:00"), new Date(endDateValue + "T00:00:00"), career, city, status);
 
             await this.projectService.create(project)
             this.router.navigate(['/project']);
@@ -318,49 +318,5 @@ export class RequestProjectComponent implements OnInit{
     if (event.target === this.buttonRequestProjectSubmit.nativeElement) {
       this.ngOnCreateRequestProject();
     }
-    
-    
-    // const buttonSubmit = this.elementReference.nativeElement.querySelector('#request-course-submit')
-
-    // if (event.target === buttonSubmit) {
-    //   const daysStingify = this.scheduleAvailability(
-    //     this.requestCourseDayMonday.nativeElement.checked,
-    //     this.requestCourseDayTuesday.nativeElement.checked,
-    //     this.requestCourseDayWednesday.nativeElement.checked,
-    //     this.requestCourseDayThursday.nativeElement.checked,
-    //     this.requestCourseDayFriday.nativeElement.checked,
-    //     this.requestCourseDaySaturday.nativeElement.checked,
-    //     this.requestCourseDaySunday.nativeElement.checked
-    //   )
-
-    //   const headquarter = this.headquarter.find(hq => hq.name === this.requestCourseHeadquarter.nativeElement.value);
-
-
-    //   const requestCourse = new RequestCourse(
-    //     this.requestProjectName.nativeElement.value,
-    //     headquarter,
-    //     this.requestCourseDuration.nativeElement.value,
-    //     this.requestCourseMode.nativeElement.value,
-    //     daysStingify,
-    //     this.user,
-    //     this.requestCourseReason.nativeElement.value
-    //   )
-
-    //   this.ngOnSubmitRequestCourse(requestCourse);
-    // }
   }
-
-  // scheduleAvailability(p1: boolean, p2: boolean, p3: boolean, p4: boolean, p5: boolean, p6: boolean, p7: boolean): string {
-  //   const days = {
-  //     monday: p1,
-  //     tuesday: p2,
-  //     wednesday: p3,
-  //     thursday: p4,
-  //     friday: p5,
-  //     saturday: p6,
-  //     sunday: p7
-  //   }
-
-  //   return JSON.stringify(days);
-  // }
 }

@@ -1,38 +1,39 @@
-const APURepository = require('../repository/apuRepository');
+const APURepository = require('../repository/apuRepository'); // El Repositorio APU es llamado
 
+// Servicio de la clase APU, funciona como capa intermedia y transforma el resultado al deseado
 class APUService {
   async getAll() {
     return await APURepository.findAll();
   }
 
   async getById(id) {
-    const apu = await APURepository.findById(id);
+    const p1 = await APURepository.findById(id);
 
-    if (!apu) {
-      throw new Error('APU not found');
+    if (!p1) {
+      return null;
     }
 
-    return apu;
+    return p1;
   }
 
   async getByName(name) {
-    const apu = await APURepository.findByName(name);
+    const p1 = await APURepository.findByName(name);
     
-    if (!apu) {
-      throw new Error('APU not found');
+    if (!p1) {
+      return null
     }
 
-    return apu;
+    return p1;
   }
 
   async getByLabel(label) {
-    const apu = await APURepository.findByLabel(label);
+    const p1 = await APURepository.findByLabel(label);
     
-    if (!apu) {
-      throw new Error('APU not found');
+    if (!p1) {
+      return null;
     }
 
-    return apu;
+    return p1;
   }
 
   async create(data) {

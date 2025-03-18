@@ -17,8 +17,7 @@ export class BreadcrumbComponent implements OnInit{
     private router: Router
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.breadcrumbPages = JSON.parse(this.listPages);
   }
-
 }

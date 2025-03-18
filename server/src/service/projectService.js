@@ -1,71 +1,89 @@
-const ProjectRepository = require('../repository/projectRepository');
+const ProjectRepository = require('../repository/projectRepository'); // El Repositorio Project es llamado
 
+// Servicio de la clase Project, funciona como capa intermedia y transforma el resultado al deseado
 class ProjectService {
   async getAll() {
-    const projects = await ProjectRepository.findAll()
+    const p1 = await ProjectRepository.findAll()
 
-    const restructuredProject = projects.map(project => {
-      const restructuredProject = project.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      restructuredProject.id_user = restructuredProject.user;
-      restructuredProject.id_career = restructuredProject.career;
-      restructuredProject.id_city = restructuredProject.city;
-      restructuredProject.id_projectStatus = restructuredProject.project_status;
+      p3.id_user = p3.user;
+      p3.id_city = p3.city;
+      p3.id_city.id_region = p3.city.region;
+      p3.id_career = p3.career;
+      p3.id_career.id_headquarter = p3.career.headquarter;
+      p3.id_career.id_faculty = p3.career.faculty;
+      p3.id_projectStatus = p3.project_status;
 
-      delete restructuredProject.user;
-      delete restructuredProject.career;
-      delete restructuredProject.city;
-      delete restructuredProject.project_status;
+      delete p3.user;
+      delete p3.city.region;
+      delete p3.city;
+      delete p3.career.headquarter;
+      delete p3.career.faculty;
+      delete p3.career;
+      delete p3.project_status;
 
-      return restructuredProject;
+      return p3;
     });
 
-    return restructuredProject;
+    return p2;
   }
 
   async getById(id) {
-    const project = await ProjectRepository.findById(id);
+    const p1 = await ProjectRepository.findById(id);
 
-    if (project) {
-      const restructuredProject = project.toJSON();
-
-      restructuredProject.id_user = restructuredProject.user;
-      restructuredProject.id_career = restructuredProject.career;
-      restructuredProject.id_city = restructuredProject.city;
-      restructuredProject.id_projectStatus = restructuredProject.project_status;
-
-      delete restructuredProject.user;
-      delete restructuredProject.career;
-      delete restructuredProject.city;
-      delete restructuredProject.project_status;
-
-      return restructuredProject;
+    if (!p1) {
+      return null
     }
 
-    throw new Error('Project not found');
+    const p2 = p1.toJSON();
+
+    p2.id_user = p2.user;
+    p2.id_city = p2.city;
+    p2.id_city.id_region = p2.city.region;
+    p2.id_career = p2.career;
+    p2.id_career.id_headquarter = p2.career.headquarter;
+    p2.id_career.id_faculty = p2.career.faculty;
+    p2.id_projectStatus = p2.project_status;
+
+    delete p2.user;
+    delete p2.city.region;
+    delete p2.city;
+    delete p2.career.headquarter;
+    delete p2.career.faculty;
+    delete p2.career;
+    delete p2.project_status;
+
+    return p2;
   }
 
   async getByUserId(id) {
-    const projects = await ProjectRepository.findByUserId(id);
-    console.log(projects)
+    const p1 = await ProjectRepository.findByUserId(id);
 
-    const restructuredProject = projects.map(project => {
-      const restructuredProject = project.toJSON();
+    const p2 = p1.map(object => {
+      const p3 = object.toJSON();
 
-      restructuredProject.id_user = restructuredProject.user;
-      restructuredProject.id_career = restructuredProject.career;
-      restructuredProject.id_city = restructuredProject.city;
-      restructuredProject.id_projectStatus = restructuredProject.project_status;
+      p3.id_user = p3.user;
+      p3.id_city = p3.city;
+      p3.id_city.id_region = p3.city.region;
+      p3.id_career = p3.career;
+      p3.id_career.id_headquarter = p3.career.headquarter;
+      p3.id_career.id_faculty = p3.career.faculty;
+      p3.id_projectStatus = p3.project_status;
 
-      delete restructuredProject.user;
-      delete restructuredProject.career;
-      delete restructuredProject.city;
-      delete restructuredProject.project_status;
+      delete p3.user;
+      delete p3.city.region;
+      delete p3.city;
+      delete p3.career.headquarter;
+      delete p3.career.faculty;
+      delete p3.career;
+      delete p3.project_status;
 
-      return restructuredProject;
+      return p3;
     });
 
-    return restructuredProject;
+    return p2;
   }
 
   async create(data) {
@@ -74,10 +92,6 @@ class ProjectService {
 
   async update(id, data) {
     return await ProjectRepository.update(id, data);
-  }
-
-  async delete(id) {
-    return await ProjectRepository.delete(id);
   }
 }
 

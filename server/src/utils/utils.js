@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 var utils = {};
 
 utils.parseDateFormat = function(date) {
@@ -42,6 +44,29 @@ utils.validateRUN = function(rut) {
 
 utils.cleanRUN = function(p1) {
     return p1.replace(/[.-]/g, '');
+}
+
+utils.generateRandomNumbers = function() {
+  const numbers = [];
+  
+  for (let i = 0; i < 5; i++) {
+    const randomNum = Math.floor(Math.random() * 10); // Genera un número entre 0 y 9
+    numbers.push(randomNum);
+  }
+
+  return numbers.join(' ');
+}
+
+utils.generateSecurePassword = function(length = 12) {
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+  let password = "";
+  
+  for (let i = 0; i < length; i++) {
+    const randomIndex = crypto.randomInt(0, charset.length);
+    password += charset[randomIndex];
+  }
+
+  return password;
 }
 
 module.exports = utils;

@@ -2,23 +2,23 @@ import { Headquarter } from "./headquarter";
 import { User } from "./user";
 
 export class RequestCourse {
-  title: String;
+  title: string;
   id_headquarter: Headquarter;
-  duration: String;
-  mode: String;
-  availableSchedule: String;
+  duration: string;
+  mode: string;
+  availableSchedule: string;
   id_user: User;
-  reason: String;
+  reason: string;
   created_at: Date;
 
   constructor(
-      title: String = '', 
+      title: string = '', 
       id_headquarter: Headquarter = new Headquarter(),
-      duration: String = '',
-      mode: String = '',
-      availableSchedule: String = '{}',
+      duration: string = '',
+      mode: string = '',
+      availableSchedule: string = '{}',
       id_user: User = new User(),
-      reason: String = '',
+      reason: string = '',
       created_at: Date = new Date()
   ) {
       this.title = title;

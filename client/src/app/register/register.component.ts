@@ -13,20 +13,20 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit{
   @ViewChild('inputUsername') inputUsername: ElementRef;
-  @ViewChild('inputFirstName') inputFirstName: ElementRef;
-  @ViewChild('inputLastName') inputLastName: ElementRef;
-  @ViewChild('inputAddress') inputAddress: ElementRef;
-  @ViewChild('inputPhone') inputPhone: ElementRef;
-  @ViewChild('inputEmail') inputEmail: ElementRef;
-  @ViewChild('inputPassword') inputPassword: ElementRef;
-  @ViewChild('inputRepeatPassword') inputRepeatPassword: ElementRef;
   usernameError: string = '';
+  @ViewChild('inputFirstName') inputFirstName: ElementRef;
   firstNameError: string = '';
+  @ViewChild('inputLastName') inputLastName: ElementRef;
   lastNameError: string = '';
+  @ViewChild('inputAddress') inputAddress: ElementRef;
   addressError: string = '';
+  @ViewChild('inputPhone') inputPhone: ElementRef;
   phoneError: string = '';
+  @ViewChild('inputEmail') inputEmail: ElementRef;
   emailError: string = '';
+  @ViewChild('inputPassword') inputPassword: ElementRef;
   passwordError: string = '';
+  @ViewChild('inputRepeatPassword') inputRepeatPassword: ElementRef;
   repeatPasswordError: string = '';
 
 
@@ -49,9 +49,92 @@ export class RegisterComponent implements OnInit{
     const email = this.inputEmail.nativeElement.value;
     const password = this.inputPassword.nativeElement.value;
     const repeatPassword = this.inputRepeatPassword.nativeElement.value;
-    const register = new Register(username.toLowerCase(), password, repeatPassword, email.toLowerCase(), firstName, lastName, address, phone);
+    let success = 0;
+    
+    if (username.trim() === '') {
+      this.usernameError = 'Debe ingresar su RUN';
+    } else if (/[a-jl-zA-JL-Z]/.test(username)) {
+      this.usernameError = 'El formato del RUT es inválido';
+    } else if (Utils.cleanRUN(username).length < 8 || Utils.cleanRUN(username).length > 12) {
+      this.usernameError = 'El RUN debe tener entre 8 y 12 caracteres';
+    } else if (!Utils.validateRUN(username)) {
+      this.usernameError = 'El RUN ingresado no es válido';
+    } else {
+      this.usernameError = '';
+      success+= 1;
+    }
+    
+    if (firstName.trim() === '') {
+      this.firstNameError = 'Debe ingresar su nombre';
+    } else if (!/^[A-Za-z ]+$/.test(firstName)) {
+      this.firstNameError = 'Su nombre solo pueden contener letras';
+    } else {
+      this.firstNameError = '';
+      success+= 1;
+    }
 
-    this.ngOnCreateUser(register);
+    if (lastName.trim() === '') {
+      this.lastNameError = 'Debe ingresar su apellido';
+    } else if (!/^[A-Za-z ]+$/.test(lastName)) {
+      this.lastNameError = 'Su apellido solo pueden contener letras';
+    } else {
+      this.lastNameError = '';
+      success+= 1;
+    }
+
+    if (address.trim() === '') {
+      this.addressError = 'Debe ingresar su dirección';
+    } else {
+      this.addressError = '';
+      success+= 1;
+    }
+
+    if (phone.trim() === '') {
+      this.phoneError = 'Debe ingresar su número';
+    } else {
+      this.phoneError = '';
+      success+= 1;
+    }
+
+    if (email.trim() === '') { 
+      this.emailError = 'Debe ingresar su correo electronico';
+    } else if (!email.includes('@') || !email.includes('.')) {
+      this.emailError = 'El correo electronico debe ser uno valido';
+    } else {
+      this.emailError = '';
+      success+= 1;
+    }
+
+    if (password.trim() === '') {
+      this.passwordError = 'Debe ingresar su contraseña';
+    } else if (password.lenght < 8 || password.lenght > 32) {
+      this.passwordError = 'La contraseña debe tener una longitud de entre 8 a 32 caracteres';
+    } else if (!/[a-zA-Z]/.test(password)) {
+      this.passwordError = 'La contraseña debe contener al menos una letra';
+    } else if (!/[0-9]/.test(password)) {
+      this.passwordError = 'La contraseña debe contener al menos un número';
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      this.passwordError = 'La contraseña debe contener al menos un símbolo';
+    } else {
+      this.passwordError = '';
+      success+= 1;
+    }
+
+    if (repeatPassword.trim() === '') {
+      this.repeatPasswordError = 'Debe repetir su contraseña';
+    } else if (password != repeatPassword) {
+      this.repeatPasswordError = 'Las contraseñas no coinciden';
+    } else {
+      this.repeatPasswordError = '';
+      success+= 1;
+    }
+
+
+    if (success === 8) {
+      const register = new Register(username.toLowerCase(), password, repeatPassword, email.toLowerCase(), firstName, lastName, address, phone);
+
+      this.ngOnCreateUser(register);
+    }
   }
 
   public ngOnFormatUsername(): void {
@@ -62,77 +145,25 @@ export class RegisterComponent implements OnInit{
     const response = await this.authService.register(object);
 
     if (response.ok) {
-      Utils.setStorage('keyToken', response.token);
+      Utils.setStorage('keyToken', response.message);
       Utils.setStorage('isLogged', true);
       this.router.navigate(['/']);
     } else {
-      if (response.error.username) {
-        this.usernameError = response.error.username;
-        this.inputUsername.nativeElement.style.border = '2px solid red';
+      if (response.error.error.username) {
+        this.usernameError = response.error.error.username;
       } else {
         this.usernameError = '';
-        this.inputUsername.nativeElement.style.border = '';
       }
 
-      if (response.error.firstName) {
-        this.firstNameError = response.error.firstName;
-        this.inputFirstName.nativeElement.style.border = '2px solid red';
-      } else {
-        this.firstNameError = '';
-        this.inputFirstName.nativeElement.style.border = '';
-      }
-
-      if (response.error.lastName) {
-        this.lastNameError = response.error.lastName;
-        this.inputLastName.nativeElement.style.border = '2px solid red';
-      } else {
-        this.lastNameError = '';
-        this.inputLastName.nativeElement.style.border = '';
-      }
-
-      if (response.error.email) {
-        this.emailError = response.error.email;
-        this.inputEmail.nativeElement.style.border = '2px solid red';
+      if (response.error.error.email) {
+        this.emailError = response.error.error.email;
       } else {
         this.emailError = '';
-        this.inputEmail.nativeElement.style.border = '';
-      }
-
-      if (response.error.address) {
-        this.addressError = response.error.address;
-        this.inputAddress.nativeElement.style.border = '2px solid red';
-      } else {
-        this.addressError = '';
-        this.inputAddress.nativeElement.style.border = '';
-      }
-
-      if (response.error.phone) {
-        this.phoneError = response.error.phone;
-        this.inputPhone.nativeElement.style.border = '2px solid red';
-      } else {
-        this.phoneError = '';
-        this.inputPhone.nativeElement.style.border = '';
-      }
-
-      if (response.error.password) {
-        this.passwordError = response.error.password;
-        this.inputPassword.nativeElement.style.border = '2px solid red';
-      } else {
-        this.passwordError = '';
-        this.inputPassword.nativeElement.style.border = '';
-      }
-
-      if (response.error.repeatPassword) {
-        this.repeatPasswordError = response.error.repeatPassword;
-        this.inputRepeatPassword.nativeElement.style.border = '2px solid red';
-      } else {
-        this.repeatPasswordError = '';
-        this.inputRepeatPassword.nativeElement.style.border = '';
-      }
-
-      if (response.fatalError) {
-        console.log(response.fatalError) //Crear un mensaje de que hubo error fatal
       }
     }
+  }
+
+  public ngOnInputValidatePhone(): void {
+    Utils.validatePhoneNumber(this.inputPhone.nativeElement)
   }
 }

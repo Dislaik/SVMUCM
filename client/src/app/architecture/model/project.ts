@@ -5,8 +5,8 @@ import { User } from "./user";
 
 export class Project {
   id: number;
-  name: String;
-  description: String;
+  name: string;
+  description: string;
   id_user: User;
   start_date: Date;
   end_date: Date;
@@ -16,8 +16,8 @@ export class Project {
   created_at: Date;
 
   constructor(
-    name: String = '', 
-    description: String = '',
+    name: string = '', 
+    description: string = '',
     id_user: User = new User(),
     start_date: Date = new Date(),
     end_date: Date = new Date(),

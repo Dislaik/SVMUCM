@@ -3,6 +3,7 @@ const router = express.Router();
 const CityController = require('../controller/cityController');
 const auth = require('../security/authentication');
 
+// endpoints del modelo City
 router.get('/city', auth.authenticateToken, CityController.getAll);
 router.get('/city/by-id/:id', auth.authenticateToken, CityController.getById);
 router.get('/city/by-name/:name', auth.authenticateToken, CityController.getByName);

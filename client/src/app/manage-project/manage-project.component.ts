@@ -53,8 +53,7 @@ export class ManageProjectComponent implements OnInit{
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
   }
@@ -140,7 +139,7 @@ export class ManageProjectComponent implements OnInit{
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/project', p1.id]);
+    this.router.navigate(['/panel/project', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -235,55 +234,6 @@ export class ManageProjectComponent implements OnInit{
   }
 
   ///// PAGINATION END /////
-
-  public ngOnCreateModalItem(): void {
-    this.modalCreateItemInstance = new bootstrap.Modal(this.modalCreateItem.nativeElement);
-
-    this.modalCreateItemInstance.show();
-  }
-
-  public ngOnModelCreateItem(): void {
-    // const name = this.inputName.nativeElement.value.toLowerCase();
-    // const label = this.inputLabel.nativeElement.value
-    // const description = this.inputDescription.nativeElement.value;
-    // let descriptionAlt;
-    // let success = 0;
-
-    // if (name.trim() === '') {
-    //   this.nameError = 'Debe ingresar un identificador'
-    // } else {
-    //   this.nameError = '';
-    //   success+= 1;
-    // }
-
-    // if (label.trim() === '') {
-    //   this.labelError = 'Debe ingresar una etiqueta'
-    // } else {
-    //   this.labelError = '';
-    //   success+= 1;
-    // }
-
-    // if (success === 2) {
-    //   const apu = new APU(name, label, description, new Date());
-
-    //   this.ngOnCreateItem(apu);
-    // }
-  }
-
-  private async ngOnCreateItem(p1: Project): Promise<void> {
-    // const response = await this.apuService.create(p1);
-
-    // if (response.ok) {
-    //   this.modalCreateItemInstance.hide();
-    //   this.apus.push(response.message);
-    //   this.ngOnShowPage(this.paginationItems, this.pagination);
-    //   this.toastr.success('Se ha creado la APU con exito');
-    // } else {
-    //   if (Object.keys(response.error).length > 0) {
-    //     this.nameError = response.error.name;
-    //   }
-    // }
-  }
 
   public UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);

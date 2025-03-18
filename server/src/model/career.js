@@ -8,7 +8,8 @@ const Career = sequelize.define('career', {
   name: { type: DataTypes.STRING, allowNull: false, unique: true },
   label: { type: DataTypes.STRING, allowNull: false },
   id_headquarter: { type: DataTypes.INTEGER, allowNull: false, references: { model: Headquarter, key: 'id' } },
-  id_faculty: { type: DataTypes.INTEGER, allowNull: false, references: { model: Faculty, key: 'id' } }
+  id_faculty: { type: DataTypes.INTEGER, allowNull: false, references: { model: Faculty, key: 'id' } },
+  created_at: { type: DataTypes.DATE,  allowNull: false }
 });
 
 Career.belongsTo(Faculty, { foreignKey: 'id_faculty'});

@@ -10,7 +10,7 @@
             <div class="mb-2">
               <div class="label-form-register">
                 <label class="form-label me-1">RUN</label>
-                <i class="bi bi-question-circle tooltip">
+                <i class="bi bi-question-circle tooltip-info">
                   <span class="tooltiptext">Debes ingresar tu RUN</span>
                 </i>
               </div>
@@ -26,7 +26,7 @@
                 <div class="me-2 mb-2">
                   <div class="label-form-register">
                     <label class="form-label me-1">NOMBRES</label>
-                    <i class="bi bi-question-circle tooltip">
+                    <i class="bi bi-question-circle tooltip-info">
                       <span class="tooltiptext">Debes ingresar tus nombres</span>
                     </i>
                   </div>
@@ -42,7 +42,7 @@
                 <div class="ms-2 mb-2">
                   <div class="label-form-register">
                     <label class="form-label me-1">APELLIDOS</label>
-                    <i class="bi bi-question-circle tooltip">
+                    <i class="bi bi-question-circle tooltip-info">
                       <span class="tooltiptext">Debes ingresar tus apellidos</span>
                     </i>
                   </div>
@@ -60,7 +60,7 @@
                 <div class="me-2 mb-2">
                   <div class="label-form-register">
                     <label class="form-label me-1">DIRECCIÓN</label>
-                    <i class="bi bi-question-circle tooltip">
+                    <i class="bi bi-question-circle tooltip-info">
                       <span class="tooltiptext">Debes ingresar tu dirección de vivienda</span>
                     </i>
                   </div>
@@ -75,12 +75,12 @@
               <div class="col-6">
                 <div class="ms-2 mb-2">
                   <div class="label-form-register">
-                    <label class="form-label me-1">Teléfono</label>
-                    <i class="bi bi-question-circle tooltip">
-                      <span class="tooltiptext">Debes ingresar los ultimos 8 digitos de tu teléfono</span>
+                    <label class="form-label me-1">TELÉFONO</label>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Debes ingresar tu numero de teléfono</span>
                     </i>
                   </div>
-                  <input #inputPhone type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu número">
+                  <input #inputPhone type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu número" (input)="ngOnInputValidatePhone()">
                   <div *ngIf="phoneError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{phoneError}}</p>
@@ -92,7 +92,7 @@
             <div class="mb-2">
               <div class="label-form-register">
                 <label class="form-label me-1">CORREO ELECTRONICO</label>
-                <i class="bi bi-question-circle tooltip">
+                <i class="bi bi-question-circle tooltip-info">
                   <span class="tooltiptext">Debes ingresar tu correo electronico</span>
                 </i>
               </div>
@@ -106,7 +106,7 @@
             <div class="mb-2">
               <div class="label-form-register">
                 <label class="form-label me-1">CONTRASEÑA</label>
-                <i class="bi bi-question-circle tooltip">
+                <i class="bi bi-question-circle tooltip-info">
                   <span class="tooltiptext">Debes ingresar tu contraseña</span>
                 </i>
               </div>
@@ -120,7 +120,7 @@
             <div class="mb-4">
               <div class="label-form-register">
                 <label class="form-label me-1">REPETIR CONTRASEÑA</label>
-                <i class="bi bi-question-circle tooltip">
+                <i class="bi bi-question-circle tooltip-info">
                   <span class="tooltiptext">Debes volver a ingresar tu contraseña</span>
                 </i>
               </div>

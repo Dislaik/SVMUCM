@@ -49,6 +49,19 @@ export class UserService {
     })
   };
 
+  public getByEmail(email: string): Promise<any> {
+    return new Promise((resolve) => {
+      this.httpClient.get<any>(this.URL + '/by-email/' + email).subscribe(
+        data => {
+          resolve(data);
+        },
+        error => {
+          resolve(error);
+        }
+      );
+    })
+  };
+
   public create(user: User): Promise<any> {
     return new Promise((resolve) => {
       this.httpClient.post<User>(this.URL, user).subscribe(
@@ -85,6 +98,19 @@ export class UserService {
           resolve(error);
         }
       );
+    })
+  }
+
+  public getCountByRole(id: number): Promise<any> {
+    return new Promise((resolve) => {
+      this.httpClient.get<any>(this.URL + '/count/' + id).subscribe(
+        data => {
+          resolve(data)
+        },
+        error => {
+          resolve(error)
+        }
+      )
     })
   }
 }

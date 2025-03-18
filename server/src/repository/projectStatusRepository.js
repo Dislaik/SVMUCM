@@ -1,5 +1,6 @@
-const ProjectStatus = require('../model/projectStatus');
+const ProjectStatus = require('../model/projectStatus'); // Modelo ProjectStatus es llamado
 
+// Repositorio de la clase ProjectStatus, se encarga de realizar las consultas a la base de datos
 class ProjectStatusRepository {
   async findAll() {
     return await ProjectStatus.findAll();
@@ -15,30 +16,6 @@ class ProjectStatusRepository {
 
   async findByLabel(label) {
     return await ProjectStatus.findOne({ where: { label: label } });
-  }
-
-  async create(data) {
-    return await ProjectStatus.create(data);
-  }
-
-  async update(id, data) {
-    const projectStatus = await this.findById(id);
-
-    if (!projectStatus) {
-      throw new Error('ProjectStatus not found');
-    }
-    
-    return await projectStatus.update(data);
-  }
-
-  async delete(id) {
-    const projectStatus = await this.findById(id);
-
-    if (!projectStatus) {
-      throw new Error('ProjectStatus not found');
-    }
-
-    return await projectStatus.destroy();
   }
 }
 

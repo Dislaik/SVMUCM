@@ -62,19 +62,6 @@ export class APUResourceService {
     })
   };
 
-  public getByRegionName(name: string): Promise<any> {
-    return new Promise((resolve) => {
-      this.httpClient.get<any>(this.URL + '/by-region-name/' + name).subscribe(
-        data => {
-          resolve(data);
-        },
-        error => {
-          resolve(error);
-        }
-      );
-    })
-  };
-
   public create(apuResource: APUResource): Promise<any> {
     return new Promise((resolve) => {
       this.httpClient.post<APUResource>(this.URL, apuResource).subscribe(

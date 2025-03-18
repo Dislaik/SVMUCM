@@ -14,10 +14,16 @@ const resourceRouter = require('./resourceRouter');
 const project = require('./projectRouter');
 const quotationStatusRouter = require('./quotationStatusRouter')
 const apuResource = require('./apuResourceRouter');
-const projectAPU = require('./projectApuRouter');
 const quotationRouter = require('./quotationRouter');
+const projectUserRouter = require('./projectUserRouter');
+const VolunteerStudentRouter = require('./volunteerStudentRouter');
+const ProjectVolunteerStudentRouter = require('./projectVolunteerStudentRouter');
+const QuotationAPUResourceRouter = require('./quotationAPUResourceRouter');
+const UserFacultyRouter = require('./userFacultyRouter');
+const RecoveryPasswordController = require('./recoveryPasswordRouter');
 let router = express.Router();
 
+// Se crean los endpoint de los controladores y se agrupan para crear un solo stack
 router.stack = router.stack.concat(authRouter.stack);
 router.stack = router.stack.concat(apuRouter.stack);
 router.stack = router.stack.concat(resourceRouter.stack);
@@ -33,7 +39,12 @@ router.stack = router.stack.concat(roleRouter.stack);
 router.stack = router.stack.concat(userRouter.stack);
 router.stack = router.stack.concat(userStatusRouter.stack);
 router.stack = router.stack.concat(apuResource.stack);
-router.stack = router.stack.concat(projectAPU.stack);
 router.stack = router.stack.concat(quotationRouter.stack);
+router.stack = router.stack.concat(projectUserRouter.stack);
+router.stack = router.stack.concat(VolunteerStudentRouter.stack);
+router.stack = router.stack.concat(ProjectVolunteerStudentRouter.stack);
+router.stack = router.stack.concat(QuotationAPUResourceRouter.stack);
+router.stack = router.stack.concat(UserFacultyRouter.stack);
+router.stack = router.stack.concat(RecoveryPasswordController.stack);
 
 module.exports = router;

@@ -9,6 +9,10 @@ import { RoleService } from '../architecture/service/role.service';
 import { UserStatus } from '../architecture/model/user-status';
 import { UserStatusService } from '../architecture/service/user-status.service';
 import { ToastrService } from 'ngx-toastr';
+import { Faculty } from '../architecture/model/faculty';
+import { FacultyService } from '../architecture/service/faculty.service';
+import { UserFacultyService } from '../architecture/service/user-faculty.service';
+import { UserFaculty } from '../architecture/model/user-faculty';
 
 declare var bootstrap: any;
 
@@ -22,6 +26,7 @@ export class ManageUserComponent implements OnInit{
   title: string = "Usuarios";
   pages: string;
   isViewLoaded: boolean = false;
+  browserUser: User;
 
   @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
   modalCreateItemInstance: any;
@@ -41,10 +46,14 @@ export class ManageUserComponent implements OnInit{
   @ViewChild('inputModalCreateItemPhone') inputModalCreateItemPhone: ElementRef;
   @ViewChild('selectModalCreateItemRole') selectModalCreateItemRole: ElementRef;
   roleError: string = '';
+  @ViewChild('selectModalCreateItemFaculty') selectModalCreateItemFaculty: ElementRef;
+  facultyError: string = '';
 
+  
   roles: Role[];
-  userStatus: UserStatus[]
+  userStatus: UserStatus[];
   users: User[];
+  faculties: Faculty[];
 
   //// PAGINATION VARIABLES ////
   pagination: number;
@@ -57,8 +66,10 @@ export class ManageUserComponent implements OnInit{
   paginationRow: number;
   isNavigationContainFirstPage: boolean;
   isNavigationContainLastPage: boolean;
-  isOnFilter: boolean;
+  isOnFilter: boolean = false;
   //// PAGINATION VARIABLES ////
+
+  isOnProfessor: boolean = false;
 
 
   constructor(
@@ -68,13 +79,17 @@ export class ManageUserComponent implements OnInit{
     private authService: AuthService,
     private userService: UserService,
     private roleService: RoleService,
-    private userStatusService: UserStatusService
+    private userStatusService: UserStatusService,
+    private facultyService: FacultyService,
+    private userFacultyService: UserFacultyService
   ) {}
 
   public async ngOnInit(): Promise<void> {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getAllRoles();
     this.getAllUserStatus();
+    this.ngOnGetAllFaculties();
     this.ngOnCreatePagination(1, 10);
   }
 
@@ -82,10 +97,20 @@ export class ManageUserComponent implements OnInit{
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getAllUsers(): Promise<User[]> {
@@ -115,6 +140,16 @@ export class ManageUserComponent implements OnInit{
 
     if (response.ok) {
       this.userStatus = response.message;
+    } else {
+      console.log(response.error)
+    }
+  }
+
+  private async ngOnGetAllFaculties(): Promise<void> {
+    const response = await this.facultyService.getAll();
+
+    if (response.ok) {
+      this.faculties = response.message;
     } else {
       console.log(response.error)
     }
@@ -193,7 +228,7 @@ export class ManageUserComponent implements OnInit{
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/user', p1.id]);
+    this.router.navigate(['/panel/user', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -295,6 +330,14 @@ export class ManageUserComponent implements OnInit{
     this.modalCreateItemInstance = new bootstrap.Modal(this.modalCreateItem.nativeElement);
 
     this.modalCreateItemInstance.show();
+
+    if (this.browserUser.id_role.name === 'dean') {
+      const toRemove = ['admin', 'externalrelationscoordinator', 'externalrelations', 'dean'];
+      this.roles = this.roles.filter(role => !toRemove.includes(<string>role.name));
+    } else if (this.browserUser.id_role.name === "externalrelationscoordinator") {
+      const toRemove = ['admin', 'externalrelationscoordinator'];
+      this.roles = this.roles.filter(role => !toRemove.includes(<string>role.name));
+    }
   } 
 
   public ngOnModelCreateItem(): void {
@@ -307,78 +350,106 @@ export class ManageUserComponent implements OnInit{
     const phone = this.inputModalCreateItemPhone.nativeElement.value;
     const role = <Role>this.roles.find(role => role.name === this.selectModalCreateItemRole.nativeElement.value);
     const userStatus = <UserStatus>this.userStatus.find(status => status.id === 1);
-    const user = new User(username, password, email, firstName, lastName, address, phone, null, role, userStatus, new Date());
-
-    this.ngOnCreateItem(user);
-  }
-
-  private async ngOnCreateItem(user: User): Promise<void> {
+    let faculty;
     let success = 0;
 
-    if (user.username.trim() === '') {
+    if (this.selectModalCreateItemFaculty) {
+      faculty = <Faculty>this.faculties.find(faculty => faculty.name === this.selectModalCreateItemFaculty.nativeElement.value);
+    }
+
+    if (username.trim() === '') {
       this.usernameError = 'Debe ingresar un RUN'
-    } else if (/[a-jl-zA-JL-Z]/.test(user.username)) {
+    } else if (/[a-jl-zA-JL-Z]/.test(username)) {
       this.usernameError = 'El formato del RUN es inválido'
-    } else if (Utils.cleanRUN(user.username).length < 8 || Utils.cleanRUN(user.username).length > 12) {
+    } else if (Utils.cleanRUN(username).length < 8 || Utils.cleanRUN(username).length > 12) {
       this.usernameError = 'El RUN debe tener entre 8 y 12 caracteres'
-    } else if (!Utils.validateRUN(user.username)) {
+    } else if (!Utils.validateRUN(username)) {
       this.usernameError = 'El RUN ingresado no es válido';
     } else {
       this.usernameError = '';
       success+= 1;
     }
 
-    if (user.password === '') {
+    if (password === '') {
       this.passwordError = 'Debe ingresar una contraseña';
     } else {
       this.passwordError = '';
       success+= 1;
     }
 
-    if (user.email.trim() === '') { 
+    if (email.trim() === '') { 
       this.emailError = 'Debe ingresar un correo electronico';
-    } else if (!user.email.includes('@') || !user.email.includes('.')) {
+    } else if (!email.includes('@') || !email.includes('.')) {
       this.emailError = 'El correo electronico debe ser uno valido';
     } else {
       this.emailError = '';
       success+= 1;
     }
 
-    if (user.first_name === '') {
+    if (firstName === '') {
       this.firstNameError = 'Debe ingresar nombres';
     } else {
       this.firstNameError = '';
       success+= 1;
     }
 
-    if (user.last_name === '') {
+    if (lastName === '') {
       this.lastNameError = 'Debe ingresar apellidos';
     } else {
       this.lastNameError = '';
       success+= 1;
     }
 
-    if (user.id_role.name === '') {
+    if (!role) {
       this.roleError = 'Debe seleccionar un rol';
     } else {
       this.roleError = '';
       success+= 1;
     }
-    
-    if (success === 6) {
-      const userCreated = await this.userService.create(user);
 
-      if (userCreated.ok) {
-        this.modalCreateItemInstance.hide();
-        this.users.push(userCreated.message);
-        this.ngOnShowPage(this.paginationItems, this.pagination);
-        this.toastr.success('Se ha creado el usuario con exito');
-      } else {
-        if (Object.keys(userCreated.error).length > 0) {
-          this.usernameError = userCreated.error.username;
-          this.emailError = userCreated.error.email;
-        }
+    if (this.isOnProfessor && !faculty) {
+      this.facultyError = 'Debe seleccionar una facultad';
+
+      return
+    } else {
+      this.facultyError = '';
+    }
+
+    if (success === 6) {
+      const user = new User(username, password, email, firstName, lastName, address, phone, null, role, userStatus);
+      this.ngOnCreateItem(user, faculty);
+    }
+  }
+
+  private async ngOnCreateItem(user: User, faculty: Faculty): Promise<void> {
+    const response = await this.userService.create(user);
+
+    if (response.ok) {
+      const user = response.message;
+      this.modalCreateItemInstance.hide();
+      this.users.push(user);
+      this.ngOnShowPage(this.paginationItems, this.pagination);
+      this.toastr.success('Se ha creado el usuario con exito');
+
+      if (this.isOnProfessor) {
+        const userFaculty = new UserFaculty(user, faculty)
+        this.ngOnCreateUserFaculty(userFaculty);
       }
+    } else {
+      if (Object.keys(response.error.error).length > 0) {
+        this.usernameError = response.error.error.username;
+        this.emailError = response.error.error.email;
+      }
+    }
+  }
+
+  private async ngOnCreateUserFaculty(userFaculty: UserFaculty): Promise<void> {
+    const response = await this.userFacultyService.create(userFaculty);
+
+    if (response.ok) {
+      console.log(response.message);
+    } else {
+      console.log(response.error)
     }
   }
 
@@ -394,6 +465,30 @@ export class ManageUserComponent implements OnInit{
 
   public ngOnInputValidatePhone(): void {
     Utils.validatePhoneNumber(this.inputModalCreateItemPhone.nativeElement)
+  }
+
+  public haveRole(p1: any[]) {
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  @HostListener('change', ['$event']) onChange(event: Event) {
+
+    if (event.target === this.selectModalCreateItemRole.nativeElement) {
+      const role = this.selectModalCreateItemRole.nativeElement.value;
+      
+      if (role === 'careerdirector' || role === 'professor') {
+        this.isOnProfessor = true;
+      } else {
+        this.isOnProfessor = false;
+      }
+    }
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {

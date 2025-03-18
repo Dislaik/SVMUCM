@@ -6,12 +6,12 @@
       
     </div>
     <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEdit" class="col-4 d-grid gap-2 d-md-flex justify-content-md-end">
-        <button type="button" class="btn btn-discard-changes" (click)="ngOnEditUserProfileCancel()"><i class="bi bi-gear-fill"></i>Deshacer cambios</button>
-        <button type="button" class="btn btn-configure" (click)="ngOnEditUserProfileSave()"><i class="bi bi-gear-fill"></i>Guardar cambios</button>
+        <button type="button" class="btn btn-secondary" (click)="ngOnEditUserProfileCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnEditUserProfileSave()"><i class="bi-check-lg"></i>Guardar cambios</button>
     </div>
     <ng-template #elseBlockOnUserEnableEdit>
       <div class="col-4 d-grid gap-2 d-md-flex justify-content-md-end">
-        <button type="button" class="btn btn-configure" (click)="ngOnEditUserProfile()"><i class="bi bi-gear-fill"></i>Configuración</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnEditUserProfile()"><i class="bi bi-pencil-square"></i>Configuración</button>
       </div>
     </ng-template>
   </div>
@@ -58,11 +58,13 @@
                   Contraseña:
                 </div>
                 <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditPassword" class="col-6 ps-2">
-                  <input #inputUserEditPassword type="password" class="form-control-sm shadow-none" required autocomplete="off">
-                  <div *ngIf="passwordError !== ''">
-                    <div class="message-error-container d-flex align-items-center">
-                      <p>{{passwordError}}</p>
-                    </div>
+                  <div class="d-flex gap-2 align-items-center">
+                    <button type="button" class="btn btn-primary w-100" (click)="ngOnCreateModalChangePassword()">
+                      <i class="bi bi-key-fill"></i>Cambiar contraseña
+                    </button>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Cambiar nueva contraseña</span>
+                    </i>
                   </div>
                 </div>
                 <ng-template #elseBlockOnUserEnableEditPassword>
@@ -76,7 +78,12 @@
                   Nombres:
                 </div>
                 <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditFirstName" class="col-6 ps-2">
-                  <input #inputUserEditFirstName type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div class="d-flex gap-2 align-items-center">
+                    <input #inputUserEditFirstName type="text" class="form-control shadow-none" autocomplete="off">
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Ingresa tus nombres</span>
+                    </i>
+                  </div>
                   <div *ngIf="firstNameError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{firstNameError}}</p>
@@ -94,7 +101,12 @@
                   Apellidos:
                 </div>
                 <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditLastName" class="col-6 ps-2">
-                  <input #inputUserEditLastName type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div class="d-flex gap-2 align-items-center">
+                    <input #inputUserEditLastName type="text" class="form-control shadow-none" autocomplete="off">
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Ingresa tus apellidos</span>
+                    </i>
+                  </div>
                   <div *ngIf="lastNameError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{lastNameError}}</p>
@@ -109,10 +121,15 @@
               </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
-                  Correo electronico:
+                  Correo electrónico:
                 </div>
                 <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditEmail" class="col-6 ps-2">
-                  <input #inputUserEditEmail type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div class="d-flex gap-2 align-items-center">
+                    <input #inputUserEditEmail type="text" class="form-control shadow-none" autocomplete="off">
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Ingresa tu correo electrónico</span>
+                    </i>
+                  </div>
                   <div *ngIf="emailError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{emailError}}</p>
@@ -130,7 +147,12 @@
                   Dirección:
                 </div>
                 <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditAddress" class="col-6 ps-2">
-                  <input #inputUserEditAddress type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div class="d-flex gap-2 align-items-center">
+                    <input #inputUserEditAddress type="text" class="form-control shadow-none" autocomplete="off">
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Ingresa la dirección en la que vives</span>
+                    </i>
+                  </div>
                   <div *ngIf="addressError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{addressError}}</p>
@@ -139,7 +161,7 @@
                 </div>
                 <ng-template #elseBlockOnUserEnableEditAddress>
                   <div class="col-6 ps-2">
-                    {{user.address}}
+                    {{checkField(user.address)}}
                   </div>
                 </ng-template>
               </div>
@@ -148,7 +170,12 @@
                   Teléfono:
                 </div>
                 <div *ngIf="enableEditInfo; else elseBlockOnUserEnableEditPhone" class="col-6 ps-2">
-                  <input #inputUserEditPhone type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <div class="d-flex gap-2 align-items-center">
+                    <input #inputUserEditPhone type="text" class="form-control shadow-none" autocomplete="off" (input)="ngOnInputValidatePhone()">
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Recuerda añadir el prefijo internacional del pais (+569) al momento de ingresar tu número telefonico</span>
+                    </i>
+                  </div>
                   <div *ngIf="phoneError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{phoneError}}</p>
@@ -157,7 +184,7 @@
                 </div>
                 <ng-template #elseBlockOnUserEnableEditPhone>
                   <div class="col-6 ps-2">
-                    {{user.phone}}
+                    {{checkField(user.phone)}}
                   </div>
                 </ng-template>
               </div>
@@ -178,21 +205,50 @@
           </div>
         </div>
       </div>
-      <div class="row mb-2">
-        <div class="card profile-general-info ms-2 shadow">
-          <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
-          <div class="card-body">
-            <div class="row align-items-center mb-2">
-              <div class="col-6 pe-2">
-                Proyectos:
+    </div>
+	</div>
+</div>
+
+
+<div #modalChangePassword class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar contraseña</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Nueva contraseña:</p>
+          </div>
+          <div class="col-6">
+            <input #inputPassword type="password" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresar contraseña">
+            <div *ngIf="passwordError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{passwordError}}</p>
               </div>
-              <div class="col-6 ps-2">
-                0
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Repetir nueva contraseña:</p>
+          </div>
+          <div class="col-6">
+            <input #inputRepeatPassword type="password" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresar contraseña">
+            <div *ngIf="repeatPasswordError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{repeatPasswordError}}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnModelChangePassword()">Cambiar contraseña</button>
+      </div>
     </div>
-	</div>
+  </div>
 </div>

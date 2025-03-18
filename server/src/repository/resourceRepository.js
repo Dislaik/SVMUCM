@@ -1,5 +1,6 @@
-const Resource = require('../model/resource');
+const Resource = require('../model/resource'); // Modelo Resource es llamado
 
+// Repositorio de la clase Resource, se encarga de realizar las consultas a la base de datos
 class ResourceRepository {
   async findAll() {
     return await Resource.findAll();
@@ -22,29 +23,29 @@ class ResourceRepository {
   }
 
   async update(id, data) {
-    const resource = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!resource) {
-      throw new Error('Resource not found');
+    if (!p1) {
+      return null;
     }
     
-    return await resource.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const resource = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!resource) {
-      throw new Error('Resource not found');
+    if (!p1) {
+      return null;
     }
 
-    return await resource.destroy();
+    return await p1.destroy();
   }
 
   async existsByName(name) {
-    const resource = await this.findByName(name);
+    const p1 = await this.findByName(name);
 
-    if (!resource) {
+    if (!p1) {
       return false;
     }
 

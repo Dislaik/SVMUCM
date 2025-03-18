@@ -1,5 +1,6 @@
-const Headquarter = require('../model/headquarter');
+const Headquarter = require('../model/headquarter'); // Modelo Headquarter es llamado
 
+// Repositorio de la clase Headquarter, se encarga de realizar las consultas a la base de datos
 class HeadquarterRepository {
   async findAll() {
     return await Headquarter.findAll();
@@ -22,23 +23,33 @@ class HeadquarterRepository {
   }
 
   async update(id, data) {
-    const headquarter = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!headquarter) {
-      throw new Error('Headquarter not found');
+    if (!p1) {
+      return null;
     }
     
-    return await headquarter.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const headquarter = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!headquarter) {
-      throw new Error('Headquarter not found');
+    if (!p1) {
+      return null;
     }
 
-    return await headquarter.destroy();
+    return await p1.destroy();
+  }
+
+  async existsByName(name) {
+    const p1 = await this.findByName(name);
+
+    if (!p1) {
+      return false;
+    }
+
+    return true;
   }
 }
 

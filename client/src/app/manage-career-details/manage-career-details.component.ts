@@ -8,6 +8,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Headquarter } from '../architecture/model/headquarter';
 import { Faculty } from '../architecture/model/faculty';
 import Swal from 'sweetalert2';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
+import { Utils } from '../utils';
 
 @Component({
   selector: 'app-manage-career-details',
@@ -20,8 +23,11 @@ export class ManageCareerDetailsComponent  implements OnInit {
   id: number;
   pages: string;  
   isViewLoaded: boolean = false;
-  enableEditItem: boolean;
+  enableEditItem: boolean = false;
+  browserUser: User;
 
+  @ViewChild('inputItemEditName') inputItemEditName: ElementRef;
+  nameError: string = '';
   @ViewChild('inputItemEditLabel') inputItemEditLabel: ElementRef;
   labelError: string = '';
   @ViewChild('selectItemEditHeadquarter') selectItemEditHeadquarter: ElementRef;
@@ -36,6 +42,7 @@ export class ManageCareerDetailsComponent  implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
+    private userService: UserService,
     private careerService: CareerService,
     private headquarterService: HeadquarterService,
     private facultyService: FacultyService
@@ -47,6 +54,7 @@ export class ManageCareerDetailsComponent  implements OnInit {
 
   public ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getAllHeadquarters();
     this.getAllFaculties();
     this.getCareer();
@@ -56,11 +64,21 @@ export class ManageCareerDetailsComponent  implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'Carreras', url: '/panel/manage/career'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'Carreras', url: '/panel/career'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getAllHeadquarters(): Promise<void> {
@@ -97,6 +115,12 @@ export class ManageCareerDetailsComponent  implements OnInit {
   public ngOnEditItem(): void {
     this.enableEditItem = true;
     setTimeout(() => {
+
+      if (this.inputItemEditName) {
+        this.inputItemEditName.nativeElement.value = this.career.name;
+      }
+
+
       if (this.inputItemEditLabel) {
         this.inputItemEditLabel.nativeElement.value = this.career.label;
       }
@@ -112,10 +136,18 @@ export class ManageCareerDetailsComponent  implements OnInit {
   }
 
   public async ngOnEditItemSave(): Promise<void> {
+    const name = this.inputItemEditName.nativeElement.value;
     const label = this.inputItemEditLabel.nativeElement.value;
     const headquarter = this.headquarters.find(headquarter => headquarter.name === this.selectItemEditHeadquarter.nativeElement.value);
     const faculty = this.faculties.find(faculty => faculty.name === this.selectItemEditFaculty.nativeElement.value); 
     let success = 0;
+
+    if (name.trim() === '') {
+      this.nameError = 'Debe ingresar un identificador';
+    } else {
+      this.nameError = '';
+      success+= 1;
+    }
 
     if (label.trim() === '') {
       this.labelError = 'Debe ingresar una etiqueta';
@@ -124,24 +156,26 @@ export class ManageCareerDetailsComponent  implements OnInit {
       success+= 1;
     }
 
-    if (success === 1) {
-      this.career.label = label;
-      this.career.id_headquarter = headquarter;
-      this.career.id_faculty = faculty;
-
-      const response = await this.careerService.update(this.career.id, this.career);
+    if (success === 2) {
+      const career = new Career(name, label, headquarter, faculty);
+      const response = await this.careerService.update(this.career.id, career);
 
       if (response.ok) {
         this.toastr.success('Se han guardado los cambios con exito');
+        this.career = response.message;
         this.enableEditItem = false;
       } else {
-        console.log(response.error)
+        if (Object.keys(response.error.error).length > 0) {
+          this.nameError = response.error.error.name;
+        }
       }
     }
   }
 
   public ngOnEditItemCancel(): void {
     this.enableEditItem = false;
+    this.nameError = '';
+    this.labelError = '';
   }
 
   public ngOnDeleteItem(): void {
@@ -157,11 +191,28 @@ export class ManageCareerDetailsComponent  implements OnInit {
         if (response.ok) {
           Swal.fire('Carrera eliminada', '', 'success');
 
-          this.router.navigate(['/panel/manage/career']);
+          this.router.navigate(['/panel/career']);
         } else {
-          Swal.fire(response.error, '', 'warning');
+          if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
+            Swal.fire('La carrera no puede ser eliminada debido a tablas relacionadas', '', 'warning');
+          }
         }
       }
     }); 
+  }
+
+  public haveRole(p1: any[]) {
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  public nameIdentifier(): void {
+    Utils.formatNameIdentifier(this.inputItemEditName.nativeElement);
   }
 }

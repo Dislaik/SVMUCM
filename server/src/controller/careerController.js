@@ -1,77 +1,84 @@
-const Headquarter = require('../model/headquarter');
-const CareerService = require('../service/careerService');
+const CareerService = require('../service/careerService'); // El servicio Career es llamado
 
+// Controlador de la clase Career, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo Career
 class CareerController {
+
+  // Metodo que obtiene todos los datos de Career 
   async getAll(request, response) {
     try {
-      const careers = await CareerService.getAll();
+      const p1 = await CareerService.getAll();
       
-      response.status(200).json({ ok: true, message: careers});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ error: 'Error fetching faculties' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una Career por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const career = await CareerService.getById(id)
+      const p1 = await CareerService.getById(id);
 
-      if (!career) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: career});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una Career por su nombre de identificador
   async getByName(request, response) {
     try {
       const { name } = request.params;
-      const career = await CareerService.getByName(name);
+      const p1 = await CareerService.getByName(name);
       
-      if (!career) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: career});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una Career por su etiqueta
   async getByLabel(request, response) {
     try {
       const { label } = request.params;
-      const career = await CareerService.getByLabel(label);
+      const p1 = await CareerService.getByLabel(label);
 
-      if (!career) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: career});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
-
+ 
+  // Metodo que obtiene las Career por su nombre de identificación de Headquarter y Faculty
   async getByHeadquarterAndFacultyName(request, response) {
     try {
       const { headquarterName, facultyName } = request.params;
-      const career = await CareerService.getByHeadquarterAndFacultyName(headquarterName, facultyName);
+      const p1 = await CareerService.getByHeadquarterAndFacultyName(headquarterName, facultyName);
 
-      if (!career) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: career});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que crea una Career a partir de las entradas recibidas
   async create(request, response) {
     try {
       const { body } = request
@@ -82,62 +89,80 @@ class CareerController {
       }
 
       if (Object.keys(error).length === 0) {
-        const careerObject = {
+        const object = {
           name: body.name,
           label: body.label,
           id_headquarter: body.id_headquarter.id,
-          id_faculty: body.id_faculty.id
+          id_faculty: body.id_faculty.id,
+          created_at: body.created_at
         }
 
-        let career = await CareerService.create(careerObject);
+        let p1 = await CareerService.create(object);
 
-        career.id_headquarter = body.id_headquarter;
-        career.id_faculty = body.id_faculty;
+        p1.id_headquarter = body.id_headquarter;
+        p1.id_faculty = body.id_faculty;
 
-        return response.status(200).json({ ok: true, message: career});
+        return response.status(200).json({ ok: true, message: p1});
       }
 
-      return response.status(200).json({ ok: false, error: error});
+      return response.status(400).json({ ok: false, error: error});
     } catch (error) {
       return response.status(500).json({ ok: false,  error: error });
     }
   }
 
+  // Metodo que actualiza una Career a partir de las entradas recibidas
   async update(request, response) {
     try {
       const { id } = request.params;
       const { body } = request;
+      const aux = await CareerService.getByName(body.name);
+      let error = {};
 
-      const careerObject = {
-        name: body.name,
-        label: body.label,
-        id_headquarter: body.id_headquarter.id,
-        id_faculty: body.id_faculty.id
+      if (aux && body.name === aux.name && Number(id) !== aux.id) {
+        error.name = 'Este identificador ya esta registrado';
       }
 
-      let career = await CareerService.update(id, careerObject);
-
-      if (!career) {
-        return response.status(404).json({ ok: false, message: 'Career not found'}); 
+      if (Object.keys(error).length === 0){
+        const object = {
+          name: body.name,
+          label: body.label,
+          id_headquarter: body.id_headquarter.id,
+          id_faculty: body.id_faculty.id,
+          created_at: body.created_at
+        }
+  
+        let p1 = await CareerService.update(id, object);
+  
+        if (!p1) {
+          return response.status(404).json({ ok: false, message: null});
+        }
+  
+        p1.id_headquarter = body.id_headquarter;
+        p1.id_faculty = body.id_faculty;
+  
+        return response.status(200).json({ ok: true, message: p1});
       }
 
-      career.id_headquarter = body.id_headquarter;
-      career.id_faculty = body.id_faculty;
-
-      return response.status(200).json({ ok: true, message: career});
+      return response.status(400).json({ ok: false, error: error});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que elimina una Career por su ID
   async delete(request, response) {
     try {
       const { id } = request.params;
-      const career = await CareerService.getById(id)
+      const p1 = await CareerService.getById(id);
+
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null });
+      }
 
       await CareerService.delete(id);
 
-      return response.status(200).json({ ok: true, message: career});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error });
     }

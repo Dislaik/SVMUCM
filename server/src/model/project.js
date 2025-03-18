@@ -8,7 +8,7 @@ const projectStatus = require('./projectStatus');
 const Project = sequelize.define('project', {
   id: { type: DataTypes.INTEGER, allowNull: false, autoIncrement: true, primaryKey: true },
   name: { type: DataTypes.STRING, allowNull: false },
-  description: { type: DataTypes.STRING, allowNull: false },
+  description: { type: DataTypes.TEXT, allowNull: false },
   id_user: { type: DataTypes.INTEGER, allowNull: false, references: { model: User, key: 'id',} },
   start_date : { type: DataTypes.DATE, allowNull: false },
   end_date: { type: DataTypes.DATE, allowNull: false },

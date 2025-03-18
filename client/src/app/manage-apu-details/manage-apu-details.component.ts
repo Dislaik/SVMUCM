@@ -9,6 +9,8 @@ import { APUResourceService } from '../architecture/service/apuresource.service'
 import { Utils } from '../utils';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
 
 declare var bootstrap: any;
 
@@ -25,7 +27,8 @@ export class ManageAPUDetailsComponent implements OnInit{
   id: number;
   pages: string;
   isViewLoaded: boolean = false;
-  enableEditItem: boolean;
+  enableEditItem: boolean = false;
+  browserUser: User;
 
   @ViewChild('inputItemEditName') inputItemEditName: ElementRef;
   nameError: string = '';
@@ -46,6 +49,7 @@ export class ManageAPUDetailsComponent implements OnInit{
   constructor(
     private router: Router,
     private toastr: ToastrService,
+    private userService: UserService,
     private apuService: APUService,
     private resourceService: ResourceService,
     private apuResourceService: APUResourceService,
@@ -58,6 +62,7 @@ export class ManageAPUDetailsComponent implements OnInit{
 
   ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.ngOnGetAPU();
     this.ngOnGetAllResources();
     this.ngOnGetResourcesByAPUId();
@@ -67,11 +72,21 @@ export class ManageAPUDetailsComponent implements OnInit{
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'APU', url: '/panel/manage/apu'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'APU', url: '/panel/apu'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async ngOnGetAPU(): Promise<void> {
@@ -100,7 +115,8 @@ export class ManageAPUDetailsComponent implements OnInit{
 
     if (response.ok) {
       this.APUResources = response.message;
-      this.APUResourcesAUX = [...this.APUResources] // LITTLE HACK
+      this.APUResourcesAUX = structuredClone(this.APUResources); // LITTLE HACK
+      //this.APUResourcesAUX = [...this.APUResources] // LITTLE HACK
       console.log(this.APUResourcesAUX)
     } else {
       console.log(response.error)
@@ -132,8 +148,6 @@ export class ManageAPUDetailsComponent implements OnInit{
         this.buttonResources.push(element.childNodes[0] as HTMLButtonElement);
       }
     }
-    
-    console.log(this.buttonResources)
   }
 
   public async ngOnEditItemSave(): Promise<void> {
@@ -157,32 +171,17 @@ export class ManageAPUDetailsComponent implements OnInit{
     }
 
     if (success === 2) {
-      this.apu.name = name;
-      this.apu.label = label;
-      this.apu.description = description;
-
-      const response = await this.apuService.update(this.apu.id, this.apu);
+      const apu = new APU(name, label, description);
+      const response = await this.apuService.update(this.apu.id, apu);
       
       if (response.ok) {
         if (!this.compareLists(this.APUResourcesAUX, this.APUResources)) {
-          let removed = '';
-          let added = '';
-
           for (let i = 0; i < this.APUResources.length; i++) {
             const element = this.APUResources[i];
-            const response = await this.apuResourceService.delete(element.id);
-
-            if (response.ok) {
-              if (i === this.APUResources.length - 1) {
-                removed += element.id_resource.name + ' ';
-              } else {
-                removed += element.id_resource.name + ', ';
-              }
-            } else {
-              console.log(response.error)
-            }            
+            
+            await this.apuResourceService.delete(element.id);         
           }
-          // this.toastr.success('Se han eliminado los siguientes recursos [' + removed + '] de la APU');
+
           this.APUResources = [];
 
           for (let i = 0; i < this.APUResourcesAUX.length; i++) {
@@ -190,29 +189,20 @@ export class ManageAPUDetailsComponent implements OnInit{
             const response = await this.apuResourceService.create(element);
             
             if (response.ok) {
-              if (i === this.APUResourcesAUX.length - 1) {
-                added += element.id_resource.name + ' ';
-              } else {
-                added += element.id_resource.name + ', ';
-              }
-
               this.APUResources.push(response.message)
-            } else {
-              console.log(response.error)
             }
           }
-          // this.toastr.success('Se han agregado los siguientes recursos [' + removed + '] a la APU');
-          this.APUResourcesAUX = [...this.APUResources];
+          this.APUResourcesAUX = structuredClone(this.APUResources);
+          //this.APUResourcesAUX = [...this.APUResources];
         }
-
-
         
         this.toastr.success('Se han guardado los cambios con exito');
+        this.apu = response.message;
         this.enableEditItem = false;
 
       } else {
-        if (Object.keys(response.error).length > 0) {
-          this.nameError = response.error.name;
+        if (Object.keys(response.error.error).length > 0) {
+          this.nameError = response.error.error.name;
         }
       }
     }
@@ -238,10 +228,10 @@ export class ManageAPUDetailsComponent implements OnInit{
         if (response.ok) {
           Swal.fire('APU eliminada', '', 'success');
 
-          this.router.navigate(['/panel/manage/apu']);
+          this.router.navigate(['/panel/apu']);
         } else {
           if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
-            Swal.fire('La APU no puede ser eliminada debio a tablas relacionadas', '', 'warning');
+            Swal.fire('La APU no puede ser eliminada debido a tablas relacionadas', '', 'warning');
           }
         }
       }
@@ -249,7 +239,6 @@ export class ManageAPUDetailsComponent implements OnInit{
   }
 
   ///// MODAL START /////
-
 
   public ngOnCreateModalAddResource(): void {
     this.modalAddResourceInstance = new bootstrap.Modal(this.modalAddResource.nativeElement);
@@ -267,20 +256,18 @@ export class ManageAPUDetailsComponent implements OnInit{
 
 
   public async ngOnRemoveResource(apuResource: APUResource): Promise<void> {
-    const ResourceId = apuResource.id_resource.id;
-    const index = this.APUResourcesAUX.findIndex(element => element.id_resource.id === ResourceId);
+    const resourceId = apuResource.id_resource.id;
+    const index = this.APUResourcesAUX.findIndex(element => element.id_resource.id === resourceId);
 
     if (index !== -1) {
       this.APUResourcesAUX.splice(index, 1);
     }
 
     this.buttonResources.forEach(element => {
-      if (Number(element.getAttribute('data-resource-id')) === ResourceId) {
+      if (Number(element.getAttribute('data-resource-id')) === resourceId) {
         element.disabled = false;
       }
     });
-    
-    console.log(this.APUResourcesAUX)
   }
 
   ///// MODAL END /////
@@ -317,7 +304,8 @@ export class ManageAPUDetailsComponent implements OnInit{
     });
 
     if (p1) {
-      this.APUResourcesAUX = [...this.APUResources];
+      this.APUResourcesAUX = structuredClone(this.APUResources);
+      //this.APUResourcesAUX = [...this.APUResources];
     }
   }
 
@@ -331,13 +319,23 @@ export class ManageAPUDetailsComponent implements OnInit{
     }
   
     for (let i = 0; i < p1.length; i++) {
-      console.log(p1[i], p2[i])
       if (p1[i].id_resource.id !== p2[i].id_resource.id) {
         return false;
       }
     }
 
     return true
+  }
+
+  public haveRole(p1: any[]) {
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   @HostListener('document:show.bs.modal', ['$event']) onModalClick(event: Event) {

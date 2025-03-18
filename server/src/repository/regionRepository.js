@@ -1,5 +1,6 @@
-const Region = require('../model/region');
+const Region = require('../model/region'); // Modelo Region es llamado
 
+// Repositorio de la clase Region, se encarga de realizar las consultas a la base de datos
 class RegionRepository {
   async findAll() {
     return await Region.findAll();
@@ -22,23 +23,33 @@ class RegionRepository {
   }
 
   async update(id, data) {
-    const region = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!region) {
-      throw new Error('Region not found');
+    if (!p1) {
+      return null;
     }
     
-    return await region.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const region = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!region) {
-      throw new Error('Region not found');
+    if (!p1) {
+      return null;
     }
 
-    return await region.destroy();
+    return await p1.destroy();
+  }
+
+  async existsByName(name) {
+    const p1 = await this.findByName(name);
+
+    if (!p1) {
+      return false;
+    }
+
+    return true;
   }
 }
 

@@ -1,99 +1,87 @@
-const roleService = require('../service/roleService');
+const RoleService = require('../service/roleService'); // El servicio Role es llamado
 
+// Controlador de la clase Role, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo Role
 class RoleController {
+
+  // Metodo que obtiene todos los datos de Role
   async getAll(request, response) {
     try {
-      const roles = await roleService.getAll();
+      const p1 = await RoleService.getAll();
       
-      response.status(200).json({ ok: true, message: roles});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que obtiene un User por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const role = await roleService.getById(id)
+      const p1 = await RoleService.getById(id);
 
-      if (role) {
-        return response.status(200).json({ ok: true, message: role}); 
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(404).json({ ok: false, error: 'Role not found'});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que obtiene un Role por su nombre de identificacion
   async getByName(request, response) {
     try {
       const { name } = request.params;
-      const role = await RegionService.getByName(name);
+      const p1 = await RoleService.getByName(name);
       
-      if (!role) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: role});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
+  // Metodo que obtiene un Role por su etiqueta
   async getByLabel(request, response) {
     try {
-      const { label } = request.params;
-      const role = await RegionService.getByLabel(label);
-
-      if (!role) {
-        response.status(200).json({ ok: true, message: null});
+      const { name } = request.params;
+      const p1 = await RoleService.getByLabel(name);
+      
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: role});
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 
-  async create(request, response) {
-    try {
-      const { body } = request
-      const role = await roleService.create(body);
-
-      response.status(200).json(role);
-    } catch (error) {
-      response.status(500).json({ error: 'Error creating role' });
-    }
-  }
-
+  // Metodo que actualiza una Resource a partir de las entradas recibidas
   async update(request, response) {
     try {
       const { id } = request.params;
       const { body } = request;
+      const object = {
+        name: body.name,
+        label: body.label,
+        created_at: body.created_atd
+      }
 
-      const role = await roleService.update(id, body);
+      const p1 = await RoleService.update(id, object);
 
-      if (!role) {
+      if (!p1) {
         return response.status(404).json({ ok: true, message: null});
       }
 
-      return response.status(200).json({ ok: true, message: role});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
-    }
-  }
-
-  async delete(request, response) {
-    try {
-      const { id } = request.params;
-      const role = await roleService.getById(id)
-
-      await roleService.delete(id);
-
-      res.status(200).json(role);
-    } catch (error) {
-      res.status(404).json({ error: error.message });
     }
   }
 }

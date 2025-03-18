@@ -1,10 +1,11 @@
-const APU = require('../model/apu');
-const Resource = require('../model/resource');
-const APUResource = require('../model/apuResource');
+const APU = require('../model/apu'); // Modelo APU es llamado
+const Resource = require('../model/resource');  // Modelo Resource es llamado
+const APUResource = require('../model/apuResource'); // Modelo APUResource es llamado
 
+// Repositorio de la clase APUResource, se encarga de realizar las consultas a la base de datos
 class APUResourceRepository {
   async findAll() {
-    return await APUResource.findAll();
+    return await APUResource.findAll({ include: [APU, Resource]});
   }
 
   async findById(id) {
@@ -16,7 +17,7 @@ class APUResourceRepository {
   }
 
   async findByResourceId(id) {
-    return await APUResource.findAll({ where: { id_resource: id}})
+    return await APUResource.findAll({ where: { id_resource: id}, include: [APU, Resource]})
   }
 
   async create(data) {
@@ -24,23 +25,23 @@ class APUResourceRepository {
   }
 
   async update(id, data) {
-    const apuResource = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!apuResource) {
-      throw new Error('APU not found');
+    if (!p1) {
+      return null;
     }
     
-    return await apuResource.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const apuResource = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!apuResource) {
-      throw new Error('APUResource not found');
+    if (!p1) {
+      return null;
     }
 
-    return await apuResource.destroy();
+    return await p1.destroy();
   }
 }
 

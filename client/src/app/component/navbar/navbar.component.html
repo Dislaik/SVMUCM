@@ -25,35 +25,38 @@
           <button #navRequestProject type="button" [ngClass]="currentPage == '/request-project' ? 'nav-link active' : 'nav-link' ">Crear solicitud de proyecto</button>
         </li>
         <li *ngIf="isLogged" class="nav-item">
-          <button #navProject type="button" [ngClass]="currentPage == '/project' ? 'nav-link active' : 'nav-link' ">Mis Proyectos</button>
+          <button #navProject type="button" [ngClass]="currentPage == '/project' ? 'nav-link active' : 'nav-link' ">Mis proyectos</button>
         </li>
       </ul>
       <ng-template #elseBlockOnPanel>
         <ul class="navbar-nav">
           <li class="nav-item">
-            <button #navPanel type="button" [ngClass]="currentPage == '/panel' ? 'nav-link active' : 'nav-link' ">Panel de administración</button>
+            <button type="button" [ngClass]="currentPage == '/panel' ? 'nav-link active' : 'nav-link' " [routerLink]="['/panel']">Panel de administración</button>
           </li>
 
           <div class="nav-item dropdown" id="dropdown-gestionar">
-            <button #navManage type="button" [ngClass]="isOnManage ? 'nav-link dropdown-toggle active' : 'nav-link dropdown-toggle'">
+            <button type="button" [ngClass]="isOnManage ? 'nav-link dropdown-toggle active' : 'nav-link dropdown-toggle'">
               Gestionar
             </button>
             <div class="dropdown-menu-panel-manage flex-column">
-              <button #navPanelManageUser type="button" [ngClass]="currentPage == '/panel/manage/user' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Usuarios</button>
-              <button #navPanelManageRole type="button" [ngClass]="currentPage == '/panel/manage/role' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Roles</button>
-              <button #navPanelManageVolunteerStudent type="button" [ngClass]="currentPage == '/panel/manage/student-volunteer' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/student-volunteer']">Alumnos Voluntarios</button>
-              <button #navPanelManageHeardquarter type="button" [ngClass]="currentPage == '/panel/manage/headquarter' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/headquarter']">Sedes</button>
-              <button #navPanelManageFaculty type="button" [ngClass]="currentPage == '/panel/manage/faculty' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/faculty']">Facultades</button>
-              <button #navPanelManageCareer type="button" [ngClass]="currentPage == '/panel/manage/career' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/career']">Carreras</button>
-              <button #navPanelManageProject type="button" [ngClass]="currentPage == '/panel/manage/project' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' ">Proyectos</button>
-              <button #navPanelManageActivity type="button" [ngClass]="currentPage == '/panel/manage/apu' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/apu']">APU</button>
-              <button type="button" [ngClass]="currentPage == '/panel/manage/resource' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/manage/resource']">Recursos</button>
+              <button type="button" [ngClass]="currentPage == '/panel/user' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/user']">Usuarios</button>
+              <button type="button" [ngClass]="currentPage == '/panel/role' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/role']">Roles</button>
+              <button type="button" [ngClass]="currentPage == '/panel/student-volunteer' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/volunteer-student']">Alumnos Voluntarios</button>
+              <button type="button" [ngClass]="currentPage == '/panel/headquarter' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/headquarter']">Sedes</button>
+              <button type="button" [ngClass]="currentPage == '/panel/faculty' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/faculty']">Facultades</button>
+              <button type="button" [ngClass]="currentPage == '/panel/career' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/career']">Carreras</button>
+              <button type="button" [ngClass]="currentPage == '/panel/project' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/project']">Proyectos</button>
+              <button type="button" [ngClass]="currentPage == '/panel/apu' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/apu']">APU</button>
+              <button type="button" [ngClass]="currentPage == '/panel/resource' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/resource']">Recursos</button>
+              <button type="button" [ngClass]="currentPage == '/panel/quotation' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/quotation']">Cotizaciones</button>
+              <button type="button" [ngClass]="currentPage == '/panel/region' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/region']">Regiones</button>
+              <button type="button" [ngClass]="currentPage == '/panel/city' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/city']">Ciudades</button>
             </div>
           </div>
 
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <button type="button" id="nav-manage-project" [ngClass]="currentPage == '/logs' ? 'nav-link active' : 'nav-link' ">Registros</button>
-          </li>
+          </li> -->
         </ul>
       </ng-template>
 
@@ -61,7 +64,7 @@
         <div *ngIf="isLogged; else elseBlockLogged">
           <div class="nav-item dropdown">
             <button class="btn dropdown-toggle btn-user d-flex align-items-center" type="button" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src={{user.image}} class="rounded-circle me-2" height="30"/>
+              <img *ngIf="user.image" src={{user.image}} class="rounded-circle me-2" height="30"/>
               {{user.first_name}} {{user.last_name}}
             </button>
             <div class="dropdown-menu flex-column" aria-labelledby="navbarDropdownMenuLink">
@@ -71,7 +74,7 @@
               <ng-template #elseBlockNotOnPanel>
                 <button *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/panel']"><i class="bi bi-pencil-fill"></i>Panel de administración</button>
               </ng-template>
-              <button type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/my-profile']"><i class="bi bi-person-lines-fill"></i>Mi perfil</button>
+              <button type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/profile']"><i class="bi bi-person-lines-fill"></i>Mi perfil</button>
               <button type="button" class="btn btn-user-dropdown text-start" (click)="ngOnLoggout()"><i class="bi bi-box-arrow-in-right"></i>Cerrar sesión</button>
             </div>
           </div>

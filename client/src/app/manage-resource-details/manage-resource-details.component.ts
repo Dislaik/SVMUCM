@@ -5,6 +5,8 @@ import { ResourceService } from '../architecture/service/resource.service';
 import { Utils } from '../utils';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import { UserService } from '../architecture/service/user.service';
+import { User } from '../architecture/model/user';
 
 @Component({
   selector: 'app-manage-resource-details',
@@ -17,7 +19,8 @@ export class ManageResourceDetailsComponent implements OnInit {
   id: number;
   pages: string;
   isViewLoaded: boolean = false;
-  enableEditItem: boolean;
+  enableEditItem: boolean = false;
+  browserUser: User;
 
   @ViewChild('inputItemEditName') inputItemEditName: ElementRef;
   nameError: string = '';
@@ -32,6 +35,7 @@ export class ManageResourceDetailsComponent implements OnInit {
   constructor(
     private router: Router,
     private toastr: ToastrService,
+    private userService: UserService,
     private resourceService: ResourceService,
     private activatedRoute: ActivatedRoute
   ){
@@ -42,6 +46,7 @@ export class ManageResourceDetailsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getResource();
   }
 
@@ -49,11 +54,21 @@ export class ManageResourceDetailsComponent implements OnInit {
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: 'Recursos', url: '/panel/manage/resource'},
-      5: {page: this.title, url: this.router.url},
+      3: {page: 'Recursos', url: '/panel/resource'},
+      4: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error)
+    }
   }
 
   private async getResource(): Promise<void> {
@@ -110,19 +125,16 @@ export class ManageResourceDetailsComponent implements OnInit {
     }
 
     if (success === 2) {
-      this.resource.name = name;
-      this.resource.label = label;
-      this.resource.description = description;
-      this.resource.price = this.priceToNumber(price);
-
-      const response = await this.resourceService.update(this.resource.id, this.resource);
+      const resource = new Resource(name, label, description, this.priceToNumber(price));
+      const response = await this.resourceService.update(this.resource.id, resource);
 
       if (response.ok) {
         this.toastr.success('Se han guardado los cambios con exito');
+        this.resource = response.message;
         this.enableEditItem = false;
       } else {
-        if (Object.keys(response.error).length > 0) {
-          this.nameError = response.error.name;
+        if (Object.keys(response.error.error).length > 0) {
+          this.nameError = response.error.error.name;
         }
       }
     }
@@ -147,10 +159,10 @@ export class ManageResourceDetailsComponent implements OnInit {
         if (response.ok) {
           Swal.fire('Recurso eliminado', '', 'success');
 
-          this.router.navigate(['/panel/manage/resource']);
+          this.router.navigate(['/panel/resource']);
         } else {
           if (response.error.error.name == 'SequelizeForeignKeyConstraintError') {
-            Swal.fire('El recurso no puede ser eliminado debio a tablas relacionadas', '', 'warning');
+            Swal.fire('El recurso no puede ser eliminado debido a tablas relacionadas', '', 'warning');
           }
         }
       }
@@ -188,5 +200,16 @@ export class ManageResourceDetailsComponent implements OnInit {
 
   public UTCToChileTime(p1: Date, p2: boolean): string {
     return Utils.convertToChileTime(p1, p2);
+  }
+
+  public haveRole(p1: any[]) {
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 }

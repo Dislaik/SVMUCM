@@ -18,7 +18,6 @@ import { ManageUserComponent } from './manage-user/manage-user.component';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { BreadcrumbComponent } from './component/breadcrumb/breadcrumb.component';
 import { ManageProjectComponent } from './manage-project/manage-project.component';
-import { ManageComponent } from './manage/manage.component';
 import { ManageRoleComponent } from './manage-role/manage-role.component';
 import { ManageResourceComponent } from './manage-resource/manage-resource.component';
 import { ProjectComponent } from './project/project.component';
@@ -26,8 +25,8 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ManageUserDetailsComponent } from './manage-user-details/manage-user-details.component';
 import { ManageRoleDetailsComponent } from './manage-role-details/manage-role-details.component';
-import { ManageStudentVolunteerComponent } from './manage-student-volunteer/manage-student-volunteer.component';
-import { ManageStudentVolunteerDetailsComponent } from './manage-student-volunteer-details/manage-student-volunteer-details.component';
+import { ManageVolunteerStudentComponent } from './manage-volunteer-student/manage-volunteer-student.component';
+import { ManageVolunteerStudentDetailsComponent } from './manage-volunteer-student-details/manage-volunteer-student-details.component';
 import { ManageHeadquarterComponent } from './manage-headquarter/manage-headquarter.component';
 import { ManageHeadquarterDetailsComponent } from './manage-headquarter-details/manage-headquarter-details.component';
 import { ManageFacultyDetailsComponent } from './manage-faculty-details/manage-faculty-details.component';
@@ -43,6 +42,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { ManageQuotationComponent } from './manage-quotation/manage-quotation.component';
 import { ManageQuotationDetailsComponent } from './manage-quotation-details/manage-quotation-details.component';
+import { ProjectDetailsComponent } from './project-details/project-details.component';
+import { ManageRegionDetailsComponent } from './manage-region-details/manage-region-details.component';
+import { ManageRegionComponent } from './manage-region/manage-region.component';
+import { ManageCityComponent } from './manage-city/manage-city.component';
+import { ManageCityDetailsComponent } from './manage-city-details/manage-city-details.component';
 
 @NgModule({
   declarations: [
@@ -53,17 +57,17 @@ import { ManageQuotationDetailsComponent } from './manage-quotation-details/mana
     UserProfileComponent,
     RequestProjectComponent,
     ProjectComponent,
+    ProjectDetailsComponent,
     NavbarComponent,
     RestrictedModelRequestCourseComponent,
     FooterComponent,
     PanelComponent,
-    ManageComponent,
     ManageUserComponent,
     ManageUserDetailsComponent,
     ManageRoleComponent,
     ManageRoleDetailsComponent,
-    ManageStudentVolunteerComponent,
-    ManageStudentVolunteerDetailsComponent,
+    ManageVolunteerStudentComponent,
+    ManageVolunteerStudentDetailsComponent,
     ManageHeadquarterComponent,
     ManageHeadquarterDetailsComponent,
     ManageFacultyComponent,
@@ -78,6 +82,10 @@ import { ManageQuotationDetailsComponent } from './manage-quotation-details/mana
     ManageResourceDetailsComponent,
     ManageQuotationComponent,
     ManageQuotationDetailsComponent,
+    ManageRegionComponent,
+    ManageRegionDetailsComponent,
+    ManageCityComponent,
+    ManageCityDetailsComponent,
     BreadcrumbComponent,
     NotFoundComponent
   ],

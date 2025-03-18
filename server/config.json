@@ -11,5 +11,10 @@
       "underscored": true,
       "timestamps": false
     }
+  },
+  "nodemailerOptions": {
+    "service": "gmail",
+    "user": "datdislaik@gmail.com",
+    "pass": "Deba2103**--"
   }
 }

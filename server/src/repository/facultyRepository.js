@@ -1,5 +1,6 @@
-const Faculty = require('../model/faculty');
+const Faculty = require('../model/faculty'); // Modelo Faculty es llamado
 
+// Repositorio de la clase Faculty, se encarga de realizar las consultas a la base de datos
 class FacultyRepository {
   async findAll() {
     return await Faculty.findAll();
@@ -22,23 +23,33 @@ class FacultyRepository {
   }
 
   async update(id, data) {
-    const faculty = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!faculty) {
-      throw new Error('Faculty not found');
+    if (!p1) {
+      return null;
     }
     
-    return await faculty.update(data);
+    return await p1.update(data);
   }
 
   async delete(id) {
-    const faculty = await this.findById(id);
+    const p1 = await this.findById(id);
 
-    if (!faculty) {
-      throw new Error('Faculty not found');
+    if (!p1) {
+      return null;
     }
 
-    return await faculty.destroy();
+    return await p1.destroy();
+  }
+
+  async existsByName(name) {
+    const p1 = await this.findByName(name);
+
+    if (!p1) {
+      return false;
+    }
+
+    return true;
   }
 }
 

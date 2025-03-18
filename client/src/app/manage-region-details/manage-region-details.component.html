@@ -1,0 +1,88 @@
+<div class="container content">
+	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
+	<h1 class="mb-3">{{title}}</h1>
+  <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
+    <div class="row mb-2">
+      <ng-template [ngIf]="haveRole(['admin', 'externalrelations', 'externalrelationscoordinator'])">
+        <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
+            <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
+          </div>
+        </ng-template>
+        <ng-template #elseBlockEditItem>
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+            <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="card profile-basic-info me-2 p-3 shadow">
+            <div class="text-center mt-2 mb-3">
+              <!-- <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo"> -->
+              <h2 class="user-fullname">{{region.label}}</h2>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                Nombre:
+              </div>
+              <div class="col-8">
+                {{region.name}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-8">
+          <div class="row mb-2">
+            <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
+            <div class="card-body">
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Nombre:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemName" #inputItemEditName type="text" class="form-control shadow-none" required autocomplete="off" (input)="nameIdentifier()">
+                  <div *ngIf="nameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{nameError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemName>
+                    {{region.name}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Etiqueta:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemLabel" #inputItemEditLabel type="text" class="form-control shadow-none" required autocomplete="off">
+                  <div *ngIf="labelError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{labelError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemLabel>
+                    {{region.label}}
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #elseBlockViewLoaded>
+    <div class="loading">
+      <svg viewBox="0 0 50 50" class="spinner">
+        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+      </svg>
+    </div>
+  </ng-template>
+</div>

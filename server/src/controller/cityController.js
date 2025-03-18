@@ -1,124 +1,182 @@
-const CityService = require('../service/cityService');
+const CityService = require('../service/cityService'); // El servicio City es llamado
 
+// Controlador de la clase City, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo City
 class CityController {
+
+  // Metodo que obtiene todos los datos de City 
   async getAll(request, response) {
     try {
-      const cities = await CityService.getAll();
+      const p1 = await CityService.getAll();
       
-      response.status(200).json({ ok: true, message: cities});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una City por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const city = await CityService.getById(id)
+      const p1 = await CityService.getById(id);
 
-      response.status(200).json(city);
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una Career por su nombre de identificador
   async getByName(request, response) {
     try {
       const { name } = request.params;
-      const city = await CityService.getByName(name);
+      const p1 = await CityService.getByName(name);
       
-      if (!city) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: city});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una Career por su etiqueta
   async getByLabel(request, response) {
     try {
       const { label } = request.params;
-      const city = await CityService.getByLabel(label);
+      const p1 = await CityService.getByLabel(label);
 
-      if (!city) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: city});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+
+  // Metodo que obtiene las Career por la ID de Region
   async getByRegionId(request, response) {
     try {
       const { id } = request.params;
-      const cities = await CityService.getByRegionId(id);
+      const p1 = await CityService.getByRegionId(id);
 
-      if (!cities) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: cities});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene las Career por el nombre de identificación de Region
   async getByRegionName(request, response) {
     try {
       const { name } = request.params;
-      const cities = await CityService.getByRegionName(name);
+      const p1 = await CityService.getByRegionName(name);
 
-      if (!cities) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: cities});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que crea una City a partir de las entradas recibidas
   async create(request, response) {
     try {
-      const { body } = request
-      const city = await CityService.create(body);
+      const { body } = request;
+      let error = {};
+      
+      if (await CityService.existsByName(body.name)) {
+        error.name = 'Este identificador ya esta registrado';
+      }
 
-      response.status(200).json(city);
+      if (Object.keys(error).length === 0) {
+        const object = {
+          name: body.name,
+          label: body.label,
+          id_region: body.id_region.id,
+          created_at: body.created_at
+        }
+        let p1 = await CityService.create(object);
+
+        p1.id_region = body.id_region;
+
+        return response.status(200).json({ ok: true, message: p1});
+      }
+
+      return response.status(400).json({ ok: false, error: error});
     } catch (error) {
-      response.status(500).json({ error: 'Error creating city' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que actualiza una City a partir de las entradas recibidas
   async update(request, response) {
     try {
       const { id } = request.params;
       const { body } = request;
+      const aux = await CityService.getByName(body.name);
+      let error = {};
 
-      const city = await CityService.update(id, body);
-      if (!city) {
-        return response.status(404).json({ message: 'Role not found' });
+      if (aux && body.name === aux.name && Number(id) !== aux.id) {
+        error.name = 'Este identificador ya esta registrado';
       }
 
-      response.status(200).json(city);
+      if (Object.keys(error).length === 0){
+        const object = {
+          name: body.name,
+          label: body.label,
+          id_region: body.id_region.id,
+          created_at: body.created_at
+        }
+  
+        let p1 = await CityService.update(id, object);
+  
+        if (!p1) {
+          return response.status(404).json({ ok: true, message: null});
+        }
+  
+        p1.id_region = body.id_region;
+  
+        return response.status(200).json({ ok: true, message: p1});
+      }
+
+      return response.status(400).json({ ok: false, error: error});
     } catch (error) {
-      response.status(500).json({ error: 'Error updating city' });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que elimina una City por su ID
   async delete(request, response) {
     try {
       const { id } = request.params;
-      const city = await CityService.getById(id)
+      const p1 = await CityService.getById(id);
+
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null });
+      }
 
       await CityService.delete(id);
 
-      res.status(200).json(city);
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      res.status(404).json({ error: error.message });
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 }

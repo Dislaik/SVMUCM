@@ -324,3 +324,59 @@ body.swal2-shown {
 .dataTable-height {
   min-height: 570px;
 }
+
+.tooltip-info {
+  position: relative !important;
+}
+
+.tooltip-info .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #1E2124;
+  color: #E5E8E8 !important;
+  border-radius: 3px;
+  text-align: center;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  top: 120%;
+  left: 50%; 
+  transform: translateX(-50%);
+  pointer-events: none;
+  font-style: normal;
+  opacity: 0;
+  transition: .2s ease
+}
+
+.tooltip-info .tooltiptext::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #1E2124 transparent; /* Cambiar los colores para apuntar hacia arriba */
+}
+
+.tooltip-info:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition: .2s ease
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card .user-fullname {
+  font-size: 24px;
+}
+
+
+.form-control:disabled {
+ background-color: #A6ACAF !important;
+ opacity: 0.4 !important;
+}

@@ -1,1 +1,243 @@
-<p>manage-quotation-details works!</p>
+<div class="container content">
+	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
+	<h1 class="mb-3">{{title}}</h1>
+  <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
+    <div class="row mb-2">
+      <ng-template [ngIf]="haveRole(['admin', 'externalrelations', 'externalrelationscoordinator'])">
+        <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
+            <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
+          </div>
+        </ng-template>
+        <ng-template #elseBlockEditItem>
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+            <!-- <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button> -->
+            <button type="button" class="btn btn-primary" (click)="ngOnGeneratePDF()"><i class="bi bi-file-earmark-bar-graph-fill"></i>Descargar cotización</button>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="card profile-basic-info me-2 p-3 shadow">
+            <div class="text-center mt-2 mb-3">
+              <!-- <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo"> -->
+              <h2 class="user-fullname">{{quotation.id_project.name}}</h2>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                Solicitante:
+              </div>
+              <div class="col-8">
+                {{quotation.id_project.id_user.username}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-8">
+          <div class="row mb-2">
+            <div class="card profile-general-info shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
+            <div class="card-body">
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Solicitante:
+                </div>
+                <div class="col-6 ps-2">
+                  <a [routerLink]="['/panel/user/', quotation.id_project.id_user.id]">{{quotation.id_project.id_user.username}}</a>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Nombre del solicitante:
+                </div>
+                <div class="col-6 ps-2">
+                  {{quotation.id_project.id_user.first_name}} {{quotation.id_project.id_user.last_name}}
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Estado:
+                </div>
+                <div class="col-6 ps-2">
+                  <select *ngIf="enableEditItem; else elseBlockEditItemQuotationStatus" #selectItemEditQuotationStatus class="form-select shadow-none">
+                    <option *ngFor="let item of quotationStatus;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <ng-template #elseBlockEditItemQuotationStatus>
+                    {{quotation.id_quotation_status.label}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Fecha de emisión:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemStartDate" #inputItemEditStartDate type="date" class="form-control shadow-none">
+                  <div *ngIf="startDateError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{startDateError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemStartDate>
+                    {{UTCToChileTime(quotation.start_date, true)}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Fecha de vencimiento:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemEndDate" #inputItemEditEndDate type="date" class="form-control shadow-none">
+                  <div *ngIf="endDateError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{endDateError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemEndDate>
+                    {{UTCToChileTime(quotation.end_date, true)}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Cotización en días:
+                </div>
+                <div class="col-6 ps-2">
+                  {{quotationDays}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="card profile-general-info shadow">
+            <div class="card-header justify-content-between">
+              <div class="d-flex gap-2">
+                <i class="bi bi-stack"></i>Proyecto asociado
+              </div>
+              <div>
+                <button type="button" class="btn btn-primary btn-sm" [routerLink]="['/panel/project/', quotation.id_project.id]">
+                  Ir a proyecto
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Nombre del proyecto:
+                </div>
+                <div class="col-6 ps-2">
+                  {{quotation.id_project.name}}
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Descripción:
+                </div>
+                <div class="col-6 ps-2">
+                  {{quotation.id_project.description}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="card profile-general-info shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>APU</div>
+            <div class="card-body">
+              <div *ngFor="let item of quotationAPU; index as i" class="apu-container mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex gap-2">
+                    <i class="bi bi-box-fill"></i>{{item.id_apu.label}}
+                  </div>
+                  <button *ngIf="enableEditItem" type="button" class="btn btn-delete-item" (click)="ngOnRemoveAPU(i, item)"><i class="bi bi-x-circle-fill"></i>Eliminar</button>
+                </div>
+                <div class="row">
+                  {{checkDescription(item.id_apu.description)}}
+                </div>
+                <div *ngIf="item.id_quotation_apu_resource !== undefined" class="row mt-2">
+                  <ul class="list-group rounded-0">
+                    <div class="m-2 mb-0 row">
+                      <div class="col-3 text-center">Recurso</div>
+                      <div class="col-3 text-center">Cantidad</div>
+                      <div class="col-3 text-center">Precio unitario</div>
+                      <div class="col-3 text-center">Subtotal</div>
+                    </div>
+                    <hr class="mb-2 mt-2">
+                    <div *ngFor="let i of item.id_quotation_apu_resource" class="m-2 row align-items-center">
+                      <div class="col-3 text-center wrap-text">{{i.id_resource.label}}</div>
+                      <div class="col-3 text-center wrap-text">
+                        <input *ngIf="enableEditItem; else elseBlockEditItemAmount" type="number" class="form-control text-center shadow-none" required autocomplete="off" value="{{i.amount}}" (input)="ngOnUtilsOnlyNumbers($event, i)">
+                        <ng-template #elseBlockEditItemAmount>
+                          {{i.amount}}
+                        </ng-template>
+                      </div>
+                      <div class="col-3 text-center wrap-text">{{numberToPrice(i.price)}}</div>
+                      <div class="col-3 text-center wrap-text">{{numberToPrice(i.subtotal)}}</div>
+                    </div>
+                  </ul>
+                </div>
+              </div>
+              <div *ngIf="enableEditItem" class="add-apu d-flex align-items-center justify-content-center">
+                <button type="button" class="btn btn-primary" (click)="ngOnCreateModalAddAPU()"><i class="bi bi-plus-circle"></i>Añadir APU</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="card profile-general-info shadow">
+            <div class="card-header"><i class="bi bi-cash-stack"></i>Resumen de valores</div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-6">
+                  Valor sin IVA: {{numberToPrice(quotationPriceWithoutIVA)}}
+                </div>
+                <div class="col-6">
+                  Valor con IVA: {{numberToPrice(quotationPriceWithIVA * 1.19)}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #elseBlockViewLoaded>
+    <div class="loading">
+      <svg viewBox="0 0 50 50" class="spinner">
+        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5" class="path"></circle>
+      </svg>
+    </div>
+  </ng-template>
+</div>
+
+
+
+
+
+<div #modalAddAPU class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Selecciona un APU</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div #modalListAPU class="row">
+          <div *ngFor="let item of apus;" class="col-3 ps-2 pe-2 mb-2">
+            <button type="button" class="btn btn-resource wrap-text" [attr.data-apu-id]="item.id" (click)="ngOnModalAddAPU(item)">
+              <i class="bi bi-person-fill"></i>{{item.label}}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-end">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

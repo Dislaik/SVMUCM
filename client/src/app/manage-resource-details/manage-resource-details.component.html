@@ -3,17 +3,19 @@
 	<h1 class="mb-3">{{title}}</h1>
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
-      <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
-        <div class="d-flex flex-row-reverse gap-2">
-          <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
-          <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
-        </div>
-      </ng-template>
-      <ng-template #elseBlockEditItem>
-        <div class="d-flex flex-row-reverse gap-2">
-          <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
-          <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button>
-        </div>
+      <ng-template [ngIf]="haveRole(['admin', 'dean', 'externalrelations', 'externalrelationscoordinator'])">
+        <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
+            <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
+          </div>
+        </ng-template>
+        <ng-template #elseBlockEditItem>
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+            <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button>
+          </div>
+        </ng-template>
       </ng-template>
     </div>
       <div class="row">
@@ -22,14 +24,6 @@
             <div class="text-center mt-2 mb-3">
               <!-- <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo"> -->
               <h2 class="user-fullname">{{resource.label}}</h2>
-            </div>
-            <div class="row mb-2">
-              <div class="col-4">
-                ID:
-              </div>
-              <div class="col-8">
-                {{resource.id}}
-              </div>
             </div>
             <div class="row mb-2">
               <div class="col-4">
@@ -48,18 +42,10 @@
             <div class="card-body">
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
-                  ID:
-                </div>
-                <div class="col-6 ps-2">
-                  {{resource.id}}
-                </div>
-              </div>
-              <div class="row align-items-center mb-2">
-                <div class="col-6 pe-2">
                   Nombre:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemName" #inputItemEditName type="text" class="form-control-sm shadow-none" required autocomplete="off" (input)="nameIdentifier()">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemName" #inputItemEditName type="text" class="form-control shadow-none" required autocomplete="off" (input)="nameIdentifier()">
                   <div *ngIf="nameError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{nameError}}</p>
@@ -75,7 +61,7 @@
                   Etiqueta:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemLabel" #inputItemEditLabel type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemLabel" #inputItemEditLabel type="text" class="form-control shadow-none" required autocomplete="off">
                   <div *ngIf="labelError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{labelError}}</p>
@@ -91,7 +77,7 @@
                   Descripción:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemDescription" #inputItemEditDescription type="text" class="form-control-sm shadow-none" required autocomplete="off" placeholder="Sin descripción">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemDescription" #inputItemEditDescription type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Sin descripción">
                   <ng-template #elseBlockEditItemDescription>
                     {{checkDescription(resource.description)}}
                   </ng-template>
@@ -102,7 +88,7 @@
                   Precio:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemPrice" #inputItemEditPrice type="text" class="form-control-sm shadow-none" required autocomplete="off" (input)="priceCLP()">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemPrice" #inputItemEditPrice type="text" class="form-control shadow-none" required autocomplete="off" (input)="priceCLP()">
                   <ng-template #elseBlockEditItemPrice>
                     {{numberToPrice(resource.price)}}
                   </ng-template>
@@ -114,21 +100,6 @@
                 </div>
                 <div class="col-6 ps-2">
                   {{UTCToChileTime(resource.created_at, false)}}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div class="card profile-general-info ms-2 shadow">
-            <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
-            <div class="card-body">
-              <div class="row mb-2">
-                <div class="col-6 pe-2">
-                  x:
-                </div>
-                <div class="col-6 ps-2">
-                  0
                 </div>
               </div>
             </div>

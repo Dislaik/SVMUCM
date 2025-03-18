@@ -1,94 +1,64 @@
-const QuotationStatusService = require('../service/quotationStatusService');
+const QuotationStatusService = require('../service/quotationStatusService'); // El servicio QuotationStatus es llamado
 
+// Controlador de la clase QuotationStatus, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo QuotationStatus
 class QuotationStatusController {
+
+  // Metodo que obtiene todos los datos de QuotationStatus 
   async getAll(request, response) {
     try {
-      const quotationStatus = await QuotationStatusService.getAll();
+      const p1 = await QuotationStatusService.getAll();
       
-      response.status(200).json({ ok: true, message: quotationStatus});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una QuotationStatus por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const quotationStatus = await QuotationStatusService.getById(id)
+      const p1 = await QuotationStatusService.getById(id)
 
-      response.status(200).json(quotationStatus);
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una QuotationStatus por su nombre de identificador
   async getByName(request, response) {
     try {
       const { name } = request.params;
-      const quotationStatus = await QuotationStatusService.getByName(name);
+      const p1 = await QuotationStatusService.getByName(name);
       
-      if (!quotationStatus) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: quotationStatus});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una QuotationStatus por su etiqueta
   async getByLabel(request, response) {
     try {
       const { label } = request.params;
-      const quotationStatus = await QuotationStatusService.getByLabel(label);
+      const p1 = await QuotationStatusService.getByLabel(label);
 
-      if (!quotationStatus) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: quotationStatus});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
-    }
-  }
-
-  async create(request, response) {
-    try {
-      const { body } = request
-      const quotationStatus = await QuotationStatusService.create(body);
-
-      response.status(200).json(quotationStatus);
-    } catch (error) {
-      response.status(500).json({ error: 'Error creating quotationStatus' });
-    }
-  }
-
-  async update(request, response) {
-    try {
-      const { id } = request.params;
-      const { body } = request;
-
-      const quotationStatus = await QuotationStatusService.update(id, body);
-      if (!quotationStatus) {
-        return response.status(404).json({ message: 'Role not found' });
-      }
-
-      response.status(200).json(quotationStatus);
-    } catch (error) {
-      response.status(500).json({ error: 'Error updating quotationStatus' });
-    }
-  }
-
-  async delete(request, response) {
-    try {
-      const { id } = request.params;
-      const quotationStatus = await QuotationStatusService.getById(id)
-
-      await QuotationStatusService.delete(id);
-
-      res.status(200).json(quotationStatus);
-    } catch (error) {
-      res.status(404).json({ error: error.message });
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 }

@@ -2,36 +2,42 @@ const CityRepository = require('../repository/cityRepository');
 
 class CityService {
   async getAll() {
-    const cities = await CityRepository.findAll();
+    const p1 = await CityRepository.findAll();
     
-    const restructuredCities = cities.map(city => {
-      const cityJSON = city.toJSON();
+    const p2 = p1.map(city => {
+      const p3 = city.toJSON();
 
-      cityJSON.id_region = cityJSON.region;
+      p3.id_region = p3.region;
 
-      delete cityJSON.region;
+      delete p3.region;
 
-      return cityJSON;
+      return p3;
     })
 
-    return restructuredCities;
+    return p2;
   }
 
   async getById(id) {
-    const city = await CityRepository.findById(id);
+    const p1 = await CityRepository.findById(id);
 
-    if (!city) {
-      throw new Error('City not found');
+    if (!p1) {
+      return null
     }
 
-    return city;
+    const p2 = p1.toJSON();
+
+    p2.id_region = p2.region;
+
+    delete p2.region;
+
+    return p2;
   }
 
   async getByName(name) {
     const city = await CityRepository.findByName(name);
     
     if (!city) {
-      throw new Error('City not found');
+      return null
     }
 
     return city;
@@ -77,6 +83,10 @@ class CityService {
 
   async delete(id) {
     return await CityRepository.delete(id);
+  }
+
+  async existsByName(name) {
+    return await CityRepository.existsByName(name);
   }
 }
 

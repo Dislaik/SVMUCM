@@ -3,21 +3,25 @@
 	<h1 class="mb-3">{{title}}</h1>
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
-      <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
-        <div class="d-flex flex-row-reverse gap-2">
-          <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
-          <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
-        </div>
-      </ng-template>
-      <ng-template #elseBlockEditItem>
-        <div class="d-flex flex-row-reverse gap-2">
-          <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
-          <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button>
-          <button *ngIf="!existsQuotation; else elseBlockExistsQuotation" type="button" class="btn btn-primary" (click)="ngOnCreateQuotation()"><i class="bi bi-file-earmark-bar-graph-fill"></i>Crear cotización</button>
-          <ng-template #elseBlockExistsQuotation>
-            <button type="button" class="btn btn-primary" (click)="ngOnGoQuotation()"><i class="bi bi-file-earmark-bar-graph-fill"></i>Ir a Cotización</button>
-          </ng-template>
-        </div>
+      <ng-template [ngIf]="haveRole(['admin', 'externalrelations', 'externalrelationscoordinator'])">
+        <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
+            <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
+          </div>
+        </ng-template>
+        <ng-template #elseBlockEditItem>
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+            <!-- <button type="button" class="btn btn-delete-item" (click)="ngOnDeleteItem()"><i class="bi bi-trash-fill"></i>Eliminar</button> -->
+            <ng-template [ngIf]="!existsQuotation && project.id_projectStatus.name === 'underreview'">
+              <button type="button" class="btn btn-primary" (click)="ngOnCreateQuotation()"><i class="bi bi-file-earmark-bar-graph-fill"></i>Generar cotización</button>
+            </ng-template>
+            <ng-template [ngIf]="existsQuotation">
+              <button type="button" class="btn btn-primary" (click)="ngOnGoQuotation()"><i class="bi bi-file-earmark-bar-graph-fill"></i>Ir a cotización</button>
+            </ng-template>
+          </div>
+        </ng-template>
       </ng-template>
     </div>
       <div class="row">
@@ -26,22 +30,6 @@
             <div class="text-center mt-2 mb-3">
               <!-- <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo"> -->
               <h2 class="user-fullname">{{project.name}}</h2>
-            </div>
-            <div class="row mb-2">
-              <div class="col-4">
-                ID:
-              </div>
-              <div class="col-8">
-                {{project.id}}
-              </div>
-            </div>
-            <div class="row mb-2">
-              <div class="col-4">
-                Nombre:
-              </div>
-              <div class="col-8">
-                {{project.name}}
-              </div>
             </div>
             <div class="row mb-2">
               <div class="col-4">
@@ -60,18 +48,10 @@
             <div class="card-body">
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
-                  ID:
-                </div>
-                <div class="col-6 ps-2">
-                  {{project.id}}
-                </div>
-              </div>
-              <div class="row align-items-center mb-2">
-                <div class="col-6 pe-2">
                   Solicitante:
                 </div>
                 <div class="col-6 ps-2">
-                  {{project.id_user.username}}
+                  <a [routerLink]="['/panel/user/', project.id_user.id]">{{project.id_user.username}}</a>
                 </div>
               </div>
               <div class="row align-items-center mb-2">
@@ -153,11 +133,28 @@
               </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
+                  Región:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemRegion" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditRegion class="form-select shadow-none">
+                      <option *ngFor="let item of regions;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemRegion>
+                  <div class="col-6 ps-2">
+                    {{project.id_city.id_region.label}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
                   Ciudad:
                 </div>
                 <div class="col-6 ps-2">
                   <select *ngIf="enableEditItem; else elseBlockEditItemCity" #selectItemEditCity class="form-select shadow-none">
-                    <option *ngFor="let item of cities;" value="{{item['name']}}">{{item['label']}}</option>
+                    <option *ngFor="let item of citiesAUX;" value="{{item['name']}}">{{item['label']}}</option>
                   </select>
                   <ng-template #elseBlockEditItemCity>
                     {{project.id_city.label}}
@@ -166,12 +163,51 @@
               </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
+                  Sede:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemHeadquarter" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditHeadquarter class="form-select shadow-none">
+                      <option *ngFor="let item of headquarters;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemHeadquarter>
+                  <div class="col-6 ps-2">
+                    {{project.id_career.id_headquarter.label}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Facultad:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockEditItemFaculty" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <select #selectItemEditFaculty class="form-select shadow-none">
+                      <option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
+                    </select>
+                  </div>
+                </div>
+                <ng-template #elseBlockEditItemFaculty>
+                  <div class="col-6 ps-2">
+                    {{project.id_career.id_faculty.label}}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
                   Carrera:
                 </div>
                 <div class="col-6 ps-2">
-                  <select *ngIf="enableEditItem; else elseBlockEditItemCareer" #selectItemEditCareer class="form-select shadow-none">
-                    <option *ngFor="let item of careers;" value="{{item['name']}}">{{item['label']}}</option>
+                  <select *ngIf="enableEditItem; else elseBlockEditItemCareer" #selectItemEditCareer class="form-control form-select shadow-none">
+                    <option *ngFor="let item of careersAUX;" value="{{item['name']}}">{{item['label']}}</option>
                   </select>
+                  <div *ngIf="careerError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{careerError}}</p>
+                    </div>
+                  </div>
                   <ng-template #elseBlockEditItemCareer>
                     {{project.id_career.label}}
                   </ng-template>
@@ -190,60 +226,50 @@
         </div>
         <div class="row mb-2">
           <div class="card profile-general-info ms-2 shadow">
-            <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
+            <div class="card-header"><i class="bi bi-people-fill"></i>Asignacion de docentes</div>
             <div class="card-body">
-              <div class="row mb-2">
-                <div class="col-6 pe-2">
-                  x:
-                </div>
-                <div class="col-6 ps-2">
-                  0
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div class="card profile-general-info ms-2 shadow">
-            <div class="card-header"><i class="bi bi-stack"></i>Asignacion de docentes</div>
-            <div class="card-body">
-              <div class="add-apu d-flex align-items-center justify-content-center">
-                <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir docente</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div class="card profile-general-info ms-2 shadow">
-            <div class="card-header"><i class="bi bi-stack"></i>Asignacion de alumnos voluntarios</div>
-            <div class="card-body">
-              <div class="add-apu d-flex align-items-center justify-content-center">
-                <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir Alumno voluntario</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- <div class="row mb-2">
-          <div class="card profile-general-info ms-2 shadow">
-            <div class="card-header"><i class="bi bi-stack"></i>APUs Asociadas</div>
-            <div class="card-body">
-              <div *ngFor="let item of projectAPUs;" class="apu-container mb-2">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex gap-2">
-                    <i class="bi bi-box-seam-fill"></i>{{item.id_apu.label}}
+              <div *ngFor="let item of projectUsersAUX;" class="mb-2">
+                <div class="apu-container">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex gap-2">
+                      <i class="bi bi-person-fill"></i>{{item.id_user.first_name}} {{item.id_user.last_name}}
+                    </div>
+                    <button *ngIf="enableEditItem" type="button" class="btn btn-delete-item" (click)="ngOnRemoveProfessor(item)"><i class="bi bi-x-circle-fill"></i>Eliminar</button>
                   </div>
-                  <button type="button" class="btn btn-remove-resource-apu" (click)="ngOnClickOpenModal()"><i class="bi bi-x-circle-fill"></i>Eliminar</button> 
-                </div>
-                <div *ngFor="let apu of apuResources[item.id_apu.id];">
-                  {{apu.id_resource.label}} - x{{apu.amount}}
+                  <div class="ms-4 d-flex justify-content-start">
+                    {{item.id_faculty.label}}
+                  </div>
                 </div>
               </div>
-              <div class="add-apu d-flex align-items-center justify-content-center">
-                <button type="button" class="btn btn-add-resource" (click)="ngOnClickOpenModal()"><i class="bi bi-plus-circle-fill"></i>Añadir APU</button>
+              <div *ngIf="enableEditItem" class="add-apu d-flex align-items-center justify-content-center">
+                <button type="button" class="btn btn-primary" (click)="ngOnCreateModalAddProfessor()"><i class="bi bi-plus-circle"></i>Añadir docente</button>
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
+        <div class="row mb-2">
+          <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-people-fill"></i>Asignacion de alumnos voluntarios</div>
+            <div class="card-body">
+              <div *ngFor="let item of projectVolunterStudentsAUX;" class="mb-2">
+                <div class="apu-container">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex gap-2">
+                      <i class="bi bi-person-fill"></i>{{item.id_volunteer_student.first_name}} {{item.id_volunteer_student.last_name}}
+                    </div>
+                    <button *ngIf="enableEditItem" type="button" class="btn btn-delete-item" (click)="ngOnRemoveVolunteerStudent(item)"><i class="bi bi-x-circle-fill"></i>Eliminar</button>
+                  </div>
+                  <div class="ms-4 d-flex justify-content-start">
+                    {{item.id_volunteer_student.id_career.label}}
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="enableEditItem" class="add-apu d-flex align-items-center justify-content-center">
+                <button type="button" class="btn btn-primary" (click)="ngOnCreateModalAddVolunteerStudent()"><i class="bi bi-plus-circle"></i>Añadir alumno voluntario</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </ng-template>
@@ -257,26 +283,83 @@
 </div>
 
 
-
-
-
-
-
-
-
-<div #modalAddAPU class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div #modalAddProfessor class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Selecciona un APU</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Selecciona los docentes</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div *ngFor="let item of apus;" class="col-3 ps-2 pe-2 mb-2">
-            <!-- <button type="button" class="btn btn-add-resource-modal" (click)="ngOnClickSelectAPU(item)">
-              <i class="bi bi-box-fill"></i>{{item.label}}
-            </button> -->
+        <div class="row mb-3">
+          <div class="d-flex justify-content-end">
+            <div class="d-flex">
+              <div class="input-group">
+                <input #inputSearchProfessor type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar docente" (keydown.enter)="ngOnSearchProfessor()">
+                <button type="button" class="btn btn-clear" (click)="ngOnClearSearchProfessor()" *ngIf="isOnFilter">
+                  <i class="bi bi-x-circle"></i>
+                </button>
+                <button type="button" class="btn btn-search" (click)="ngOnSearchProfessor()">
+                  <i class="bi bi-search"></i>Buscar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div #modalListProfessors class="row">
+          <div *ngFor="let item of filteredProfessors()" class="col-3 ps-2 pe-2 mb-2">
+            <button type="button" class="btn btn-resource d-flex justify-content-start flex-column text-left" [attr.data-professor-id]="item.id_user.id" (click)="ngOnModalAddProfessor(item)">
+              <div class="d-flex gap-2 wrap-text">
+                <i class="bi bi-person-fill"></i>{{item.id_user.first_name}} {{item.id_user.last_name}}
+              </div>
+              <div class="d-flex justify-content-start">
+                {{item.id_faculty.label}}
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-end">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div #modalAddVolunteerStudent class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Selecciona los alumnos voluntarios</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="d-flex justify-content-end">
+            <div class="d-flex">
+              <div class="input-group">
+                <input #inputSearchVolunteerStudent type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Buscar alumno voluntario" (keydown.enter)="ngOnSearchVolunteerStudent()">
+                <button type="button" class="btn btn-clear" (click)="ngOnClearSearchVolunteerStudent()" *ngIf="isOnFilter">
+                  <i class="bi bi-x-circle"></i>
+                </button>
+                <button type="button" class="btn btn-search" (click)="ngOnSearchVolunteerStudent()">
+                  <i class="bi bi-search"></i>Buscar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div #modalListVolunteerStudent class="row">
+          <div *ngFor="let item of filteredVolunteerStudents()" class="col-3 ps-2 pe-2 mb-2">
+            <button type="button" class="btn btn-resource d-flex justify-content-start flex-column text-left" [attr.data-volunteer-student-id]="item.id" (click)="ngOnModalAddVolunteerStudent(item)">
+              <div class="d-flex gap-2 wrap-text">
+                <i class="bi bi-person-fill"></i>{{item.first_name}} {{item.last_name}}
+              </div>
+              <div class="d-flex justify-content-start">
+                {{item.id_career.label}}
+              </div>
+            </button>
           </div>
         </div>
       </div>

@@ -6,33 +6,33 @@ class RegionService {
   }
 
   async getById(id) {
-    const region = await RegionRepository.findById(id);
+    const p1 = await RegionRepository.findById(id);
 
-    if (!region) {
-      throw new Error('Role not found');
+    if (!p1) {
+      return null;
     }
 
-    return region;
+    return p1;
   }
 
   async getByName(name) {
-    const region = await RegionRepository.findByName(name);
+    const p1 = await RegionRepository.findByName(name);
     
-    if (!region) {
-      throw new Error('Role not found');
+    if (!p1) {
+      return null;
     }
 
-    return region;
+    return p1;
   }
 
   async getByLabel(label) {
-    const region = await RegionRepository.findByLabel(label);
+    const p1 = await RegionRepository.findByLabel(label);
     
-    if (!region) {
-      throw new Error('Role not found');
+    if (!p1) {
+      return null;
     }
 
-    return region;
+    return p1;
   }
 
   async create(data) {
@@ -45,6 +45,10 @@ class RegionService {
 
   async delete(id) {
     return await RegionRepository.delete(id);
+  }
+
+  async existsByName(name) {
+    return await RegionRepository.existsByName(name);
   }
 }
 

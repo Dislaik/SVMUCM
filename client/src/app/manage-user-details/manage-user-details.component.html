@@ -3,16 +3,18 @@
 	<h1 class="mb-3">{{title}}</h1>
   <ng-template [ngIf]="isViewLoaded" [ngIfElse]="elseBlockViewLoaded">
     <div class="row mb-2">
-      <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
-        <div class="d-flex flex-row-reverse gap-2">
-          <button type="button" class="btn btn-edit-save" (click)="ngOnEditItemSave()"><i class="bi bi-gear-fill"></i>Guardar cambios</button>
-          <button type="button" class="btn btn-edit-cancel" (click)="ngOnEditItemCancel()"><i class="bi bi-gear-fill"></i>Deshacer cambios</button>
-        </div>
-      </ng-template>
-      <ng-template #elseBlockEditItem>
-        <div class="d-flex flex-row-reverse">
-          <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-gear-fill"></i>Editar</button>
-        </div>
+      <ng-template [ngIf]="haveRole(['admin', 'dean', 'externalrelationscoordinator']) && browserUser.id_role.id <= user.id_role.id">
+        <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
+            <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
+          </div>
+        </ng-template>
+        <ng-template #elseBlockEditItem>
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+          </div>
+        </ng-template>
       </ng-template>
     </div>
       <div class="row">
@@ -57,24 +59,25 @@
                 <div class="col-6 pe-2">
                   Contraseña:
                 </div>
-                <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemPassword" #inputItemEditPassword type="password" class="form-control-sm shadow-none" required autocomplete="off">
-                  <div *ngIf="passwordError !== ''">
-                    <div class="message-error-container d-flex align-items-center">
-                      <p>{{passwordError}}</p>
-                    </div>
+                <div *ngIf="enableEditItem; else elseBlockOnUserEnableEditPassword" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <button type="button" class="btn btn-primary w-100" (click)="ngOnCreateModalChangePassword()">
+                      <i class="bi bi-key-fill"></i>Cambiar contraseña
+                    </button>
                   </div>
-                  <ng-template #elseBlockEditItemPassword>
-                    ************
-                  </ng-template>
                 </div>
+                <ng-template #elseBlockOnUserEnableEditPassword>
+                  <div class="col-6 ps-2">
+                    ************
+                  </div>
+                </ng-template>
               </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Nombres:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemFirstName" #inputItemEditFirstName type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemFirstName" #inputItemEditFirstName type="text" class="form-control shadow-none" required autocomplete="off">
                   <div *ngIf="firstNameError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{firstNameError}}</p>
@@ -90,7 +93,7 @@
                   Apellidos:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemLastName" #inputItemEditLastName type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemLastName" #inputItemEditLastName type="text" class="form-control shadow-none" required autocomplete="off">
                   <div *ngIf="lastNameError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{lastNameError}}</p>
@@ -106,7 +109,7 @@
                   Correo electronico:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemEmail" #inputItemEditEmail type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemEmail" #inputItemEditEmail type="text" class="form-control shadow-none" required autocomplete="off">
                   <div *ngIf="emailError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{emailError}}</p>
@@ -122,14 +125,14 @@
                   Dirección:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemAddres" #inputItemEditAddress type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemAddres" #inputItemEditAddress type="text" class="form-control shadow-none" required autocomplete="off">
                   <div *ngIf="addressError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{addressError}}</p>
                     </div>
                   </div>
                   <ng-template #elseBlockEditItemAddres>
-                    {{user.address}}
+                    {{checkField(user.address)}}
                   </ng-template>
                 </div>
               </div>
@@ -138,14 +141,14 @@
                   Teléfono:
                 </div>
                 <div class="col-6 ps-2">
-                  <input *ngIf="enableEditItem; else elseBlockEditItemPhone" #inputItemEditPhone type="text" class="form-control-sm shadow-none" required autocomplete="off">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemPhone" #inputItemEditPhone type="text" class="form-control shadow-none" required autocomplete="off" (input)="ngOnInputValidatePhone()">
                   <div *ngIf="phoneError !== ''">
                     <div class="message-error-container d-flex align-items-center">
                       <p>{{phoneError}}</p>
                     </div>
                   </div>
                   <ng-template #elseBlockEditItemPhone>
-                    {{user.phone}}
+                    {{checkField(user.phone)}}
                   </ng-template>
                 </div>
               </div>
@@ -154,7 +157,7 @@
                   Rol:
                 </div>
                 <div class="col-6 ps-2">
-                  <select *ngIf="enableEditItem; else elseBlockEditItemRole" #selectItemEditRole class="form-select form-select-sm">
+                  <select *ngIf="enableEditItem && haveRole(['admin', 'dean']); else elseBlockEditItemRole" #selectItemEditRole class="form-select form-select">
                     <option *ngFor="let item of roles;" value="{{item['name']}}">{{item['label']}}</option>
                   </select>
                   <div *ngIf="roleError !== ''">
@@ -167,12 +170,30 @@
                   </ng-template>
                 </div>
               </div>
+              <div *ngIf="isOnProfessor === true" class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Facultad:
+                </div>
+                <div class="col-6 ps-2">
+                  <select *ngIf="enableEditItem && haveRole(['admin', 'dean']); else elseBlockEditItemFaculty" #selectItemEditFaculty class="form-select form-select">
+                    <option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <div *ngIf="facultyError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{facultyError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemFaculty>
+                    {{userFaculty ? userFaculty.id_faculty.label : ''}}
+                  </ng-template>
+                </div>
+              </div>
               <div class="row align-items-center mb-2">
                 <div class="col-6 pe-2">
                   Estado:
                 </div>
                 <div class="col-6 ps-2">
-                  <select *ngIf="enableEditItem; else elseBlockEditItemUserStatus" #selectItemEditUserStatus class="form-select form-select-sm">
+                  <select *ngIf="enableEditItem && haveRole(['admin', 'dean']) && browserUser.id !== user.id; else elseBlockEditItemUserStatus" #selectItemEditUserStatus class="form-select form-select">
                     <option *ngFor="let item of userStatus;" value="{{item['name']}}">{{item['label']}}</option>
                   </select>
                   <div *ngIf="userStatusError !== ''">
@@ -196,21 +217,6 @@
             </div>
           </div>
         </div>
-        <div class="row mb-2">
-          <div class="card profile-general-info ms-2 shadow">
-            <div class="card-header"><i class="bi bi-stack"></i>Otra información</div>
-            <div class="card-body">
-              <div class="row mb-2">
-                <div class="col-6 pe-2">
-                  Proyectos:
-                </div>
-                <div class="col-6 ps-2">
-                  0
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </ng-template>
@@ -221,4 +227,35 @@
       </svg>
     </div>
   </ng-template>
+</div>
+
+
+<div #modalChangePassword class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar contraseña</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Nueva contraseña:</p>
+          </div>
+          <div class="col-6">
+            <input #inputPassword type="password" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresar contraseña">
+            <div *ngIf="passwordError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{passwordError}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnModelChangePassword()">Cambiar contraseña</button>
+      </div>
+    </div>
+  </div>
 </div>

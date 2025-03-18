@@ -22,23 +22,25 @@
       <div class="card-body p-0">
         <ul class="list-group rounded-0">
           <div class="m-2 mb-0 row">
-            <div class="col-1 text-center">ID</div>
             <div class="col-2 text-center">Nombre</div>
-            <div class="col-2 text-center">Solicitante</div>
+            <div class="col-1 text-center">Solicitante</div>
             <div class="col-2 text-center">Fecha Emisión</div>
             <div class="col-2 text-center">Fecha Vencimiento</div>
             <div class="col-2 text-center">Estado</div>
+            <div class="col-2 text-center">Total</div>
             <div class="col-1 text-center">Opciones</div> 
           </div>
           <hr class="mb-2 mt-2">
   
           <div *ngFor="let item of paginationShowItems" class="m-2 row">
-            <div class="col-1 text-center">{{item.id}}</div>
             <div class="col-2 text-center wrap-text">{{item.id_project.name}}</div>
-            <div class="col-2 text-center wrap-text">{{item.id_project.id_user.username}}</div>
-            <div class="col-2 text-center wrap-text">{{UTCToChileTime(item.created_at, true)}}</div>
-            <div class="col-2 text-center wrap-text">TO-DO</div>
+            <div class="col-1 text-center wrap-text">
+              <a [routerLink]="['/panel/user/', item.id_project.id_user.id]">{{item.id_project.id_user.username}}</a>
+            </div>
+            <div class="col-2 text-center wrap-text">{{UTCToChileTime(item.start_date, true)}}</div>
+            <div class="col-2 text-center wrap-text">{{UTCToChileTime(item.end_date, true)}}</div>
             <div class="col-2 text-center wrap-text">{{item.id_quotation_status.label}}</div>
+            <div class="col-2 text-center wrap-text">{{numberToPrice(item.price)}}</div>
             <div class="col-1 d-flex justify-content-center">
               <button type="button" class="btn btn-primary btn-sm" (click)="ngOnItemDetails(item)">
                 Ver detalles
@@ -99,28 +101,6 @@
         </div>
       </ul>
     </nav>
-  
-    <div class="card mt-3 mb-3">
-      <div class="card-header">Estadisticas</div>
-      <div class="card-body">
-        <div class="row mb-2">
-          <div class="col-6 pe-2">
-            <div class="charts-height">
-
-
-
-
-            </div>
-          </div>
-          <div class="col-6 ps-2">
-            <div class="charts-height">
-
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </ng-template>
   <ng-template #elseBlockViewLoaded>
     <div class="loading">

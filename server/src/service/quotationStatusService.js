@@ -1,50 +1,39 @@
-const QuotationStatusRepository = require('../repository/quotationStatusRepository');
+const QuotationStatusRepository = require('../repository/quotationStatusRepository'); // El Repositorio QuotationStatus es llamado
 
+// Servicio de la clase QuotationStatus, funciona como capa intermedia y transforma el resultado al deseado
 class QuotationStatusService {
   async getAll() {
     return await QuotationStatusRepository.findAll();
   }
 
   async getById(id) {
-    const quotationStatus = await QuotationStatusRepository.findById(id);
+    const p1 = await QuotationStatusRepository.findById(id);
 
-    if (!quotationStatus) {
-      throw new Error('Quotation Status not found');
+    if (!p1) {
+      return null;
     }
 
-    return quotationStatus;
+    return p1;
   }
 
   async getByName(name) {
-    const quotationStatus = await QuotationStatusRepository.findByName(name);
+    const p1 = await QuotationStatusRepository.findByName(name);
     
-    if (!quotationStatus) {
-      throw new Error('Quotation Status not found');
+    if (!p1) {
+      return null;
     }
 
-    return quotationStatus;
+    return p1;
   }
 
   async getByLabel(label) {
-    const quotationStatus = await QuotationStatusRepository.findByLabel(label);
+    const p1 = await QuotationStatusRepository.findByLabel(label);
     
-    if (!quotationStatus) {
-      throw new Error('Quotation Status not found');
+    if (!p1) {
+      return null;
     }
 
-    return quotationStatus;
-  }
-
-  async create(data) {
-    return await QuotationStatusRepository.create(data);
-  }
-
-  async update(id, data) {
-    return await QuotationStatusRepository.update(id, data);
-  }
-
-  async delete(id) {
-    return await QuotationStatusRepository.delete(id);
+    return p1;
   }
 }
 

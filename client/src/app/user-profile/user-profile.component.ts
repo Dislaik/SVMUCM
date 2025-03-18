@@ -5,6 +5,8 @@ import { UserService } from '../architecture/service/user.service';
 import { Utils } from '../utils';
 import Swal from 'sweetalert2';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-user-profile',
   standalone: false,
@@ -12,8 +14,17 @@ import Swal from 'sweetalert2';
   styleUrl: './user-profile.component.css'
 })
 export class UserProfileComponent implements OnInit {
-  @ViewChild('inputUserEditPassword', {static: false}) inputUserEditPassword: ElementRef;
+  title: string = "Mi perfil";
+  pages: string;
+
+  @ViewChild('modalChangePassword') modalChangePassword: ElementRef;
+  modalChangePasswordInstance: any;
+
+  @ViewChild('inputPassword', {static: false}) inputPassword: ElementRef; 
   passwordError: string = '';
+  @ViewChild('inputRepeatPassword', { static: false}) inputRepeatPassword: ElementRef;
+  repeatPasswordError: string = '';
+
   @ViewChild('inputUserEditFirstName', { static: false }) inputUserEditFirstName: ElementRef;
   firstNameError: string = '';
   @ViewChild('inputUserEditLastName', { static: false }) inputUserEditLastName: ElementRef;
@@ -24,8 +35,6 @@ export class UserProfileComponent implements OnInit {
   addressError: string = '';
   @ViewChild('inputUserEditPhone', { static: false }) inputUserEditPhone: ElementRef;
   phoneError: string = '';
-  title: string = "Mi perfil";
-  pages: string;
 
   user: User;
   userCreateAt: string;
@@ -72,18 +81,18 @@ export class UserProfileComponent implements OnInit {
     this.enableEditInfo = false;
   }
 
-  public async ngOnEditUserProfileSave(): Promise<void> {
-    const password = this.inputUserEditPassword.nativeElement.value;
-    const firstName = this.inputUserEditFirstName.nativeElement.value;
-    const lastName = this.inputUserEditLastName.nativeElement.value;
-    const email = this.inputUserEditEmail.nativeElement.value;
-    const address = this.inputUserEditAddress.nativeElement.value;
-    const phone = this.inputUserEditPhone.nativeElement.value;
-    let success = 0;
+  public ngOnCreateModalChangePassword(): void {
+    this.modalChangePasswordInstance = new bootstrap.Modal(this.modalChangePassword.nativeElement);
+    this.modalChangePasswordInstance.show();
+  }
 
+  public async ngOnModelChangePassword(): Promise<void> {
+    const password = this.inputPassword.nativeElement.value;
+    const repeatPassword = this.inputRepeatPassword.nativeElement.value;
+    let success = 0
 
     if (password.trim() === '') {
-      success+= 1;
+      this.passwordError = 'Debe ingresar una contraseña';
     } else if (password.lenght < 8 || password.lenght > 32) {
       this.passwordError = 'La contraseña debe tener una longitud de entre 8 a 32 caracteres';
     } else if (!/[a-zA-Z]/.test(password)) {
@@ -97,6 +106,49 @@ export class UserProfileComponent implements OnInit {
       success+= 1;
     }
 
+    if (repeatPassword.trim() === '') {
+      this.repeatPasswordError = 'Debe repetir su contraseña';
+    } else if (password != repeatPassword) {
+      this.repeatPasswordError = 'Las contraseñas no coinciden';
+    } else {
+      this.repeatPasswordError = '';
+      success+= 1;
+    }
+
+
+    if (success === 2) {
+      this.user.password = password;
+
+      Swal.fire({
+        title: '¿Estas seguro que quieres cambiar tu contraseña?',
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await this.userService.update(this.user.id, this.user)
+
+          if (response.ok) {
+            Swal.fire('¡Cambios realizados con exito!', '', 'success');
+            this.modalChangePasswordInstance.hide()
+            this.enableEditInfo = false;
+          } else {
+            console.log(response.error)
+          }
+        } else if (result.isDenied) {
+          Swal.fire('Los cambios no se han guardado', '', 'info');
+        }
+      }); 
+    }
+  }
+
+  public async ngOnEditUserProfileSave(): Promise<void> {
+    const firstName = this.inputUserEditFirstName.nativeElement.value;
+    const lastName = this.inputUserEditLastName.nativeElement.value;
+    const email = this.inputUserEditEmail.nativeElement.value;
+    const address = this.inputUserEditAddress.nativeElement.value;
+    const phone = this.inputUserEditPhone.nativeElement.value;
+    let success = 0;
 
     if (firstName.trim() === '') {
       this.firstNameError = 'Debe ingresar sus nombres';
@@ -136,11 +188,7 @@ export class UserProfileComponent implements OnInit {
       success+= 1;
     }
 
-    if (success === 6) {
-      if (password !== '') {
-        this.user.password = password;
-      }
-
+    if (success === 5) {
       this.user.first_name = firstName;
       this.user.last_name = lastName;
       this.user.email = email;
@@ -181,6 +229,19 @@ export class UserProfileComponent implements OnInit {
     return Utils.convertToChileTime(p1, p2);
   }
 
+  public checkField(p1: string): string {
+
+    if (p1.trim() === '') {
+      return "No proporcionado";
+    }
+
+    return p1;
+  }
+
+  public ngOnInputValidatePhone(): void {
+    Utils.validatePhoneNumber(this.inputUserEditPhone.nativeElement)
+  }
+
 
   private async getUserBrowser(): Promise<void> {
     const result = await this.userService.getByUsername(Utils.getUsernameByBrowser());
@@ -192,5 +253,12 @@ export class UserProfileComponent implements OnInit {
     } else {
       console.log(result.error);
     }
+  }
+
+  @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {
+    this.inputPassword.nativeElement.value = '';
+    this.inputRepeatPassword.nativeElement.value = '';
+    this.passwordError = '';
+    this.repeatPasswordError = '';
   }
 }

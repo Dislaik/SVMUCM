@@ -3,6 +3,7 @@ const router = express.Router();
 const CareerController = require('../controller/careerController');
 const auth = require('../security/authentication');
 
+// endpoints del modelo Career
 router.get('/career', auth.authenticateToken, CareerController.getAll);
 router.get('/career/by-id/:id', auth.authenticateToken, CareerController.getById);
 router.get('/career/by-name/:name', auth.authenticateToken, CareerController.getByName);

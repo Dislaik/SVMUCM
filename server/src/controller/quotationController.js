@@ -1,90 +1,100 @@
-const QuotationService = require('../service/quotationService');
+const QuotationService = require('../service/quotationService'); // El servicio Quotation es llamado
 
+// Controlador de la clase Quotation, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo Quotation
 class QuotationController {
+
+  // Metodo que obtiene todos los datos de Quotation
   async getAll(request, response) {
     try {
-      const quotations = await QuotationService.getAll();
+      const p1 = await QuotationService.getAll();
       
-      response.status(200).json({ ok: true, message: quotations});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene un Quotation por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const quotation = await QuotationService.getById(id)
+      const p1 = await QuotationService.getById(id);
 
-      response.status(200).json(quotation);
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene un Quotation por el ID de Project
   async getByProjectId(request, response) {
     try {
       const { id } = request.params;
-      const quotation = await QuotationService.getByProjectId(id);
+      const p1 = await QuotationService.getByProjectId(id);
       
-      if (!quotation) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: quotation});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
-
+  // Metodo que crea un Quotation a partir de las entradas recibidas
   async create(request, response) {
     try {
       const { body } = request
-      const quotationObject = {
+      const object = {
         id_project: body.id_project.id,
         id_quotation_status: body.id_quotation_status.id,
-        duration_day: body.durationDay,
+        start_date: body.start_date,
+        end_date: body.end_date,
+        price: body.price,
         created_at: body.created_at
       }
 
-      let quotation = await QuotationService.create(quotationObject);
+      let p1 = await QuotationService.create(object);
 
-      quotation.id_project = body.id_project;
-      quotation.id_quotation_status = body.id_quotation_status;
+      p1.id_project = body.id_project;
+      p1.id_quotation_status = body.id_quotation_status;
 
-      return response.status(200).json({ ok: true, message: quotation});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false,  error: error });
     }
   }
 
+  // Metodo que actualiza un Quotation a partir de las entradas recibidas
   async update(request, response) {
     try {
       const { id } = request.params;
       const { body } = request;
+      const object = {
+        id_project: body.id_project.id,
+        id_quotation_status: body.id_quotation_status.id,
+        start_date: body.start_date,
+        end_date: body.end_date,
+        price: body.price,
+        created_at: body.created_at
+      }
+      let p1 = await QuotationService.update(id, object);
 
-      const quotation = await QuotationService.update(id, body);
-      if (!quotation) {
-        return response.status(404).json({ message: 'Quotation not found' });
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null });
       }
 
-      response.status(200).json(quotation);
+      p1.id_project = body.id_project;
+      p1.id_quotation_status = body.id_quotation_status;
+
+      return response.status(200).json({ ok: true, message: p1 });
     } catch (error) {
-      response.status(500).json({ error: 'Error updating quotation' });
-    }
-  }
-
-  async delete(request, response) {
-    try {
-      const { id } = request.params;
-      const quotation = await QuotationService.getById(id)
-
-      await QuotationService.delete(id);
-
-      res.status(200).json(quotation);
-    } catch (error) {
-      res.status(404).json({ error: error.message });
+      return response.status(500).json({ ok: false, error: error });
     }
   }
 }

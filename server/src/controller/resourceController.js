@@ -1,105 +1,147 @@
-const ResourceService = require('../service/resourceService');
+const ResourceService = require('../service/resourceService'); // El servicio Resource es llamado
 
+// Controlador de la clase Resource, valida los datos recibidos y realiza actualizaciones correspondientes en el modelo Resource
 class ResourceController {
+
+  // Metodo que obtiene todos los datos de Region
   async getAll(request, response) {
     try {
-      const resources = await ResourceService.getAll();
+      const p1 = await ResourceService.getAll();
       
-      response.status(200).json({ ok: true, message: resources});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json({ ok: false, error: error});
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que obtiene una Resource por su ID
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const resource = await ResourceService.getById(id)
+      const p1 = await ResourceService.getById(id);
 
-      if (!resource) {
-        response.status(200).json({ ok: true, message: null});
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      response.status(200).json({ ok: true, message: resource});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
-      response.status(500).json(null);
+      return response.status(500).json({ ok: false, error: error});
     }
   }
 
-  async create(request, response) {
+  // Metodo que obtiene una Resource por su nombre de identificador
+  async getByName(request, response) {
     try {
-      const { body } = request;
-      let error = {};
+      const { name } = request.params;
+      const p1 = await ResourceService.getByName(name);
       
-      if (await ResourceService.existsByName(body.name)) {
-        error.name = 'Este identificador ya esta registrado';
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
       }
 
-      if (Object.keys(error).length === 0) {
-        const resourceObject = {
+      return response.status(200).json({ ok: true, message: p1});
+    } catch (error) {
+      return response.status(500).json({ ok: false, error: error});
+    }
+  }
+
+  // Metodo que obtiene una Resource por su etiqueta
+  async getByLabel(request, response) {
+    try {
+      const { label } = request.params;
+      const p1 = await ResourceService.getByLabel(label);
+
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null});
+      }
+
+      return response.status(200).json({ ok: true, message: p1});
+    } catch (error) {
+      return response.status(500).json({ ok: false, error: error});
+    }
+  }
+
+  // Metodo que crea una Resource a partir de las entradas recibidas
+  async create(request, response) {
+    try {
+      const { body } = request
+      let error = {};
+
+      if (await ResourceService.existsByName(body.name)) {
+        error.name = 'Este identificador ya esta registrado' 
+      }
+
+      if (Object.keys(error).length === 0) { 
+        const object = {
           name: body.name,
           label: body.label,
           description: body.description,
           price: body.price,
           created_at: body.created_at
         }
-        let resource = await ResourceService.create(resourceObject);
 
-        /// Add relations (not have lol, but I put this comment anyway);
+        let p1 = await ResourceService.create(object);
 
-        return response.status(200).json({ ok: true, message: resource});
+
+        return response.status(200).json({ ok: true, message: p1});
       }
 
-      return response.status(200).json({ ok: false, error: error});
+      return response.status(400).json({ ok: false, error: error});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que actualiza una Resource a partir de las entradas recibidas
   async update(request, response) {
     try {
       const { id } = request.params;
       const { body } = request;
-      const aux = await ResourceService.getByName(body.name)
+      const aux = await ResourceService.getByName(body.name);
       let error = {};
 
-      if (body.name === aux.name && Number(id) !== aux.id) {
-        error.name = 'Este identificador ya esta registrado';
+      if (aux && body.name === aux.name && Number(id) !== aux.id) {
+        error.name = 'Este Identificador ya esta registrado';
       }
 
       if (Object.keys(error).length === 0) {
-        const resourceObject = {
+        const object = {
           name: body.name,
           label: body.label,
           description: body.description,
           price: body.price,
-          created_at: body.created_at
-        }
-        let resource = await ResourceService.update(id, resourceObject);
-
-        if (!resource) {
-          return response.status(404).json({ ok: false, error: 'Resource not found'});
+          created_at: body.created_atd
         }
 
-        /// Add relations (not have lol, but I put this comment anyway);
+        const p1 = await ResourceService.update(id, object);
 
-        return response.status(200).json({ ok: true, message: resource});
+        if (!p1) {
+          return response.status(404).json({ ok: true, message: null});
+        }
+
+        return response.status(200).json({ ok: true, message: p1});
       }
 
-      return response.status(200).json({ ok: false, error: error});
+      return response.status(400).json({ ok: false, error: error});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
   }
 
+  // Metodo que elimina una Resource por su ID
   async delete(request, response) {
     try {
       const { id } = request.params;
-      const resource = await ResourceService.getById(id)
+      const p1 = await ResourceService.getById(id);
+
+      if (!p1) {
+        return response.status(404).json({ ok: true, message: null });
+      }
 
       await ResourceService.delete(id);
 
-      return response.status(200).json({ ok: true, message: resource});
+      return response.status(200).json({ ok: true, message: p1});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }

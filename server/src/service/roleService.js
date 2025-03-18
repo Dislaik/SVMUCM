@@ -1,38 +1,39 @@
-const RoleRepository = require('../repository/roleRepository');
+const RoleRepository = require('../repository/roleRepository'); // El Repositorio Role es llamado
 
+// Servicio de la clase Role, funciona como capa intermedia y transforma el resultado al deseado
 class RoleService {
   async getAll() {
     return await RoleRepository.findAll();
   }
 
   async getById(id) {
-    const role = await RoleRepository.findById(id);
+    const p1 = await RoleRepository.findById(id);
 
-    if (!role) {
-      throw new Error('Role not found');
+    if (!p1) {
+      return null;
     }
 
-    return role;
+    return p1;
   }
 
   async getByName(name) {
-    const role = await RoleRepository.findByName(name);
+    const p1 = await RoleRepository.findByName(name);
     
-    if (!role) {
-      throw new Error('Role not found');
+    if (!p1) {
+      return null;
     }
 
-    return role;
+    return p1;
   }
 
   async getByLabel(label) {
-    const role = await RoleRepository.findByLabel(label);
+    const p1 = await RoleRepository.findByLabel(label);
     
-    if (!role) {
-      throw new Error('Role not found');
+    if (!p1) {
+      return null;
     }
 
-    return role;
+    return p1;
   }
 
   async create(data) {

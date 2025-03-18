@@ -8,6 +8,8 @@ import { Headquarter } from '../architecture/model/headquarter';
 import { HeadquarterService } from '../architecture/service/headquarter.service';
 import { Faculty } from '../architecture/model/faculty';
 import { FacultyService } from '../architecture/service/faculty.service';
+import { User } from '../architecture/model/user';
+import { UserService } from '../architecture/service/user.service';
 
 declare var bootstrap: any;
 
@@ -21,6 +23,7 @@ export class ManageCareerComponent implements OnInit{
   title: string = "Carreras";
   pages: string;
   isViewLoaded: boolean = false;
+  browserUser: User;
 
   @ViewChild('modalCreateItem') modalCreateItem: ElementRef;
   modalCreateItemInstance: any;
@@ -58,6 +61,7 @@ export class ManageCareerComponent implements OnInit{
   constructor(
     private router: Router,
     private toastr: ToastrService,
+    private userService: UserService,
     private careerService: CareerService,
     private headquarterService: HeadquarterService,
     private facultyService: FacultyService
@@ -65,6 +69,7 @@ export class ManageCareerComponent implements OnInit{
 
   async ngOnInit(): Promise<void> {
     this.createBreadCrumb();
+    this.getUserByBrowser();
     this.getAllHeadquarters();
     this.getAllFaculties();
     this.ngOnCreatePagination(1, 10);
@@ -74,10 +79,20 @@ export class ManageCareerComponent implements OnInit{
     const arrayPages: { [i: number]: { page: string; url: string } } = {
       1: {page: 'Inicio', url: '/'},
       2: {page: 'Panel de administración', url: '/panel'},
-      3: {page: 'Gestionar', url: '/panel/manage'},
-      4: {page: this.title, url: this.router.url},
+      3: {page: this.title, url: this.router.url},
     };
     this.pages = JSON.stringify(arrayPages);
+  }
+
+  private async getUserByBrowser(): Promise<void> {
+    const browserUser = Utils.getUsernameByBrowser();
+    const response = await this.userService.getByUsername(browserUser);
+
+    if (response.ok) {
+      this.browserUser = response.message;
+    } else {
+      console.log(response.error);
+    }
   }
 
   private async getAllFaculties(): Promise<void> {
@@ -137,7 +152,6 @@ export class ManageCareerComponent implements OnInit{
     this.ngOnShowPage(p1, this.pagination)
     this.paginationMax = this.getTotalPages(p1, this.paginationRow)
     this.paginationList = this.createRange(this.paginationMax);
-    console.log(this.paginationList)
     this.paginationListShow = this.paginationList.slice(0, 3);
   }
 
@@ -182,7 +196,7 @@ export class ManageCareerComponent implements OnInit{
   }
 
   public ngOnItemDetails(p1: any): void {
-    this.router.navigate(['/panel/manage/career', p1.id]);
+    this.router.navigate(['/panel/career', p1.id]);
   }
 
   public ngOnPaginationNext(): void {
@@ -335,7 +349,7 @@ export class ManageCareerComponent implements OnInit{
         this.ngOnShowPage(this.paginationItems, this.pagination);
         this.toastr.success('Se ha creado la carrera con exito');
       } else {
-        this.nameError = response.error.name;
+        this.nameError = response.error.error.name;
       }
     }
   }
@@ -346,6 +360,17 @@ export class ManageCareerComponent implements OnInit{
 
   public nameIdentifier(): void {
     Utils.formatNameIdentifier(this.inputModalName.nativeElement);
+  }
+
+  public haveRole(p1: any[]) {
+    
+    if (this.browserUser) {
+      if (Utils.haveRole(this.browserUser, p1)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   @HostListener('document:hidden.bs.modal', ['$event']) onModalClick(event: Event) {

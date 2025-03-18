@@ -24,6 +24,8 @@
     "bootstrap-icons": "^1.11.3",
     "echarts": "^5.5.1",
     "jquery": "^3.7.1",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
     "jwt-decode": "^4.0.0",
     "ngx-easy-pagination": "^0.7.0",
     "ngx-echarts": "^18.0.0",
