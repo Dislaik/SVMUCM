@@ -37,6 +37,11 @@ for more info check `package.json` on each project.
 ## Diagram ER
 ![](https://i.imgur.com/ZimaU92.png)
 
+## Architecture
+![](https://i.imgur.com/1zXZQMZ.png)
+
+![](https://i.imgur.com/nyLieYA.png)
+
 ## Images
 ![](https://i.imgur.com/zpzN2sH.png)
 
