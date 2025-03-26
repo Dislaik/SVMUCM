@@ -10,7 +10,8 @@
           "strict": true
         },
         "@schematics/angular:component": {
-          "skipTests": true
+          "skipTests": true,
+          "standalone": false
         },
         "@schematics/angular:class": {
           "skipTests": true
@@ -22,6 +23,12 @@
           "skipTests": true
         },
         "@schematics/angular:service": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:guard": {
           "skipTests": true
         }
       },

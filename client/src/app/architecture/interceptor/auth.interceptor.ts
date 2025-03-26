@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Utils } from '../../utils';
+import { Utils } from '../../app.utils';
 import { Observable } from 'rxjs';
 
 @Injectable()

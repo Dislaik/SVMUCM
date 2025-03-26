@@ -7,7 +7,7 @@ import { RecoveryPasswordConfirm } from '../dto/recovery-password-confirm';
   providedIn: 'root'
 })
 export class RecoveryPasswordService {
-  private URL = "http://localhost:8080/api/v1/recovery-password";
+  private URL = "http://localhost:3000/api/v1/recovery-password";
 
   constructor(private httpClient: HttpClient) { }
 

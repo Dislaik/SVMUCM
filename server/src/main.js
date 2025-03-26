@@ -2,11 +2,10 @@ const express = require('express');
 const router = require('./router/router');
 const { syncDatabase } = require('./config/db');
 const authentication = require('./security/authentication');
-const Role = require('./model/role');
 const cors = require ('cors');
+const Role = require('./model/role');
 const Headquarter = require('./model/headquarter');
 const User = require('./model/user');
-const utils = require('./utils/utils');
 const Region = require('./model/region');
 const City = require('./model/city');
 const Faculty = require('./model/faculty');
@@ -14,7 +13,7 @@ const Career = require('./model/career');
 const projectStatus = require('./model/projectStatus');
 const UserStatus = require('./model/userStatus');
 const QuotationStatus = require('./model/quotationStatus');
-const port = 8080;
+const port = 3000;
 const app = express();
 
 app.use(express.static('public'));
@@ -143,11 +142,11 @@ async function initTable() {
   await Role.findOrCreate({ where: {name: 'community'}, defaults: {label: 'Comunidad', created_at: new Date()} });
   await UserStatus.findOrCreate({ where: {name: 'active'}, defaults: {label: 'Activo', created_at: new Date()} });
   await UserStatus.findOrCreate({ where: {name: 'inactive'}, defaults: {label: 'Inactivo', created_at: new Date()} });
-  await User.findOrCreate({ where: { username: '20.349.272-3' }, defaults: {password: await authentication.cryptPassword('123'), email: 'matias.salas@alu.ucm.cl', first_name: 'Matias Nicolas', last_name: 'Salas Sepulveda', address: 'Santa María 660', phone: '+56930853894', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 1, id_user_status: 1, created_at: new Date()} });
-  await User.findOrCreate({ where: { username: '20.564.236-6' }, defaults: {password: await authentication.cryptPassword('123'), email: 'alex.gajardo@alu.ucm.cl', first_name: 'Alex Nicolas', last_name: 'Gajardo Sanchez', address: '9 Ote. 30 sur Pje. 31 493 Villa Brisas Del Maule', phone: '+56936341033', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 7, id_user_status: 1, created_at: new Date()} });
-  await User.findOrCreate({ where: { username: '8.698.796-1' }, defaults: {password: await authentication.cryptPassword('123'), email: 'mjarur@ucm.cl', first_name: 'Mary Carmen', last_name: 'Jarur Muñoz', address: 'Chorrillos 1167', phone: '+56712203306', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 6, id_user_status: 1, created_at: new Date()} });
-  await User.findOrCreate({ where: { username: '7.817.164-2' }, defaults: {password: await authentication.cryptPassword('123'), email: 'haraya@ucm.cl', first_name: 'Hugo Antonio', last_name: 'Araya Carrasco', address: 'Vi Galilea 9 Pte 0 228', phone: '+56712633436', image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 5, id_user_status: 1, created_at: new Date()} });
-  await User.findOrCreate({ where: { username: '16.303.922-2' }, defaults: {password: await authentication.cryptPassword('123'), email: 'ccastrob@ucm.cl', first_name: 'Carlos Andres', last_name: 'Castro Bustamante', address: 'Mataquito 90 Licanten', phone: null, image: 'http://localhost:8080/attachments/avatarDefault.png', id_role: 5, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '20.349.272-3' }, defaults: {password: await authentication.cryptPassword('123'), email: 'matias.salas@alu.ucm.cl', first_name: 'Matias Nicolas', last_name: 'Salas Sepulveda', address: 'Santa María 660', phone: '+56930853894', image: 'http://localhost:3000/attachments/avatarDefault.png', id_role: 1, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '20.564.236-6' }, defaults: {password: await authentication.cryptPassword('123'), email: 'alex.gajardo@alu.ucm.cl', first_name: 'Alex Nicolas', last_name: 'Gajardo Sanchez', address: '9 Ote. 30 sur Pje. 31 493 Villa Brisas Del Maule', phone: '+56936341033', image: 'http://localhost:3000/attachments/avatarDefault.png', id_role: 7, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '8.698.796-1' }, defaults: {password: await authentication.cryptPassword('123'), email: 'mjarur@ucm.cl', first_name: 'Mary Carmen', last_name: 'Jarur Muñoz', address: 'Chorrillos 1167', phone: '+56712203306', image: 'http://localhost:3000/attachments/avatarDefault.png', id_role: 6, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '7.817.164-2' }, defaults: {password: await authentication.cryptPassword('123'), email: 'haraya@ucm.cl', first_name: 'Hugo Antonio', last_name: 'Araya Carrasco', address: 'Vi Galilea 9 Pte 0 228', phone: '+56712633436', image: 'http://localhost:3000/attachments/avatarDefault.png', id_role: 5, id_user_status: 1, created_at: new Date()} });
+  await User.findOrCreate({ where: { username: '16.303.922-2' }, defaults: {password: await authentication.cryptPassword('123'), email: 'ccastrob@ucm.cl', first_name: 'Carlos Andres', last_name: 'Castro Bustamante', address: 'Mataquito 90 Licanten', phone: null, image: 'http://localhost:3000/attachments/avatarDefault.png', id_role: 5, id_user_status: 1, created_at: new Date()} });
   await Headquarter.findOrCreate({ where: {name: 'ucm1'}, defaults: {label: 'Campus San Miguel', created_at: new Date()} });
   await Headquarter.findOrCreate({ where: {name: 'ucm2'}, defaults: {label: 'Campus Nuestra Señora del Carmen', created_at: new Date()} });
   await Headquarter.findOrCreate({ where: {name: 'ucm3'}, defaults: {label: 'Campus San Isidro', created_at: new Date()} });
@@ -223,122 +222,3 @@ async function initTable() {
   await QuotationStatus.findOrCreate({ where: {name: 'approved'}, defaults: {label: 'Aprobado', created_at: new Date()} });
   await QuotationStatus.findOrCreate({ where: {name: 'rejected'}, defaults: {label: 'Rechazado', created_at: new Date()} });
 }
-
-//20.564.236-6
-
-// HABLAR DE CARACTERISTICAS, MEDIA PAGINA APROXIMADAMENTE HABLAR DE LOS FRONTS, EXPLICAR DETALLES BENEFICIOS, -- DOCUMENTO
-
-// CONSIDERANDO LOS BENEFICIOS DE ANGULAR, (PORQUE USAMOS ANGULAR), SE ALINIAN A LAS NECESIDADES DE ESTE PROYECTO,  -- DOCUMENTO
-
-// HABLAR DE OTROS FRAMEWORKS DE FRONTS Y EL POQUUE OCUPAOS ANGULAR (HABLAR EL ORIGEN, BENEFCIOS Y CARACTERISTICAS) -- DOCUMENTO
-
-// BENEFICIOS EN FORMA DE VIÑETAS -- DOCUMENTO
-
-// OCUPAR GRAFICOS REFERENCIA, TOP EN BUSQUEDAS -- DOCUMENTO
-
-// DESARROLLO DE HABILIDADES PROFESIONALES, MERCADO LABORAR CHILENO ANGULAR, DECISIONES TECNICAS, -- DOCUMENTO
-
-// NODE.JS HABLAR DEL Y LUEGO DE EXPRESS EN BACKEND -- DOCUMENTO
-
-// CUADROS COMPARATIVOS, TENDECIA A NIVEL DE CHILE -- DOCUMENTO
-
-// SECCION DE CONTROL DE VERSIONES, HABLAR DE ORIGEN, EL PORQUE SIRVE EL CONTROL DE VERSION, HABLAR DE LOS DISTINTOS VERSIONES DE CONTROL DE VERSIONES -- DOCUMENTO
-
-// BACKEND HABLAR DE POSTMAN, HERRAMIENTAS PARA PROBAR EL BACKEND, -- DOCUMENTO
-
-// introduccion conceptos BASCISO ,ANTES DE CONTINUAS SE HACE NECESARIO LA DEFINICION DE ALGUNOS CONCEPTOS -- DOCUMENTO
-
-//  CAP 2, ABAJO DE INTRODUCCION , CONCEPTOS FUNDAMENTALES (VIÑETA) (REFERENCIA, DE DONDE SE SACO) -- DOCUMENTO
-
-// METODOLOGIA- HABLAR DE OTRAS METOLOGIAS, HABLAR DE PRO Y CONTRAS, HABLARA DE SCRUM, EL PORQUE SE ELIGIO ESA METOLOGIA -- DOCUMENTO
-
-
-
-
-// Vincuador con el medio por facultad 
-
-// VINCULADOR CON EL MEDIO PUEDE VER OTRAS SOLICITUDES DE OTRAS FACULTADES
-
-// ESTADO DE PROYECTO DEBEN SER MÁS DE 5 
-
-// LISTADO CON FILTRO DE PROYECTO -- CUMPLIDO
-
-// ADMINISTRADOR POR FACULTAD, ADMINISTRAR FACULTAD, ASIGNAR MIENMBROS, ETC. 
-
-// COORDINADOR DE VINCULACION DE LA FACULTAD - INGRID LOPEZ, FILTRO 1, DESIGNA LA VINCULACION POR CARRERA, ASIGNA LA SOLICITUD A LAS CARRERAS
-
-// COORDINADOR DE VICULACION DE CARRERAS - ASIGNA PROFESORES, APROBAR O RECHZAR UN PROYECTO
-
-// VISTA DE PROFESORES VER PROYECTOS DE SU CARRERA
-
-// ALMACENAMIENTO DE ARCHIVOS, USAR SERVICIO EXTERNO
-
-// ENCARGADO DE LA CARRERA VINCULACION Y PASA A COTIZACION
-
-// SOLICITUD, AÑADIR CAMPO DE CONTACTO
-
-// ENCARGADO DE VINCULACION ASIGNA
-
-// ALUMNO NO ENTRA AL SISTEMA -- CUMPLIDO
-
-// PROFESOR PUEDE VER LOS POYECTOS DE LA CARRERA QUE ESTA ASOCIADO 
-
-// ESTADO DE USUARIO (ACTIVO Y NO ACTIVO) LO PUEDE MODIFICAR EL ENCARGADO DE LA CARRERA -- CUMPLIDO
-
-// TODOS LOS PROFESOR PUEDEN VER LOS PROYECTOS
-
-// DIRECCION DEL SOLICITANTE (GEOLOCALIZACION A FUTURO)(A FUTURO) -- CUMPLIDO
-
-// CREAR CATEGORIA SI EL SOLICITANTE ES UN ORGANISMO O PERSONA
-
-// REGISTER AÑADIR EL TELEFONO -- CUMPLIDO
-
-// COTIZACION, LO QUE SE VA HACER Y CUANTO VA A COSTAR -- CUMPLIDO
-
-// COTIZACION PARA LEVANTAR COSTOS, -- CUMPLIDO
-
-// PROFESOR RESPONSABLE DE LA EJECUCION COTIZACIONES, PROFESOR RESPONSABLE DE LA EJECUCION OBLIGATORIO
-
-// COTIZACION AÑADIR ESTUDIANTE ENCARGO DE VINCULACION CON EL MEDIO
-
-// COTIZACION VA A TENER TODO LOS RECOPILADO DEL PROYECTO 
-
-// AÑADIR FECHA DE CIERRE AL CERRAR UN PROECTO, LO REALIZA VINCULADOR CON EL MEDIO
-
-// UN PROYECTO PUEDE ESTAR UN TIEMPO CONSIDERABLEMENTE LARGO ABIERTO
-
-
-
-
-// APU 1 UNIDAD QUITAR AMOUNT - CUMPLIDO
-
-// EN COTIZACION SE MODIFICA LA APU  - CUMPLIDO
-
-// CREAR TABLA COTIZACION -- CUMPLIDO 
-
-// SE PUEDE AÑADIR A LA CONTIZACION MAS DE UNA APU IGUAL - CUMPLIDO
-
-// PRECIO UNITARIO X LA CANTIDAD, PRECIO TOTAL Y PRECIO CON IVA Y SIN IVA -- CUMPLIDO
-
-// COTIZACION VER DETALLES - CUMPLIDO
-
-// MOSTRAR INFORMACION BASICA, APUS Y RESUMEN DE VALORRES (CON IVA Y SIN IVA) - CUMPLIDO
-
-// listado profesores sacar desde la pagina de ucm
-// Añadir animacion de transicion a los input cuando se va a editar un item
-
-
-//// 60 hojas maximo la tesis
-
-//AÑADIR SOLUCION PROPUESTA EN CAP 1
-// UNA SECCION DEBE TENER MEDIA HOJA
-
-// EN PROYECTO,EN ESPERA SE VA A COTIZACION Y EN LA COTIZACION SE VE CUANTO SALE, Y SI SE APRUEBA O NO EL PROYECTO, SE GUARDA - CUMPLIDO
-// LA COTIZACION Y QUEDA COMO EVIDENCIA, Y EL COORDINADOR - CUMPLIDO
-// AÑADIR FILTROS EN LAS ASIGNACIONES DE PROFESORES Y   - CUNPLIDO
-// validadores de usuarios y alumnos voluntarios activos o inactivos - CUMPLIDO
-
-//añadir en cotizacion dias de cotizacion (calcular emision y vencimiento) - CUMPLIDO
-
-// MEJORAR ESTADISTICAS GENERALES
-// MEJORAR INICIO

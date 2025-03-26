@@ -1,0 +1,252 @@
+<div class="container content">
+	<app-breadcrumb [listPages]="pages" [titlePage]="title"></app-breadcrumb>
+	<h1 class="mb-3">{{title}}</h1>
+    <div class="row mb-2">
+      <ng-template [ngIf]="haveRole(['admin', 'externalrelationscoordinator', 'dean']) && browserUser.id_role.id < user.id_role.id">
+        <ng-template [ngIf]="enableEditItem" [ngIfElse]="elseBlockEditItem">
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-primary" (click)="ngOnEditItemSave()"><i class="bi bi-check-lg"></i>Guardar cambios</button>
+            <button type="button" class="btn btn-secondary" (click)="ngOnEditItemCancel()"><i class="bi bi-x-lg"></i>Deshacer cambios</button>
+          </div>
+        </ng-template>
+        <ng-template #elseBlockEditItem>
+          <div class="d-flex flex-row-reverse gap-2">
+            <button type="button" class="btn btn-edit-item" (click)="ngOnEditItem()"><i class="bi bi-pencil-square"></i>Editar</button>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="card profile-basic-info me-2 p-3 shadow">
+            <div class="text-center mt-2 mb-3">
+              <img class="profile-image rounded-circle" src="{{user.image}}" alt="Student Photo">
+              <h2 class="user-fullname">{{user.first_name}} {{user.last_name}}</h2>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                RUN:
+              </div>
+              <div class="col-8">
+                {{user.username}}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4">
+                Rol:
+              </div>
+              <div class="col-8">
+                {{user.id_role.label}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-8">
+          <div class="row mb-2">
+            <div class="card profile-general-info ms-2 shadow">
+            <div class="card-header"><i class="bi bi-stack"></i>Información General</div>
+            <div class="card-body">
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  RUN:
+                </div>
+                <div class="col-6 ps-2">
+                  {{user.username}}
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Contraseña:
+                </div>
+                <div *ngIf="enableEditItem; else elseBlockOnUserEnableEditPassword" class="col-6 ps-2">
+                  <div class="d-flex gap-2 align-items-center">
+                    <button type="button" class="btn btn-primary w-100" (click)="ngOnCreateModalChangePassword()">
+                      <i class="bi bi-key-fill"></i>Cambiar contraseña
+                    </button>
+                  </div>
+                </div>
+                <ng-template #elseBlockOnUserEnableEditPassword>
+                  <div class="col-6 ps-2">
+                    ************
+                  </div>
+                </ng-template>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Nombres:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemFirstName" #inputItemEditFirstName type="text" class="form-control shadow-none" required autocomplete="off">
+                  <div *ngIf="firstNameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{firstNameError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemFirstName>
+                    {{user.first_name}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Apellidos:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemLastName" #inputItemEditLastName type="text" class="form-control shadow-none" required autocomplete="off">
+                  <div *ngIf="lastNameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{lastNameError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemLastName>
+                    {{user.last_name}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Correo electronico:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemEmail" #inputItemEditEmail type="text" class="form-control shadow-none" required autocomplete="off">
+                  <div *ngIf="emailError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{emailError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemEmail>
+                    {{user.email}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Dirección:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemAddres" #inputItemEditAddress type="text" class="form-control shadow-none" required autocomplete="off">
+                  <div *ngIf="addressError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{addressError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemAddres>
+                    {{checkField(user.address)}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Teléfono:
+                </div>
+                <div class="col-6 ps-2">
+                  <input *ngIf="enableEditItem; else elseBlockEditItemPhone" #inputItemEditPhone type="text" class="form-control shadow-none" required autocomplete="off" (input)="ngOnInputValidatePhone()">
+                  <div *ngIf="phoneError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{phoneError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemPhone>
+                    {{checkField(user.phone)}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Rol:
+                </div>
+                <div class="col-6 ps-2">
+                  <select *ngIf="enableEditItem && haveRole(['admin', 'externalrelationscoordinator', 'dean']); else elseBlockEditItemRole" #selectItemEditRole class="form-select form-select">
+                    <option *ngFor="let item of roles;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <div *ngIf="roleError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{roleError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemRole>
+                    {{user.id_role.label}}
+                  </ng-template>
+                </div>
+              </div>
+              <div *ngIf="isOnProfessor === true" class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Facultad:
+                </div>
+                <div class="col-6 ps-2">
+                  <select *ngIf="enableEditItem && haveRole(['admin', 'externalrelationscoordinator', 'dean']); else elseBlockEditItemFaculty" #selectItemEditFaculty class="form-select form-select">
+                    <option *ngFor="let item of faculties;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <div *ngIf="facultyError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{facultyError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemFaculty>
+                    {{userFaculty ? userFaculty.id_faculty.label : ''}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Estado:
+                </div>
+                <div class="col-6 ps-2">
+                  <select *ngIf="enableEditItem && haveRole(['admin', 'externalrelationscoordinator', 'dean']) && browserUser.id !== user.id; else elseBlockEditItemUserStatus" #selectItemEditUserStatus class="form-select form-select">
+                    <option *ngFor="let item of userStatus;" value="{{item['name']}}">{{item['label']}}</option>
+                  </select>
+                  <div *ngIf="userStatusError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{userStatusError}}</p>
+                    </div>
+                  </div>
+                  <ng-template #elseBlockEditItemUserStatus>
+                    {{user.id_user_status.label}}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="row align-items-center mb-2">
+                <div class="col-6 pe-2">
+                  Creado en:
+                </div>
+                <div class="col-6 ps-2">
+                  {{UTCToChileTime(user.created_at, false)}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<div #modalChangePassword class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar contraseña</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Nueva contraseña:</p>
+          </div>
+          <div class="col-6">
+            <input #inputPassword type="password" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresar contraseña">
+            <div *ngIf="passwordError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{passwordError}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnModelChangePassword()">Cambiar contraseña</button>
+      </div>
+    </div>
+  </div>
+</div>

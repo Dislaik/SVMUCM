@@ -4,12 +4,12 @@ const QuotationAPUResourceController = require('../controller/quotationAPUResour
 const auth = require('../security/authentication');
 
 // endpoints del modelo ProjectVolunteerStudent
-router.get('/quotation-apu-resource', auth.authenticateToken, QuotationAPUResourceController.getAll);
-router.get('/quotation-apu-resource/by-id/:id', auth.authenticateToken, QuotationAPUResourceController.getById);
-router.get('/quotation-apu-resource/by-quotation-id/:id', auth.authenticateToken, QuotationAPUResourceController.getByQuotationId);
-router.get('/quotation-apu-resource/by-apu-id/:id', auth.authenticateToken, QuotationAPUResourceController.getByAPUId);
-router.get('/quotation-apu-resource/by-resource-id/:id', auth.authenticateToken, QuotationAPUResourceController.getByResourceId);
-router.post('/quotation-apu-resource', auth.authenticateToken, QuotationAPUResourceController.create);
-router.delete('/quotation-apu-resource/by-id/:id', auth.authenticateToken, QuotationAPUResourceController.delete);
+router.get('/quotation-apu-resource', auth.authenticateToken(['ALL']), QuotationAPUResourceController.getAll);
+router.get('/quotation-apu-resource/by-id/:id', auth.authenticateToken(['ALL']), QuotationAPUResourceController.getById);
+router.get('/quotation-apu-resource/by-quotation-id/:id', auth.authenticateToken(['ALL']), QuotationAPUResourceController.getByQuotationId);
+router.get('/quotation-apu-resource/by-apu-id/:id', auth.authenticateToken(['ALL']), QuotationAPUResourceController.getByAPUId);
+router.get('/quotation-apu-resource/by-resource-id/:id', auth.authenticateToken(['ALL']), QuotationAPUResourceController.getByResourceId);
+router.post('/quotation-apu-resource', auth.authenticateToken(['ALL']), QuotationAPUResourceController.create);
+router.delete('/quotation-apu-resource/by-id/:id', auth.authenticateToken(['ALL']), QuotationAPUResourceController.delete);
 
 module.exports = router;

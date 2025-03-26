@@ -1,106 +1,52 @@
-<nav *ngIf="showComponent" class="navbar navbar-expand-lg navbar-light bg-light shadow fixed-top">
+
   <div class="container">
-    <a *ngIf="!isOnPanel; else elseBlockOnPanelImage" class="navbar-brand d-flex align-items-center" [routerLink]="['/']">
+    <div class="navbar-logo">
       <img src="../../../assets/img/logoucm.png" alt="Logo" width="180" class="d-inline-block align-text-top">
-    </a>
-    <ng-template #elseBlockOnPanelImage>
-      <a class="navbar-brand d-flex align-items-center" [routerLink]="['/panel']">
-        <img src="../../../assets/img/logoucm.png" alt="Logo" width="180" class="d-inline-block align-text-top">
-      </a>
-    </ng-template>
+    </div>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse d-flex justify-content-start" id="navbarNav">
-      <ul *ngIf="!isOnPanel; else elseBlockOnPanel" class="navbar-nav">
+    <ng-template [ngIf]="!panelView" [ngIfElse]="elseBlockViewPanel">
+      <ul class="navbar-menu">
         <li class="nav-item">
-          <button #navHome type="button" [ngClass]="currentPage == '/' ? 'nav-link active' : 'nav-link' ">Inicio</button>
+          <a #home class="nav-link" [routerLink]="['/']" (click)="ngOnChangeNavbarActive('home')">Inicio</a>
         </li>
-        <!-- <li class="nav-item">
-          <button type="button" id="nav-courses" [ngClass]="currentPage == '/course' ? 'nav-link active' : 'nav-link' ">Proyectos</button>
-        </li> -->
         <li class="nav-item">
-          <button #navRequestProject type="button" [ngClass]="currentPage == '/request-project' ? 'nav-link active' : 'nav-link' ">Crear solicitud de proyecto</button>
+          <a #requestProject class="nav-link" [routerLink]="['/request-project']" (click)="ngOnChangeNavbarActive('request-project')">Solicitar proyecto</a>
         </li>
-        <li *ngIf="isLogged" class="nav-item">
-          <button #navProject type="button" [ngClass]="currentPage == '/project' ? 'nav-link active' : 'nav-link' ">Mis proyectos</button>
+        <li class="nav-item">
+          <a #projects class="nav-link act" [routerLink]="['/project']" (click)="ngOnChangeNavbarActive('project')">Mis proyectos</a>
         </li>
       </ul>
-      <ng-template #elseBlockOnPanel>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <button type="button" [ngClass]="currentPage == '/panel' ? 'nav-link active' : 'nav-link' " [routerLink]="['/panel']">Panel de administración</button>
-          </li>
+    </ng-template>
+    <ng-template #elseBlockViewPanel>
+      <ul class="navbar-menu">
+        <li class="nav-item">
+          <a #panel class="nav-link" [routerLink]="['/panel']" (click)="ngOnChangeNavbarActive('panel')">Panel de administración</a>
+        </li>
+      </ul>
+    </ng-template>
 
-          <div class="nav-item dropdown" id="dropdown-gestionar">
-            <button type="button" [ngClass]="isOnManage ? 'nav-link dropdown-toggle active' : 'nav-link dropdown-toggle'">
-              Gestionar
+    <div class="navbar-profile">
+      <ng-template [ngIf]="isLogged" [ngIfElse]="elseBlockViewLoggin">
+          <div class="user-options dropdown">
+            <button class="btn user-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="user-image-container">
+                <img src={{image}} alt="User Image" class="user-image">
+              </div>
+              <div class="user-username">
+                <span>{{name}}</span>
+              </div>
             </button>
-            <div class="dropdown-menu-panel-manage flex-column">
-              <button type="button" [ngClass]="currentPage == '/panel/user' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/user']">Usuarios</button>
-              <button type="button" [ngClass]="currentPage == '/panel/role' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/role']">Roles</button>
-              <button type="button" [ngClass]="currentPage == '/panel/student-volunteer' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/volunteer-student']">Alumnos Voluntarios</button>
-              <button type="button" [ngClass]="currentPage == '/panel/headquarter' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/headquarter']">Sedes</button>
-              <button type="button" [ngClass]="currentPage == '/panel/faculty' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/faculty']">Facultades</button>
-              <button type="button" [ngClass]="currentPage == '/panel/career' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/career']">Carreras</button>
-              <button type="button" [ngClass]="currentPage == '/panel/project' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/project']">Proyectos</button>
-              <button type="button" [ngClass]="currentPage == '/panel/apu' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/apu']">APU</button>
-              <button type="button" [ngClass]="currentPage == '/panel/resource' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/resource']">Recursos</button>
-              <button type="button" [ngClass]="currentPage == '/panel/quotation' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/quotation']">Cotizaciones</button>
-              <button type="button" [ngClass]="currentPage == '/panel/region' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/region']">Regiones</button>
-              <button type="button" [ngClass]="currentPage == '/panel/city' ? 'btn btn-panel-manage-dropdown text-start active' : 'btn btn-panel-manage-dropdown text-start' " [routerLink]="['/panel/city']">Ciudades</button>
-            </div>
+            <ul class="user-options-menu pop-in dropdown-menu">
+              <li><a class="user-option-item dropdown-item d-flex justify-content-between" [routerLink]="['/profile']">Perfil<i class="bi bi-pencil-square"></i></a></li>
+              <li><a class="user-option-item dropdown-item d-flex justify-content-between leave" (click)="ngOnClickLogout()">Salir<i class="bi bi-box-arrow-right"></i></a></li>
+            </ul>
           </div>
-
-          <!-- <li class="nav-item">
-            <button type="button" id="nav-manage-project" [ngClass]="currentPage == '/logs' ? 'nav-link active' : 'nav-link' ">Registros</button>
-          </li> -->
-        </ul>
       </ng-template>
-
-      <div class="ms-auto d-flex">
-        <div *ngIf="isLogged; else elseBlockLogged">
-          <div class="nav-item dropdown">
-            <button class="btn dropdown-toggle btn-user d-flex align-items-center" type="button" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              <img *ngIf="user.image" src={{user.image}} class="rounded-circle me-2" height="30"/>
-              {{user.first_name}} {{user.last_name}}
-            </button>
-            <div class="dropdown-menu flex-column" aria-labelledby="navbarDropdownMenuLink">
-              <ng-template [ngIf]="isOnPanel" [ngIfElse]="elseBlockNotOnPanel">
-                <button *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/']"><i class="bi bi-house"></i>Inicio</button>
-              </ng-template>
-              <ng-template #elseBlockNotOnPanel>
-                <button *ngIf="user.id_role.name !== 'community'" type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/panel']"><i class="bi bi-pencil-fill"></i>Panel de administración</button>
-              </ng-template>
-              <button type="button" class="btn btn-user-dropdown text-start" [routerLink]="['/profile']"><i class="bi bi-person-lines-fill"></i>Mi perfil</button>
-              <button type="button" class="btn btn-user-dropdown text-start" (click)="ngOnLoggout()"><i class="bi bi-box-arrow-in-right"></i>Cerrar sesión</button>
-            </div>
-          </div>
+      <ng-template #elseBlockViewLoggin>
+        <div class="d-flex flex-row-reverse gap-2">
+          <button class="btn btn-primary" type="button" [routerLink]="['/register']">Registrarse</button>
+          <button class="btn btn-outline-primary me-2" type="button" [routerLink]="['/login']">Ingresar</button>
         </div>
-        <ng-template #elseBlockLogged>
-          <button class="btn btn-outline-primary me-2" type="button" (click)="ngOnLogin()">Ingresar</button>
-          <button class="btn btn-primary" type="button" (click)="ngOnRegister()">Registrarse</button>
-        </ng-template>
-      </div>
+      </ng-template>
     </div>
-  </div>
-</nav>
-
-<div class="modal fade" #modalRequestProjectGuest tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-      <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Inicia sesión para solicitar un curso</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          Debes iniciar sesión para poder crear una solicitud. Si no tienes una cuenta creada, <a data-bs-dismiss="modal" [routerLink]="['/register']">registrate aquí</a>
-      </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-      </div>
-  </div>
 </div>

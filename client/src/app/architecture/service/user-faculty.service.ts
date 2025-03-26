@@ -6,7 +6,7 @@ import { UserFaculty } from '../model/user-faculty';
   providedIn: 'root'
 })
 export class UserFacultyService {
-  private URL = "http://localhost:8080/api/v1/user-faculty";
+  private URL = "http://localhost:3000/api/v1/user-faculty";
 
   constructor(private httpClient: HttpClient) { }
 

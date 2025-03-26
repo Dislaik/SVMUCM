@@ -6,7 +6,7 @@ import { RequestCourse } from '../model/request-course';
   providedIn: 'root'
 })
 export class RequestCourseService {
-  private URL = "http://localhost:8080/api/v1/request-course";
+  private URL = "http://localhost:3000/api/v1/request-course";
 
   constructor(private httpClient: HttpClient) { }
 

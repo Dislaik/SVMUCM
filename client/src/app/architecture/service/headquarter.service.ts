@@ -6,7 +6,7 @@ import { Headquarter } from '../model/headquarter';
   providedIn: 'root'
 })
 export class HeadquarterService {
-  private URL = "http://localhost:8080/api/v1/headquarter";
+  private URL = "http://localhost:3000/api/v1/headquarter";
 
   constructor(private httpClient: HttpClient) { }
 

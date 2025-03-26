@@ -21,7 +21,8 @@ class UserRepository {
   }
 
   async create(data) {
-    return await User.create(data);
+    const user = await User.create(data);
+    return await User.findByPk(user.id, { include: [Role, UserStatus] });
   }
 
   async update(id, data) {

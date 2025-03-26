@@ -6,7 +6,7 @@ import { APU } from '../model/apu';
   providedIn: 'root'
 })
 export class APUService {
-  private URL = "http://localhost:8080/api/v1/apu";
+  private URL = "http://localhost:3000/api/v1/apu";
 
   constructor(private httpClient: HttpClient) { }
 

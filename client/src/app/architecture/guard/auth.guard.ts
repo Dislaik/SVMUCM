@@ -1,18 +1,18 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { Utils } from '../../utils';
-import { AuthService } from '../service/auth.service';
+import { Utils } from '../../app.utils';
 
-export const AuthGuard: CanActivateFn = async (route, state) => {
+export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
-  const auth = inject(AuthService);
 
-  const isAuthenticated = !!Utils.getStorage('keyToken'); // Ejemplo: verificar si hay un token
+  const isAuthenticated = !!Utils.getStorage('keyToken');
 
   if (isAuthenticated) {
-    router.navigate(['/'])
-    return false;
+    
+    return true;
   }
 
-  return true;
+  router.navigate(['/'])
+
+  return false;
 };

@@ -6,7 +6,7 @@ import { ProjectUser } from '../model/project-user';
   providedIn: 'root'
 })
 export class ProjectUserService {
-  private URL = "http://localhost:8080/api/v1/project-user";
+  private URL = "http://localhost:3000/api/v1/project-user";
 
   constructor(private httpClient: HttpClient) { }
 

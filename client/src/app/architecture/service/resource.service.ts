@@ -6,7 +6,7 @@ import { Resource } from '../model/resource';
   providedIn: 'root'
 })
 export class ResourceService {
-  private URL = "http://localhost:8080/api/v1/resource";
+  private URL = "http://localhost:3000/api/v1/resource";
 
   constructor(private httpClient: HttpClient) { }
 

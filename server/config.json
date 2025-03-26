@@ -1,11 +1,12 @@
 {
   "username": "root",
-  "password": "2103",
+  "password": "root",
   "database": "svmucm",
   "token_secret": "c23bcf05e8343fd7f7bddfb51c3df4f8bec04bc8d9e15a2ff72486f7803f11dc0894bf927b74fc9d1edaa1438f9a8b3d546758ec9fc70982b4aa654d8de0f854",
   "databaseOptions": {
-    "host": "localhost",
+    "host": "mysql",
     "dialect": "mysql",
+    "port": 3306,
     "define": {
       "freezeTableName": true,
       "underscored": true,
@@ -14,7 +15,7 @@
   },
   "nodemailerOptions": {
     "service": "gmail",
-    "user": "datdislaik@gmail.com",
-    "pass": "Deba2103**--"
+    "user": "",
+    "pass": ""
   }
 }

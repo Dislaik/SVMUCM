@@ -4,12 +4,12 @@ const VolunteerStudentController = require('../controller/volunteerStudentContro
 const auth = require('../security/authentication');
 
 // endpoints del modelo VolunteerStudent
-router.get('/volunteer-student', auth.authenticateToken, VolunteerStudentController.getAll);
-router.get('/volunteer-student/by-id/:id', auth.authenticateToken, VolunteerStudentController.getById);
-router.get('/volunteer-student/by-run/:run', auth.authenticateToken, VolunteerStudentController.getByRun);
-router.get('/volunteer-student/by-email/:email', auth.authenticateToken, VolunteerStudentController.getByEmail);
-router.post('/volunteer-student', auth.authenticateToken, VolunteerStudentController.create);
-router.put('/volunteer-student/by-id/:id', auth.authenticateToken, VolunteerStudentController.update);
-router.delete('/volunteer-student/by-id/:id', auth.authenticateToken, VolunteerStudentController.delete);
+router.get('/volunteer-student', auth.authenticateToken(['ALL']), VolunteerStudentController.getAll);
+router.get('/volunteer-student/by-id/:id', auth.authenticateToken(['ALL']), VolunteerStudentController.getById);
+router.get('/volunteer-student/by-run/:run', auth.authenticateToken(['ALL']), VolunteerStudentController.getByRun);
+router.get('/volunteer-student/by-email/:email', auth.authenticateToken(['ALL']), VolunteerStudentController.getByEmail);
+router.post('/volunteer-student', auth.authenticateToken(['ALL']), VolunteerStudentController.create);
+router.put('/volunteer-student/by-id/:id', auth.authenticateToken(['ALL']), VolunteerStudentController.update);
+router.delete('/volunteer-student/by-id/:id', auth.authenticateToken(['ALL']), VolunteerStudentController.delete);
 
 module.exports = router;

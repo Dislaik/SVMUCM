@@ -6,7 +6,7 @@ import { City } from '../model/city';
   providedIn: 'root'
 })
 export class CityService {
-  private URL = "http://localhost:8080/api/v1/city";
+  private URL = "http://localhost:3000/api/v1/city";
 
   constructor(private httpClient: HttpClient) { }
 

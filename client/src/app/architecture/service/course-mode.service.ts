@@ -6,7 +6,7 @@ import { CourseMode } from '../model/course-mode';
   providedIn: 'root'
 })
 export class CourseModeService {
-  private URL = "http://localhost:8080/api/v1/course-mode";
+  private URL = "http://localhost:3000/api/v1/course-mode";
 
   constructor(private httpClient: HttpClient) { }
 

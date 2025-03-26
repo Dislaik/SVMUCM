@@ -52,7 +52,7 @@ class UserFacultyService {
     if (!p1) {
       return null;
     }
-    console.log(p1)
+
     const p2 = p1.toJSON();
 
     p2.id_user = p2.user;

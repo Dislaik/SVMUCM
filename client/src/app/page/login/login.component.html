@@ -1,0 +1,112 @@
+<div class="background">
+  <div class="container-to-center">
+    <div class="card-login pop-in shadow">
+      <div class="row pb-2 pt-4 ps-5 pe-5">
+        <div class="col-7 pe-2">
+          <div class="row-welcome">
+            <h3>Bienvenido de vuelta!</h3>
+            <p>Estamos felices de que hayas vuelto</p>
+          </div>
+          <div class="mb-2">
+            <div class="label-form-login">
+              <label class="form-label me-1">RUN</label>
+            </div>
+            <input #inputUsername type="text" class="form-control shadow-none"required autocomplete="off" placeholder="Ingresa tu RUN" (input)="ngOnFormatUsername()">
+            <div *ngIf="usernameError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{usernameError}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="label-form-login">
+              <label class="form-label me-1">CONTRASEÑA</label>
+            </div>
+            <input #inputPassword type="password" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu contraseña">
+            <div *ngIf="passwordError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{passwordError}}</p>
+              </div>
+            </div>
+            <a (click)="ngOnCreateModalRecoveryPassword()" class="recovery-link">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button class="btn btn-login mb-2" (click)="ngOnLoginSubmit()">Ingresar</button>
+          <span>¿Necesitas una cuenta? </span> <a [routerLink]="['/register']">Registrate</a>
+        </div>
+        <div class="col-5 d-flex justify-content-center align-items-center">
+          <img src="../../assets/img/escudoucm.png" width="200" height="200">
+        </div>
+      </div>
+      <div class="bottom-card d-flex flex-row bd-highlight">
+        <a class="back-card" [routerLink]="['/']"><i class="bi bi-arrow-left"></i> Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div #modalRecoveryPassword class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Recuperar contraseña</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-2">Ingresa tu correo electrónico y recibirás un correo con una nueva contraseña para ingresar.</p>
+        <div class="row mb-2">
+          <div class="label-form col-6">
+            <p class="mt-1">Correo electrónico:</p>
+          </div>
+          <div class="col-6">
+            <input #inputEmail type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresar tu correo electrónico">
+            <div *ngIf="emailError !== ''">
+              <div class="message-error-container d-flex align-items-center">
+                <p>{{emailError}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnModelRecoveryPassword()">Recuperar contraseña</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div #modalRecoveryPasswordConfirm class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Esperando confirmación</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-2">Se ha enviado un correo con un codigo a su correo electronico, introduzcalo aquí para verificar su identidad.</p>
+        <div class="row mb-2">
+          <div class="d-flex justify-content-center gap-2">
+            <input #inputCode1 type="text" class="form-control shadow-none verify-code text-center" required autocomplete="off" maxlength="1" (input)="ngOnOnlyNumbers($event)">
+            <input #inputCode2 type="text" class="form-control shadow-none verify-code text-center" required autocomplete="off" maxlength="1" (input)="ngOnOnlyNumbers($event)">
+            <input #inputCode3 type="text" class="form-control shadow-none verify-code text-center" required autocomplete="off" maxlength="1" (input)="ngOnOnlyNumbers($event)">
+            <input #inputCode4 type="text" class="form-control shadow-none verify-code text-center" required autocomplete="off" maxlength="1" (input)="ngOnOnlyNumbers($event)">
+            <input #inputCode5 type="text" class="form-control shadow-none verify-code text-center" required autocomplete="off" maxlength="1" (input)="ngOnOnlyNumbers($event)">
+          </div>
+        </div>
+        <div class="d-flex justify-content-center mb-2">
+          <b #timestampText></b>
+        </div>
+        <div *ngIf="codeError !== ''">
+          <div class="message-error-container d-flex align-items-center justify-content-center">
+            <p>{{codeError}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="ngOnModelRecoveryPasswordConfirm()">Restablecer contraseña</button>
+      </div>
+    </div>
+  </div>
+</div>

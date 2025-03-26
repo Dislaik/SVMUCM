@@ -6,7 +6,7 @@ import { Register } from '../dto/register';
   providedIn: 'root'
 })
 export class AuthService {
-  private URL = "http://localhost:8080/api/v1/auth";
+  private URL = "http://localhost:3000/api/v1/auth";
 
   constructor(private httpClient: HttpClient) { }
 

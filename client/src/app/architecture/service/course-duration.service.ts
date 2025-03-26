@@ -6,7 +6,7 @@ import { CourseDuration } from '../model/course-duration';
   providedIn: 'root'
 })
 export class CourseDurationService {
-  private URL = "http://localhost:8080/api/v1/course-duration";
+  private URL = "http://localhost:3000/api/v1/course-duration";
 
   constructor(private httpClient: HttpClient) { }
 

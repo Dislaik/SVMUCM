@@ -1,0 +1,32 @@
+.main {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+  
+.navbar {
+  --bs-navbar-padding-y: 0px;
+  background-color: #f1f1f1;
+  position: fixed !important;
+  height: 80px;
+  width: 100%;
+  top: 0 !important;
+  z-index: 10;
+  justify-content: center !important;
+  display: flex !important;
+  align-items: center !important;
+}
+  
+.base {
+  flex: 1 !important;
+  position: relative;
+  margin-top: 80px;
+}
+
+footer {
+  background-color: #272727;
+  color: #f1f1f1;
+  text-align: left;
+  padding-top: 20px;
+  z-index: 9;
+}

@@ -6,7 +6,7 @@ import { Region } from '../model/region';
   providedIn: 'root'
 })
 export class RegionService {
-  private URL = "http://localhost:8080/api/v1/region";
+  private URL = "http://localhost:3000/api/v1/region";
 
   constructor(private httpClient: HttpClient) { }
 

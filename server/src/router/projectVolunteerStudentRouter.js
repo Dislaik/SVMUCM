@@ -4,11 +4,11 @@ const ProjectVolunteerStudentController = require('../controller/projectVoluntee
 const auth = require('../security/authentication');
 
 // endpoints del modelo ProjectVolunteerStudent
-router.get('/project-volunteer-student', auth.authenticateToken, ProjectVolunteerStudentController.getAll);
-router.get('/project-volunteer-student/by-id/:id', auth.authenticateToken, ProjectVolunteerStudentController.getById);
-router.get('/project-volunteer-student/by-project-id/:id', auth.authenticateToken, ProjectVolunteerStudentController.getByProjectId);
-router.get('/project-volunteer-student/by-volunteer-student-id/:id', auth.authenticateToken, ProjectVolunteerStudentController.getByVolunteerStudentId);
-router.post('/project-volunteer-student', auth.authenticateToken, ProjectVolunteerStudentController.create);
-router.delete('/project-volunteer-student/by-id/:id', auth.authenticateToken, ProjectVolunteerStudentController.delete);
+router.get('/project-volunteer-student', auth.authenticateToken(['ALL']), ProjectVolunteerStudentController.getAll);
+router.get('/project-volunteer-student/by-id/:id', auth.authenticateToken(['ALL']), ProjectVolunteerStudentController.getById);
+router.get('/project-volunteer-student/by-project-id/:id', auth.authenticateToken(['ALL']), ProjectVolunteerStudentController.getByProjectId);
+router.get('/project-volunteer-student/by-volunteer-student-id/:id', auth.authenticateToken(['ALL']), ProjectVolunteerStudentController.getByVolunteerStudentId);
+router.post('/project-volunteer-student', auth.authenticateToken(['ALL']), ProjectVolunteerStudentController.create);
+router.delete('/project-volunteer-student/by-id/:id', auth.authenticateToken(['ALL']), ProjectVolunteerStudentController.delete);
 
 module.exports = router;

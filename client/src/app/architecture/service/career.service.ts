@@ -6,7 +6,7 @@ import { Career } from '../model/career';
   providedIn: 'root'
 })
 export class CareerService {
-  private URL = "http://localhost:8080/api/v1/career";
+  private URL = "http://localhost:3000/api/v1/career";
 
   constructor(private httpClient: HttpClient) { }
 

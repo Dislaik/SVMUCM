@@ -29,16 +29,16 @@ class AuthController {
           last_name: lastName,
           address: address,
           phone: phone,
-          image: 'http://localhost:8080/attachments/avatarDefault.png',
+          image: 'http://localhost:3000/attachments/avatarDefault.png',
           id_role: 7,
           id_user_status: 1,
           created_at: new Date()
         }
 
         const p1 = await userService.create(object)
-        
+
         if (p1) {
-          const keyToken = auth.generateToken(username);
+          const keyToken = auth.generateToken(p1.username, p1.id_role, p1.first_name, p1.last_name, p1.image);
 
           return response.status(200).json({ ok: true, message: keyToken});
         } else {
@@ -67,7 +67,7 @@ class AuthController {
         const p1 = await userService.getByUsername(username);
 
         if (await auth.comparePassword(password, p1.password)) {
-          const keyToken = auth.generateToken(username);
+          const keyToken = auth.generateToken(p1.username, p1.id_role, p1.first_name, p1.last_name, p1.image);
 
           if (p1.id_user_status.name === 'inactive') {
             error.username = "La cuenta del usuario no esta activa, contacta con un administrador.";
@@ -81,9 +81,9 @@ class AuthController {
           
           return response.status(400).json({ ok: false, error: error});
         }
-      } else {
-        return response.status(400).json({ ok: false, error: error});
       }
+
+      return response.status(400).json({ ok: false, error: error});
     } catch (error) {
       return response.status(500).json({ ok: false, error: error});
     }
@@ -91,9 +91,17 @@ class AuthController {
 
   // Metodo para verificar una sesion de User
   async verify(request, response) {
-    const result = await auth.verify(request, response)
-  
-    return response.status(200).json(result);
+    try {
+      const verify = await auth.verify(request, response);
+
+      if (verify) {        
+        return response.status(200).json({ ok: true, message: true});
+      }
+
+      return response.status(200).json({ ok: true, message: false});
+    } catch(error) {
+      return response.status(500).json({ ok: false, error: error});
+    }
   }
 }
 

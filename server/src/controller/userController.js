@@ -87,7 +87,7 @@ class UserController {
           last_name: body.last_name,
           address: body.address,
           phone: body.phone,
-          image: 'http://localhost:8080/attachments/avatarDefault.png',
+          image: 'http://localhost:3000/attachments/avatarDefault.png',
           id_role: body.id_role.id,
           id_user_status: body.id_user_status.id,
           created_at: body.created_at
@@ -136,7 +136,7 @@ class UserController {
           last_name: body.last_name,
           address: body.address,
           phone: body.phone,
-          image: 'http://localhost:8080/attachments/avatarDefault.png',
+          image: 'http://localhost:3000/attachments/avatarDefault.png',
           id_role: body.id_role.id,
           id_user_status: body.id_user_status.id,
           created_at: body.created_at

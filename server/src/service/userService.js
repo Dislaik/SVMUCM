@@ -75,7 +75,21 @@ class UserService {
   }
 
   async create(data) {
-    return await UserRepository.create(data);
+    const p1 = await UserRepository.create(data)
+
+    if (!p1) {
+      return null;
+    }
+
+    const p2 = p1.toJSON();
+
+    p2.id_role = p2.role;
+    p2.id_user_status = p2.user_status;
+
+    delete p2.role;
+    delete p2.user_status;
+
+    return p2;
   }
 
   async update(id, data) {

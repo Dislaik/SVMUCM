@@ -6,7 +6,7 @@ import { Quotation } from '../model/quotation';
   providedIn: 'root'
 })
 export class QuotationService {
-  private URL = "http://localhost:8080/api/v1/quotation";
+  private URL = "http://localhost:3000/api/v1/quotation";
 
   constructor(private httpClient: HttpClient) { }
 

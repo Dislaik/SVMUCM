@@ -1,0 +1,141 @@
+<div class="background"></div>
+<div class="container-to-center">
+  <div class="card-register pop-in shadow">
+    <div class="row pb-2 pt-4 ps-5 pe-5">
+      <div class="col">
+        <div class="row-welcome">
+          <h3>Crear una cuenta</h3>
+        </div>
+            <div class="mb-2">
+              <div class="label-form-register">
+                <label class="form-label me-1">RUN</label>
+                <i class="bi bi-question-circle tooltip-info">
+                  <span class="tooltiptext">Debes ingresar tu RUN</span>
+                </i>
+              </div>
+              <input #inputUsername type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu RUN" (input)="ngOnFormatUsername()">
+              <div *ngIf="usernameError !== ''">
+                <div class="message-error-container d-flex align-items-center">
+                  <p>{{usernameError}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <div class="me-2 mb-2">
+                  <div class="label-form-register">
+                    <label class="form-label me-1">NOMBRES</label>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Debes ingresar tus nombres</span>
+                    </i>
+                  </div>
+                  <input #inputFirstName type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tus nombres">
+                  <div *ngIf="firstNameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{firstNameError}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="ms-2 mb-2">
+                  <div class="label-form-register">
+                    <label class="form-label me-1">APELLIDOS</label>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Debes ingresar tus apellidos</span>
+                    </i>
+                  </div>
+                  <input #inputLastName type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tus apellidos">
+                  <div *ngIf="lastNameError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{lastNameError}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <div class="me-2 mb-2">
+                  <div class="label-form-register">
+                    <label class="form-label me-1">DIRECCIÓN</label>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Debes ingresar tu dirección de vivienda</span>
+                    </i>
+                  </div>
+                  <input #inputAddress type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu dirección">
+                  <div *ngIf="addressError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{addressError}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="ms-2 mb-2">
+                  <div class="label-form-register">
+                    <label class="form-label me-1">TELÉFONO</label>
+                    <i class="bi bi-question-circle tooltip-info">
+                      <span class="tooltiptext">Debes ingresar tu numero de teléfono</span>
+                    </i>
+                  </div>
+                  <input #inputPhone type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu número" (input)="ngOnInputValidatePhone()">
+                  <div *ngIf="phoneError !== ''">
+                    <div class="message-error-container d-flex align-items-center">
+                      <p>{{phoneError}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <div class="label-form-register">
+                <label class="form-label me-1">CORREO ELECTRONICO</label>
+                <i class="bi bi-question-circle tooltip-info">
+                  <span class="tooltiptext">Debes ingresar tu correo electronico</span>
+                </i>
+              </div>
+              <input #inputEmail type="text" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu correo electronico">
+              <div *ngIf="emailError !== ''">
+                <div class="message-error-container d-flex align-items-center">
+                  <p>{{emailError}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <div class="label-form-register">
+                <label class="form-label me-1">CONTRASEÑA</label>
+                <i class="bi bi-question-circle tooltip-info">
+                  <span class="tooltiptext">Debes ingresar tu contraseña</span>
+                </i>
+              </div>
+              <input #inputPassword type="password" class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu contraseña">
+              <div *ngIf="passwordError !== ''">
+                <div class="message-error-container d-flex align-items-center">
+                  <p>{{passwordError}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <div class="label-form-register">
+                <label class="form-label me-1">REPETIR CONTRASEÑA</label>
+                <i class="bi bi-question-circle tooltip-info">
+                  <span class="tooltiptext">Debes volver a ingresar tu contraseña</span>
+                </i>
+              </div>
+              <input #inputRepeatPassword type="password"class="form-control shadow-none" required autocomplete="off" placeholder="Ingresa tu contraseña">
+              <div *ngIf="repeatPasswordError !== ''">
+                <div class="message-error-container d-flex align-items-center">
+                  <p>{{repeatPasswordError}}</p>
+                </div>
+              </div>
+            </div>
+            <button type="submit" id="buttonRegisterSubmit" class="btn btn-register mb-2" (click)="ngOnCompleteRegister()">Completar registro</button>
+            <a [routerLink]="['/login']">¿Ya tienes una cuenta?</a>
+      </div>
+    </div>
+    <div class="bottom-card d-flex flex-row bd-highlight">
+      <a class="back-card" [routerLink]="['/']"><i class="bi bi-arrow-left"></i> Volver al inicio</a>
+    </div>
+  </div>
+</div>
