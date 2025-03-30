@@ -1,4 +1,4 @@
-# SVMUCM
+# VCMUCM
 Este proyecto se centra en el desarrollo de un sistema informático para la gestión de actividades y solicitudes de vinculación con el medio en la Universidad Católica del Maule. Se desarrolla con el fin de optimizar la administración de estas actividades, mejorar la toma de decisiones y facilitar el seguimiento de los proyectos comunitarios.
 
 Para su desarrollo, se empleó una metodología ágil que permitió iteraciones rápidas y ajustes constantes, asegurando una implementación eficiente.
