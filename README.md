@@ -26,6 +26,12 @@ Para mantener una acreditación sólida, las universidades deben demostrar un co
 Open CMD on this folder, type `docker-compose build --no-cache` then type `docker-compose up`.  
 Go to your browser `http://localhost:4200`.
 
+## Preview
+
+https://github.com/user-attachments/assets/e408e9a1-3e14-455c-ad13-f5905ff04315
+
+https://github.com/user-attachments/assets/3ea1f994-dd71-47d6-9c3c-fdffd1e1f75f
+
 ## Frameworks
 - NodeJS 20.17.0
 - Angular 17.1.1 
@@ -41,12 +47,3 @@ for more info check `package.json` on each project.
 ![](https://i.imgur.com/1zXZQMZ.png)
 
 ![](https://i.imgur.com/nyLieYA.png)
-
-## Images
-![](https://i.imgur.com/zpzN2sH.png)
-
-![](https://i.imgur.com/T9Tibgi.png)
-
-![](https://i.imgur.com/0lXw30e.png)
-
-![](https://i.imgur.com/T2TMOvM.png)
